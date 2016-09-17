@@ -1,0 +1,6 @@
+[submodule "include/json"]
+	path = include/json
+	url = https://github.com/nlohmann/json.git
+[submodule "include/date"]
+	path = include/date
+	url = https://github.com/HowardHinnant/date.git
