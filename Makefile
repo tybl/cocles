@@ -2,7 +2,7 @@ CC := clang++
 TARGET := cocles
 OBJECTS = $(SOURCES:src/%.cpp=$(BLDDIR)/%.o)
 DEPS = $(OBJECTS:.o=.d)
-INCLUDES := -I src
+INCLUDES := -I src -I include
 SOURCES := src/main.cpp
 
 ifndef CONFIG
@@ -27,7 +27,7 @@ ifeq ($(CONFIG), Release)
    LFLAGS := -g0 -O3
 endif
 
-CFLAGS += -c -std=c++14 -stdlib=libc++ -pedantic -Weverything -MP -MMD
+CFLAGS += -c -std=c++14 -stdlib=libc++ -pedantic -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -MP -MMD
 LFLAGS += -lc++ -lc++abi
 
 $(TARGET): $(OBJECTS)
