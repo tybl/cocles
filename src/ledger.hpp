@@ -1,31 +1,12 @@
 #ifndef COCLES_LEDGER_HPP
 #define COCLES_LEDGER_HPP
 
+#include "account_table.hpp"
+
 #include "date/date.hpp"
 
 #include <string>
 #include <vector>
-
-enum AccountType {
-   EQUITY,
-   INCOME_EXPENSE,
-   ASSET_LIABILITY,
-   BUDGET_CATEGORY
-};
-
-struct account_t {
-   account_t(unsigned long new_id,
-             std::string new_name,
-             AccountType new_type)
-      : id(new_id),
-      name(new_name),
-      type(new_type)
-   {
-   }
-   unsigned long id;
-   std::string name;
-   AccountType type;
-};
 
 struct adjustment_t {
    adjustment_t(unsigned long new_id,
@@ -69,7 +50,8 @@ struct ledger_t {
 private:
    unsigned long GetUnusedAdjustmentId(void) const;
    std::vector<transaction_t> transactions;
-   std::vector<account_t> accounts;
+   //std::vector<account_t> accounts;
+   account_table_t accounts;
    std::vector<adjustment_t> adjustments;
 };
 

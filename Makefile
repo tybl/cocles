@@ -4,6 +4,7 @@ OBJECTS = $(SOURCES:src/%.cpp=$(BLDDIR)/%.o)
 DEPS = $(OBJECTS:.o=.d)
 INCLUDES := -I src -I include
 SOURCES := src/main.cpp \
+	   src/account_table.cpp \
 	   src/ledger.cpp
 
 ifndef CONFIG
