@@ -1,6 +1,6 @@
 #include "ledger.hpp"
 
-#include "json/json.hpp"
+#include "rapidjson/document.h"
 #include <algorithm>
 #include <iostream>
 
@@ -9,9 +9,12 @@ void ledger_t::UpdateWithEvent(std::string event) {
 }
 
 void ledger_t::AddTransaction(std::string trans) {
-   auto json_trans = nlohmann::json::parse(trans);
-   for (auto json_adjust : json_trans["adjustments"]) {
-      adjustments.AddAdjustment(json_adjust);
+   rapidjson::Document json_trans;
+   json_trans.Parse(trans.c_str());
+
+   const rapidjson::Value &adjusts = json_trans["adjustments"];
+   for (rapidjson::SizeType i = 0; i < adjusts.Size(); ++i) {
+      adjustments.AddAdjustment(adjusts[i]);
    }
 }
 

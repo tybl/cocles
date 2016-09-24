@@ -4,12 +4,14 @@
 #include "amount.hpp"
 #include "identifier.hpp"
 
-#include "json/json.hpp"
+#include "rapidjson/document.h"
+
+#include <vector>
 
 struct adjustment_table_t {
    amount_t GetBalanceForAccount(identifier_t account_id);
 
-   void AddAdjustment(nlohmann::json json_adjust);
+   void AddAdjustment(const rapidjson::Value &json_adjust);
 
    struct adjustment_t {
       adjustment_t(identifier_t new_id,

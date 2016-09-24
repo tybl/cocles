@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <numeric>
 
 struct sum_t {
    sum_t(identifier_t account_id)
@@ -42,13 +43,11 @@ amount_t adjustment_table_t::GetBalanceForAccount(identifier_t account_id) {
                           [account_id] (const amount_t &amt, const adjustment_t &adj) -> amount_t {
                              return amt + ((adj.account_id == account_id) ? adj.amount : amount_t(0.0));
                           });
-   //return std::for_each(adjustments.begin(), adjustments.end(), sum_t(account_id)).Total();
 }
 
-void adjustment_table_t::AddAdjustment(nlohmann::json json_adjust) {
-   std::cerr << json_adjust << std::endl;
+void adjustment_table_t::AddAdjustment(const rapidjson::Value &json_adjust) {
    adjustments.emplace_back(adjustments.size(),
-                            amount_t(json_adjust["amount"].get<double>()),
+                            amount_t(json_adjust["amount"].GetDouble()),
                             0ul,
                             0ul);
    for (auto a : adjustments) {
