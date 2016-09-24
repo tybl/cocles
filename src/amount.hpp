@@ -6,17 +6,12 @@
 
 struct amount_t {
    amount_t(std::string new_value);
-   amount_t(double new_value)
-      : value(new_value)
-   {
-   }
+
+   amount_t(double new_value);
 
    std::string ToString(void) const;
 
-   amount_t& operator += (const amount_t &other) {
-      value += other.value;
-      return *this;
-   }
+   amount_t& operator += (const amount_t &other);
 private:
    double value;
 };
