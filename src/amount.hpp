@@ -12,6 +12,8 @@ struct amount_t {
 
    amount_t(const amount_t &other);
 
+   ~amount_t(void);
+
    std::string ToString(void) const;
 
    amount_t& operator = (amount_t other);

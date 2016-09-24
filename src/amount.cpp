@@ -14,6 +14,10 @@ amount_t::amount_t(const amount_t &other) {
    mpz_init_set(value, other.value);
 }
 
+amount_t::~amount_t(void) {
+   mpz_clear(value);
+}
+
 std::string amount_t::ToString(void) const {
    std::string result(mpz_sizeinbase(value, 10) + 3, '\0');
    mpz_get_str(&result.front(), 10, value);
