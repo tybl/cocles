@@ -1,7 +1,7 @@
 #ifndef COCLES_ADJUSTMENTTABLE_HPP
 #define COCLES_ADJUSTMENTTABLE_HPP
 
-#include "amount.hpp"
+#include "money.hpp"
 #include "identifier.hpp"
 
 #include "json/json.hpp"

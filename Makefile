@@ -6,7 +6,7 @@ INCLUDES := -I src -I include
 SOURCES := src/main.cpp \
 	   src/account_table.cpp \
 	   src/adjustment_table.cpp \
-	   src/amount.cpp \
+	   src/money.cpp \
 	   src/identifier.cpp \
 	   src/ledger.cpp
 
