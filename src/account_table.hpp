@@ -1,6 +1,8 @@
 #ifndef COCLES_ACCOUNTTABLE_HPP
 #define COCLES_ACCOUNTTABLE_HPP
 
+#include "identifier.hpp"
+
 #include <iostream>
 #include <map>
 #include <string>
@@ -16,17 +18,17 @@ enum AccountType {
 #endif
 
 struct account_table_t {
-   unsigned long GetIdForAccount(std::string account_name);
-   std::string GetNameForAccount(unsigned long id);
+   identifier_t GetIdForAccount(std::string account_name);
+   std::string GetNameForAccount(identifier_t id);
 private:
    struct account_t {
       account_t(unsigned long new_id,
                 std::string new_name/*,
                 AccountType new_type*/);
       std::string Name(void) const;
-      unsigned long ID(void) const;
+      identifier_t ID(void) const;
    private:
-      unsigned long id;
+      identifier_t id;
       std::string name;
       //AccountType type;
    };

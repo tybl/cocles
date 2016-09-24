@@ -1,6 +1,6 @@
 #include "account_table.hpp"
 
-unsigned long
+identifier_t
 account_table_t::GetIdForAccount(std::string account_name) {
    auto pos = std::lower_bound(accounts.begin(), accounts.end(), account_name, cmp);
    if (accounts.end() == pos || pos->Name() != account_name) {
@@ -14,8 +14,8 @@ account_table_t::GetIdForAccount(std::string account_name) {
 }
 
 std::string
-account_table_t::GetNameForAccount(unsigned long id) {
-   return accounts.at(id_index.at(id)).Name();
+account_table_t::GetNameForAccount(identifier_t id) {
+   return accounts.at(id_index.at(id())).Name();
 }
 
 bool
@@ -35,5 +35,5 @@ account_table_t::account_t::account_t(unsigned long new_id,
 std::string
 account_table_t::account_t::Name(void) const { return name; }
 
-unsigned long
+identifier_t
 account_table_t::account_t::ID(void) const { return id; }
