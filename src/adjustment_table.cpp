@@ -27,20 +27,20 @@ struct sum_t {
          m_total += a.amount;
       }
    }
-   amount_t Total(void) const {
+   money_t Total(void) const {
       return m_total;
    }
 private:
-   amount_t m_total;
+   money_t m_total;
    identifier_t m_account_id;
 };
 
-amount_t adjustment_table_t::GetBalanceForAccount(identifier_t account_id) {
+money_t adjustment_table_t::GetBalanceForAccount(identifier_t account_id) {
    return std::accumulate(adjustments.begin(),
                           adjustments.end(),
-                          amount_t(0.0),
-                          [account_id] (const amount_t &amt, const adjustment_t &adj) -> amount_t {
-                             return amt + ((adj.account_id == account_id) ? adj.amount : amount_t(0.0));
+                          money_t(0.0),
+                          [account_id] (const money_t &amt, const adjustment_t &adj) -> money_t {
+                             return amt + ((adj.account_id == account_id) ? adj.amount : money_t(0.0));
                           });
    //return std::for_each(adjustments.begin(), adjustments.end(), sum_t(account_id)).Total();
 }
@@ -48,7 +48,7 @@ amount_t adjustment_table_t::GetBalanceForAccount(identifier_t account_id) {
 void adjustment_table_t::AddAdjustment(nlohmann::json json_adjust) {
    std::cerr << json_adjust << std::endl;
    adjustments.emplace_back(adjustments.size(),
-                            amount_t(json_adjust["amount"].get<double>()),
+                            money_t(json_adjust["amount"].get<double>()),
                             0ul,
                             0ul);
    for (auto a : adjustments) {
@@ -57,7 +57,7 @@ void adjustment_table_t::AddAdjustment(nlohmann::json json_adjust) {
 }
 
 adjustment_table_t::adjustment_t::adjustment_t(identifier_t new_id,
-                                               amount_t new_amount,
+                                               money_t new_amount,
                                                unsigned long new_account_id,
                                                unsigned long new_transaction_id)
    : id(new_id),

@@ -1,29 +1,29 @@
-#ifndef COCLES_AMOUNT_HPP
-#define COCLES_AMOUNT_HPP
+#ifndef COCLES_MONEY_HPP
+#define COCLES_MONEY_HPP
 
 #include <ostream>
 #include <string>
 #include <gmp.h>
 
-struct amount_t {
-   amount_t(std::string new_value);
+struct money_t {
+   money_t(std::string new_value);
 
-   amount_t(double new_value);
+   money_t(double new_value);
 
-   amount_t(const amount_t &other);
+   money_t(const money_t &other);
 
-   ~amount_t(void);
+   ~money_t(void);
 
    std::string ToString(void) const;
 
-   amount_t& operator = (amount_t other);
+   money_t& operator = (money_t other);
 
-   amount_t& operator += (const amount_t &other);
+   money_t& operator += (const money_t &other);
 private:
    mpz_t value;
 };
 
-std::ostream& operator << (std::ostream &out, const amount_t &a);
+std::ostream& operator << (std::ostream &out, const money_t &a);
 
-amount_t operator + (amount_t lhs, const amount_t &rhs);
-#endif // COCLES_AMOUNT_HPP
+money_t operator + (money_t lhs, const money_t &rhs);
+#endif // COCLES_MONEY_HPP

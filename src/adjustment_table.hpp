@@ -7,17 +7,17 @@
 #include "json/json.hpp"
 
 struct adjustment_table_t {
-   amount_t GetBalanceForAccount(identifier_t account_id);
+   money_t GetBalanceForAccount(identifier_t account_id);
 
    void AddAdjustment(nlohmann::json json_adjust);
 
    struct adjustment_t {
       adjustment_t(identifier_t new_id,
-                   amount_t new_amount,
+                   money_t new_amount,
                    unsigned long new_account_id,
                    unsigned long new_transaction_id);
       identifier_t id;
-      amount_t amount;
+      money_t amount;
       identifier_t account_id;
       unsigned long transaction_id;
    };

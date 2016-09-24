@@ -15,7 +15,7 @@ void ledger_t::AddTransaction(std::string trans) {
    }
 }
 
-amount_t ledger_t::GetBalance(std::string account_name) {
+money_t ledger_t::GetBalance(std::string account_name) {
    identifier_t account_id = accounts.GetIdForAccount(account_name);
    return adjustments.GetBalanceForAccount(account_id);
 }
