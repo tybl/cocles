@@ -1,21 +1,33 @@
 #include "amount.hpp"
 
-amount_t::amount_t(std::string new_value)
-   : value(std::stod(new_value))
-{
+#include <iostream>
+
+amount_t::amount_t(std::string new_value) {
+   mpz_init(value);
 }
 
-amount_t::amount_t(double new_value)
-   : value(new_value)
-{
+amount_t::amount_t(double new_value) {
+   mpz_init_set_d(value, new_value * 100);
+}
+
+amount_t::amount_t(const amount_t &other) {
+   mpz_init_set(value, other.value);
 }
 
 std::string amount_t::ToString(void) const {
-   return std::to_string(value);
+   std::string result(mpz_sizeinbase(value, 10) + 3, '\0');
+   mpz_get_str(&result.front(), 10, value);
+   // TODO: Insert decimal place
+   return result;
+}
+
+amount_t& amount_t::operator = (amount_t other) {
+   mpz_swap(value, other.value);
+   return *this;
 }
 
 amount_t& amount_t::operator += (const amount_t &other) {
-   value += other.value;
+   mpz_add(value, value, other.value);
    return *this;
 }
 
