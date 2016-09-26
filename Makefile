@@ -1,14 +1,14 @@
-CC := clang++
+CXX := clang++
 TARGET := cocles
 OBJECTS = $(SOURCES:src/%.cpp=$(BLDDIR)/%.o)
 DEPS = $(OBJECTS:.o=.d)
 INCLUDES := -I src -I include
 SOURCES := src/main.cpp \
-	   src/account_table.cpp \
-	   src/adjustment_table.cpp \
-	   src/amount.cpp \
-	   src/identifier.cpp \
-	   src/ledger.cpp
+           src/account_table.cpp \
+           src/adjustment_table.cpp \
+           src/amount.cpp \
+           src/identifier.cpp \
+           src/ledger.cpp
 
 ifndef CONFIG
    CONFIG=Valgrind
@@ -36,13 +36,13 @@ CFLAGS += -c -std=c++14 -stdlib=libc++ -pedantic -Weverything -Wno-c++98-compat 
 LFLAGS += -lc++ -lc++abi
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) $(LFLAGS) -o $@
+	$(CXX) $(OBJECTS) $(LFLAGS) -o $@
 
 $(BLDDIR):
 	mkdir -p $(dir $(OBJECTS))
 
 $(BLDDIR)/%.o: src/%.cpp | $(BLDDIR)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $<
+	$(CXX) $(CFLAGS) $(INCLUDES) -o $@ $<
 
 .PHONY: clean
 clean:
