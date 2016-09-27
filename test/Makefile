@@ -4,13 +4,16 @@ USER_DIR = ../deps/googletest/googletest/samples
 
 CPPFLAGS += -isystem ../include
 
-CXXFLAGS += -g -Wall -Wextra -pthread
+CXXFLAGS += -g -stdlib=libc++ -Wall -Wextra -pthread
+
+LFLAGS += -lc++ -lc++abi -lpthread
 
 TESTS = sample1_unittest
 
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
 
+.PHONY: all test clean
 all : $(TESTS)
 
 test: all
@@ -40,4 +43,4 @@ sample1_unittest.o : $(USER_DIR)/sample1_unittest.cc $(USER_DIR)/sample1.h $(GTE
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $<
 
 sample1_unittest : sample1.o sample1_unittest.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LFLAGS) $^ -o $@

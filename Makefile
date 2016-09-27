@@ -1,14 +1,17 @@
 CXX := clang++
 TARGET := cocles
-OBJECTS = $(SOURCES:src/%.cpp=$(BLDDIR)/%.o)
+TEST_TRGT = cocles-test
+OBJECTS = $(SOURCES:%.cpp=$(BLDDIR)/%.o)
+TEST_OBJ = $(TEST_SRC:%.cpp=$(BLDDIR)/%.o)
 DEPS = $(OBJECTS:.o=.d)
 INCLUDES := -I src -I include
-SOURCES := src/main.cpp \
-           src/account_table.cpp \
+SOURCES := src/account_table.cpp \
            src/adjustment_table.cpp \
            src/amount.cpp \
            src/identifier.cpp \
            src/ledger.cpp
+
+TEST_SRC := test/identifier-test.cpp
 
 ifndef CONFIG
    CONFIG=Valgrind
@@ -33,19 +36,28 @@ ifeq ($(CONFIG), Release)
 endif
 
 CFLAGS += -c -std=c++14 -stdlib=libc++ -pedantic -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -MP -MMD
-LFLAGS += -lc++ -lc++abi
+LFLAGS += -lc++ -lc++abi -lpthread
 
-$(TARGET): $(OBJECTS)
-	$(CXX) $(OBJECTS) $(LFLAGS) -o $@
+.PHONY: all test clean
+all: $(TARGET)
+
+test: $(TEST_TRGT)
+	./$(TEST_TRGT)
+
+clean:
+	$(RM) -r build $(TARGET)
+
+$(TARGET): $(OBJECTS) $(BLDDIR)/src/main.o
+	$(CXX) $(LFLAGS) $^ -o $@
+
+$(TEST_TRGT): $(OBJECTS) $(TEST_OBJ) lib/gtest_main.a
+	$(CXX) $(LFLAGS) $^ -o $@
 
 $(BLDDIR):
 	mkdir -p $(dir $(OBJECTS))
+	mkdir -p $(dir $(TEST_OBJ))
 
-$(BLDDIR)/%.o: src/%.cpp | $(BLDDIR)
+$(BLDDIR)/%.o: %.cpp | $(BLDDIR)
 	$(CXX) $(CFLAGS) $(INCLUDES) -o $@ $<
-
-.PHONY: clean
-clean:
-	$(RM) -r build $(TARGET)
 
 -include $(DEPS)
