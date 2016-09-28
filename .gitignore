@@ -22,6 +22,7 @@
 *.out
 *.app
 cocles
+cocles-test
 
 # Vim
 *.swp
