@@ -5,11 +5,11 @@ OBJECTS = $(SOURCES:%.cpp=$(BLDDIR)/%.o)
 TEST_OBJ = $(TEST_SRC:%.cpp=$(BLDDIR)/%.o)
 DEPS = $(OBJECTS:.o=.d)
 INCLUDES := -I src -I include
-SOURCES := src/account_table.cpp \
-           src/adjustment_table.cpp \
+SOURCES := src/ledger/account_table.cpp \
+           src/ledger/adjustment_table.cpp \
            src/money.cpp \
            src/identifier.cpp \
-           src/ledger.cpp
+           src/ledger/ledger.cpp
 
 TEST_SRC := test/identifier-test.cpp
 
