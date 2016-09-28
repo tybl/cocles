@@ -19,9 +19,14 @@ money_t::~money_t(void) {
 }
 
 std::string money_t::ToString(void) const {
-   std::string result(mpz_sizeinbase(value, 10) + 3, '\0');
-   mpz_get_str(&result.front(), 10, value);
-   // TODO: Insert decimal place
+   mpz_t whole;
+   mpz_init(whole);
+   unsigned long fraction = mpz_tdiv_q_ui(whole, value, 100);
+   int length = gmp_snprintf(nullptr, 0, "%Zd.%02lu", whole, fraction);
+   length = (0 < length) ? length : 0;
+   std::string result(static_cast<unsigned>(length), '\0');
+   gmp_snprintf(&result[0], length + 1, "%Zd.%02lu", whole, fraction);
+   mpz_clear(whole);
    return result;
 }
 
