@@ -1,29 +1,23 @@
-#ifndef COCLES_LEDGER_HPP
-#define COCLES_LEDGER_HPP
+#ifndef COCLES_LEDGER_LEDGER_HPP
+#define COCLES_LEDGER_LEDGER_HPP
 
 #include "account_table.hpp"
 #include "adjustment_table.hpp"
-
-#include "date/date.hpp"
+#include "transaction.hpp"
+#include "event.hpp"
 
 #include <string>
 #include <vector>
 
-struct transaction_t {
-   unsigned long id;
-   std::string memo;
-   date::year_month_day date;
-};
-
 // Possible events:
-// add transaction
-// edit transaction
-//    add adjustment
-//    edit adjustment
+// insert transaction
+// modify transaction
+//    insert adjustment
+//    modify adjustment
 //    remove adjustment
 // remove transaction
-// add account
-// edit account
+// insert account
+// modify account
 // remove account
 
 namespace ledger {
@@ -38,4 +32,4 @@ namespace ledger {
       adjustment_table_t adjustments;
    };
 } // namespace ledger
-#endif // COCLES_LEDGER_HPP
+#endif // COCLES_LEDGER_LEDGER_HPP

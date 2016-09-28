@@ -1,5 +1,5 @@
-#ifndef COCLES_ACCOUNTTABLE_HPP
-#define COCLES_ACCOUNTTABLE_HPP
+#ifndef COCLES_LEDGER_ACCOUNTTABLE_HPP
+#define COCLES_LEDGER_ACCOUNTTABLE_HPP
 
 #include "account.hpp"
 #include "identifier.hpp"
@@ -25,4 +25,4 @@ namespace ledger {
       std::map<unsigned long, size_t> id_index;
    };
 } // namespace ledger
-#endif // COCLES_ACCOUNTTABLE_HPP
+#endif // COCLES_LEDGER_ACCOUNTTABLE_HPP

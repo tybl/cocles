@@ -1,3 +1,6 @@
+#ifndef COCLES_LEDGER_ADJUSTMENT_HPP
+#define COCLES_LEDGER_ADJUSTMENT_HPP
+
 #include "identifier.hpp"
 #include "money.hpp"
 
@@ -13,3 +16,4 @@ namespace ledger {
       unsigned long transaction_id;
    };
 } // namespace ledger
+#endif // COCLES_LEDGER_ADJUSTMENT_HPP

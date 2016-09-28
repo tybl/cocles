@@ -1,5 +1,5 @@
-#ifndef COCLES_ADJUSTMENTTABLE_HPP
-#define COCLES_ADJUSTMENTTABLE_HPP
+#ifndef COCLES_LEDGER_ADJUSTMENTTABLE_HPP
+#define COCLES_LEDGER_ADJUSTMENTTABLE_HPP
 
 #include "adjustment.hpp"
 #include "money.hpp"
@@ -21,4 +21,4 @@ namespace ledger {
       std::vector<adjustment_t> adjustments;
    };
 } // namespace ledger
-#endif // COCLES_ADJUSTMENTTABLE_HPP
+#endif // COCLES_LEDGER_ADJUSTMENTTABLE_HPP
