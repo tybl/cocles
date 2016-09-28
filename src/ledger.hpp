@@ -28,7 +28,7 @@ struct transaction_t {
 
 struct ledger_t {
    void UpdateWithEvent(std::string event);
-   amount_t GetBalance(std::string account);
+   money_t GetBalance(std::string account);
    void AddTransaction(std::string trans);
 private:
    unsigned long GetUnusedAdjustmentId(void) const;

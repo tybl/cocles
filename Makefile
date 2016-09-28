@@ -7,7 +7,7 @@ DEPS = $(OBJECTS:.o=.d)
 INCLUDES := -I src -I include
 SOURCES := src/account_table.cpp \
            src/adjustment_table.cpp \
-           src/amount.cpp \
+           src/money.cpp \
            src/identifier.cpp \
            src/ledger.cpp
 
@@ -36,7 +36,7 @@ ifeq ($(CONFIG), Release)
 endif
 
 CFLAGS += -c -std=c++14 -stdlib=libc++ -pedantic -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -MP -MMD
-LFLAGS += -lc++ -lc++abi -lpthread
+LFLAGS += -lc++ -lc++abi -lpthread -lgmp
 
 .PHONY: all test clean
 all: $(TARGET)
