@@ -26,15 +26,16 @@ struct transaction_t {
 // edit account
 // remove account
 
-struct ledger_t {
-   void UpdateWithEvent(std::string event);
-   money_t GetBalance(std::string account);
-   void AddTransaction(std::string trans);
-private:
-   unsigned long GetUnusedAdjustmentId(void) const;
-   std::vector<transaction_t> transactions;
-   account_table_t accounts;
-   adjustment_table_t adjustments;
-};
-
+namespace ledger {
+   struct ledger_t {
+      void UpdateWithEvent(std::string event);
+      money_t GetBalance(std::string account);
+      void AddTransaction(std::string trans);
+   private:
+      unsigned long GetUnusedAdjustmentId(void) const;
+      std::vector<transaction_t> transactions;
+      account_table_t accounts;
+      adjustment_table_t adjustments;
+   };
+} // namespace ledger
 #endif // COCLES_LEDGER_HPP

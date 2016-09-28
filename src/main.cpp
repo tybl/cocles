@@ -2,8 +2,8 @@
 
 extern "C"
 int
-main(int , const char * []) {
-   ledger_t ledger;
+main(int argc, const char * argv[]) {
+   ledger::ledger_t ledger;
    ledger.AddTransaction("{ "
       "\"date\":\"2016-09-17\", "
       "\"adjustments\":[ "

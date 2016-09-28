@@ -1,6 +1,7 @@
 #ifndef COCLES_ACCOUNTTABLE_HPP
 #define COCLES_ACCOUNTTABLE_HPP
 
+#include "account.hpp"
 #include "identifier.hpp"
 
 #include <iostream>
@@ -8,34 +9,20 @@
 #include <string>
 #include <vector>
 
-#if 0
-enum AccountType {
-   EQUITY,
-   INCOME_EXPENSE,
-   ASSET_LIABILITY,
-   BUDGET_CATEGORY
-};
-#endif
+namespace ledger {
+   struct account_table_t {
+      const identifier_t&
+      GetIdForAccount(std::string account_name);
 
-struct account_table_t {
-   identifier_t GetIdForAccount(std::string account_name);
-   std::string GetNameForAccount(identifier_t id);
-private:
-   struct account_t {
-      account_t(unsigned long new_id,
-                std::string new_name/*,
-                AccountType new_type*/);
-      std::string Name(void) const;
-      identifier_t ID(void) const;
+      const std::string&
+      GetNameForAccount(identifier_t id);
+
    private:
-      identifier_t id;
-      std::string name;
-      //AccountType type;
+      static bool cmp(const account_t &a, const std::string &s);
+
+   private:
+      std::vector<account_t> accounts;
+      std::map<unsigned long, size_t> id_index;
    };
-
-   static bool cmp(const account_t &a, const std::string &s);
-
-   std::vector<account_t> accounts;
-   std::map<unsigned long, size_t> id_index;
-};
+} // namespace ledger
 #endif // COCLES_ACCOUNTTABLE_HPP
