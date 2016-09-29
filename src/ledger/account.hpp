@@ -6,25 +6,23 @@
 
 namespace ledger {
    struct account_t {
+      enum account_type_t {
+         EQUITY,
+         INCOME_EXPENSE,
+         ASSET_LIABILITY,
+         BUDGET_CATEGORY
+      };
       account_t(unsigned long new_id,
-                std::string new_name/*,
-                account_type_t new_type*/);
+                std::string new_name,
+                account_type_t new_type);
       const std::string& Name(void) const;
       const identifier_t& ID(void) const;
+      const account_type_t& Type(void) const;
    private:
       identifier_t id;
       std::string name;
       std::string memo;
-
-#if 0
-   enum account_type_t {
-      EQUITY,
-      INCOME_EXPENSE,
-      ASSET_LIABILITY,
-      BUDGET_CATEGORY
-   };
-#endif
-      //account_type_t type;
+      account_type_t type;
    };
 } // namespace ledger
 #endif // COCLES_LEDGER_ACCOUNT_HPP

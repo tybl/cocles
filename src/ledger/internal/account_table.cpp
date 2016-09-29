@@ -6,7 +6,8 @@ namespace ledger {
       account_table_t::GetIdForAccount(std::string account_name) {
          auto pos = std::lower_bound(accounts.begin(), accounts.end(), account_name, cmp);
          if (accounts.end() == pos || pos->Name() != account_name) {
-            pos = accounts.emplace(pos, accounts.size(), account_name);
+            // TODO: Need to know account type to create it...
+            pos = accounts.emplace(pos, accounts.size(), account_name, account_t::EQUITY);
          }
          for (auto a : accounts) {
             std::cout << a.ID() << " " << a.Name() << std::endl;
