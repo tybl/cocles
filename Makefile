@@ -1,8 +1,8 @@
 CXX := clang++
 TARGET := cocles
 TEST_TRGT = cocles-test
-OBJECTS = $(SOURCES:%.cpp=$(BLDDIR)/%.o)
-TEST_OBJ = $(TEST_SRC:%.cpp=$(BLDDIR)/%.o)
+OBJECTS = $(SOURCES:src/%.cpp=$(BLDDIR)/src/%.o)
+TEST_OBJ = $(TEST_SRC:test/%.cpp=$(BLDDIR)/test/%.o)
 DEPS = $(OBJECTS:.o=.d)
 INCLUDES := -I src -I include
 SOURCES := src/ledger/account.cpp \
@@ -37,7 +37,8 @@ ifeq ($(CONFIG), Release)
    LFLAGS := -g0 -O3
 endif
 
-CFLAGS += -c -std=c++14 -stdlib=libc++ -pedantic -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -MP -MMD
+WARNINGS = -pedantic -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded
+CFLAGS += -c -std=c++14 -stdlib=libc++ -MP -MMD
 LFLAGS += -lc++ -lc++abi -lpthread -lgmp
 
 .PHONY: all test clean
@@ -59,7 +60,10 @@ $(BLDDIR):
 	mkdir -p $(dir $(OBJECTS))
 	mkdir -p $(dir $(TEST_OBJ))
 
-$(BLDDIR)/%.o: %.cpp | $(BLDDIR)
+$(BLDDIR)/src/%.o: src/%.cpp | $(BLDDIR)
+	$(CXX) $(CFLAGS) $(WARNINGS) $(INCLUDES) -o $@ $<
+
+$(BLDDIR)/test/%.o: test/%.cpp | $(BLDDIR)
 	$(CXX) $(CFLAGS) $(INCLUDES) -o $@ $<
 
 -include $(DEPS)
