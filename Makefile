@@ -6,7 +6,7 @@ TEST_OBJ = $(TEST_SRC:%.cpp=$(BLDDIR)/%.o)
 DEPS = $(OBJECTS:.o=.d)
 INCLUDES := -I src -I include
 SOURCES := src/ledger/account.cpp \
-           src/ledger/account_table.cpp \
+           src/ledger/internal/account_table.cpp \
            src/ledger/adjustment.cpp \
            src/ledger/internal/adjustment_table.cpp \
            src/money.cpp \
