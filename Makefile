@@ -47,7 +47,7 @@ test: $(TEST_TRGT)
 	./$(TEST_TRGT)
 
 clean:
-	$(RM) -r build $(TARGET)
+	$(RM) -r build $(TARGET) $(TEST_TRGT)
 
 $(TARGET): $(OBJECTS) $(BLDDIR)/src/main.o
 	$(CXX) $(LFLAGS) $^ -o $@
