@@ -2,8 +2,6 @@
 
 #include "ledger_impl.hpp"
 #include "rapidjson/document.h"
-#include <algorithm>
-#include <iostream>
 
 namespace ledger {
    ledger_t::ledger_t(void)
