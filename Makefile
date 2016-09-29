@@ -8,7 +8,7 @@ INCLUDES := -I src -I include
 SOURCES := src/ledger/account.cpp \
            src/ledger/account_table.cpp \
            src/ledger/adjustment.cpp \
-           src/ledger/adjustment_table.cpp \
+           src/ledger/internal/adjustment_table.cpp \
            src/money.cpp \
            src/identifier.cpp \
            src/ledger/ledger.cpp
