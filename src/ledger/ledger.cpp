@@ -5,7 +5,7 @@
 
 namespace ledger {
    ledger_t::ledger_t(void)
-      : impl(std::make_unique<ledger_impl_t>())
+      : impl(std::make_unique<internal::ledger_impl_t>())
    {
    }
 

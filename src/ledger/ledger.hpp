@@ -17,6 +17,10 @@
 // remove account
 
 namespace ledger {
+   namespace internal {
+      struct ledger_impl_t;
+   }
+
    struct ledger_t {
       ledger_t(void);
 
@@ -37,8 +41,7 @@ namespace ledger {
       AddTransaction(std::string trans);
 
    private:
-      struct ledger_impl_t;
-      std::unique_ptr<ledger_impl_t> impl;
+      std::unique_ptr<internal::ledger_impl_t> impl;
    };
 } // namespace ledger
 #endif // COCLES_LEDGER_LEDGER_HPP
