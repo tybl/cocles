@@ -1,9 +1,9 @@
 #ifndef COCLES_LEDGER_LEDGERIMPL_HPP
 #define COCLES_LEDGER_LEDGERIMPL_HPP
 
-#include "internal/account_table.hpp"
-#include "internal/adjustment_table.hpp"
-#include "transaction.hpp"
+#include "account_table.hpp"
+#include "adjustment_table.hpp"
+#include "../transaction.hpp"
 
 #include <vector>
 

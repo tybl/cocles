@@ -1,6 +1,6 @@
 #include "ledger.hpp"
 
-#include "ledger_impl.hpp"
+#include "internal/ledger_impl.hpp"
 #include "rapidjson/document.h"
 
 namespace ledger {
