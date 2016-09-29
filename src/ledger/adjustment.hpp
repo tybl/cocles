@@ -13,7 +13,7 @@ namespace ledger {
       identifier_t id;
       money_t amount;
       identifier_t account_id;
-      unsigned long transaction_id;
+      identifier_t transaction_id;
    };
 } // namespace ledger
 #endif // COCLES_LEDGER_ADJUSTMENT_HPP
