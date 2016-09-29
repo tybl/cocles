@@ -1,13 +1,9 @@
 #ifndef COCLES_LEDGER_LEDGER_HPP
 #define COCLES_LEDGER_LEDGER_HPP
 
-#include "account_table.hpp"
-#include "adjustment_table.hpp"
-#include "transaction.hpp"
-#include "event.hpp"
-
 #include <string>
-#include <vector>
+
+#include "money.hpp"
 
 // Possible events:
 // insert transaction
@@ -22,14 +18,14 @@
 
 namespace ledger {
    struct ledger_t {
+      ledger_t(void);
+      ~ledger_t(void);
       void UpdateWithEvent(std::string event);
       money_t GetBalance(std::string account);
       void AddTransaction(std::string trans);
    private:
-      unsigned long GetUnusedAdjustmentId(void) const;
-      std::vector<transaction_t> transactions;
-      account_table_t accounts;
-      adjustment_table_t adjustments;
+      struct ledger_impl_t;
+      std::unique_ptr<ledger_impl_t> impl;
    };
 } // namespace ledger
 #endif // COCLES_LEDGER_LEDGER_HPP
