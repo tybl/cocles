@@ -1,6 +1,5 @@
 #include "adjustment_table.hpp"
 
-#include <algorithm>
 #include <iostream>
 #include <numeric>
 
