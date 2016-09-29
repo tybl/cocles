@@ -11,9 +11,12 @@ namespace ledger {
    {
    }
 
-   ledger_t::~ledger_t(void)
-   {
-   }
+   ledger_t::ledger_t(ledger_t &&) noexcept = default;
+
+   ledger_t::~ledger_t(void) = default;
+
+   ledger_t&
+   ledger_t::operator = (ledger_t &&) noexcept = default;
 
    void
    ledger_t::UpdateWithEvent(std::string event) {

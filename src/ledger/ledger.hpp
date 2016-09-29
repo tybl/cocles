@@ -19,10 +19,23 @@
 namespace ledger {
    struct ledger_t {
       ledger_t(void);
+
+      ledger_t(ledger_t &&) noexcept;
+
       ~ledger_t(void);
-      void UpdateWithEvent(std::string event);
-      money_t GetBalance(std::string account);
-      void AddTransaction(std::string trans);
+
+      ledger_t&
+      operator = (ledger_t &&) noexcept;
+
+      void
+      UpdateWithEvent(std::string event);
+
+      money_t
+      GetBalance(std::string account);
+
+      void
+      AddTransaction(std::string trans);
+
    private:
       struct ledger_impl_t;
       std::unique_ptr<ledger_impl_t> impl;
