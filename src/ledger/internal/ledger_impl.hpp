@@ -3,7 +3,7 @@
 
 #include "account_table.hpp"
 #include "adjustment_table.hpp"
-#include "../transaction.hpp"
+#include "transaction.hpp"
 
 #include <vector>
 
