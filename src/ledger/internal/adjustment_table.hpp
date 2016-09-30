@@ -2,8 +2,8 @@
 #define COCLES_LEDGER_ADJUSTMENTTABLE_HPP
 
 #include "ledger/adjustment.hpp"
-#include "money.hpp"
 #include "ledger/identifier.hpp"
+#include "ledger/money.hpp"
 
 #include "rapidjson/document.h"
 
