@@ -8,8 +8,8 @@ namespace ledger {
       struct account_t;
       struct transaction_t;
       struct adjustment_t {
-         transaction_t* transaction_id;
-         account_t* account_id;
+         transaction_t* transaction_ptr;
+         account_t* account_ptr;
          money_t amount;
       }; // struct adjustment_t
    } // namespace internal
