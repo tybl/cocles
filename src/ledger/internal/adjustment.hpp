@@ -1,8 +1,8 @@
 #ifndef COCLES_LEDGER_ADJUSTMENT_HPP
 #define COCLES_LEDGER_ADJUSTMENT_HPP
 
-#include "identifier.hpp"
-#include "money.hpp"
+#include "ledger/identifier.hpp"
+#include "ledger/money.hpp"
 
 namespace ledger {
    namespace internal {

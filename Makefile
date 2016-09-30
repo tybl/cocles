@@ -7,7 +7,7 @@ DEPS = $(OBJECTS:.o=.d)
 INCLUDES := -I src -I include
 SOURCES := src/ledger/internal/account.cpp \
            src/ledger/internal/account_table.cpp \
-           src/ledger/adjustment.cpp \
+           src/ledger/internal/adjustment.cpp \
            src/ledger/internal/adjustment_table.cpp \
            src/ledger/money.cpp \
            src/ledger/identifier.cpp \

@@ -1,7 +1,7 @@
 #ifndef COCLES_LEDGER_ADJUSTMENTTABLE_HPP
 #define COCLES_LEDGER_ADJUSTMENTTABLE_HPP
 
-#include "ledger/adjustment.hpp"
+#include "adjustment.hpp"
 #include "ledger/identifier.hpp"
 #include "ledger/money.hpp"
 
