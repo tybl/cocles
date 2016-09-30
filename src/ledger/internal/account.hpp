@@ -1,29 +1,24 @@
 #ifndef COCLES_LEDGER_INTERNAL_ACCOUNT_HPP
 #define COCLES_LEDGER_INTERNAL_ACCOUNT_HPP
 
-#include "ledger/identifier.hpp"
 #include <string>
+#include <vector>
 
 namespace ledger {
    namespace internal {
+      struct adjustment_t;
+      enum account_type_t {
+         EQUITY,
+         INCOME_EXPENSE,
+         ASSET_LIABILITY,
+         BUDGET_CATEGORY
+      };
       struct account_t {
-         enum account_type_t {
-            EQUITY,
-            INCOME_EXPENSE,
-            ASSET_LIABILITY,
-            BUDGET_CATEGORY
-         };
-         account_t(unsigned long new_id,
-                   std::string new_name,
-                   account_type_t new_type);
-         const std::string& Name(void) const;
-         const identifier_t& ID(void) const;
-         const account_type_t& Type(void) const;
-      private:
-         identifier_t id;
+         account_t(std::string p_name, account_type_t p_type);
          std::string name;
          std::string memo;
          account_type_t type;
+         std::vector<adjustment_t*> adjustments;
       }; // struct account_t
    } // namespace internal
 } // namespace ledger
