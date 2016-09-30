@@ -1,5 +1,5 @@
-#ifndef COCLES_LEDGER_ACCOUNT_HPP
-#define COCLES_LEDGER_ACCOUNT_HPP
+#ifndef COCLES_LEDGER_INTERNAL_ACCOUNT_HPP
+#define COCLES_LEDGER_INTERNAL_ACCOUNT_HPP
 
 #include "ledger/identifier.hpp"
 #include <string>
@@ -27,4 +27,4 @@ namespace ledger {
       }; // struct account_t
    } // namespace internal
 } // namespace ledger
-#endif // COCLES_LEDGER_ACCOUNT_HPP
+#endif // COCLES_LEDGER_INTERNAL_ACCOUNT_HPP

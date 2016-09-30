@@ -1,5 +1,5 @@
-#ifndef COCLES_LEDGER_LEDGERIMPL_HPP
-#define COCLES_LEDGER_LEDGERIMPL_HPP
+#ifndef COCLES_LEDGER_INTERNAL_LEDGERIMPL_HPP
+#define COCLES_LEDGER_INTERNAL_LEDGERIMPL_HPP
 
 #include "account_table.hpp"
 #include "adjustment_table.hpp"
@@ -16,4 +16,4 @@ namespace ledger {
       }; // struct ledger_impl_t
    } // namespace internal
 } // namespace ledger
-#endif // COCLES_LEDGER_LEDGERIMPL_HPP
+#endif // COCLES_LEDGER_INTERNAL_LEDGERIMPL_HPP

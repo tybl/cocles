@@ -1,5 +1,5 @@
-#ifndef COCLES_IDENTIFIER_HPP
-#define COCLES_IDENTIFIER_HPP
+#ifndef COCLES_LEDGER_IDENTIFIER_HPP
+#define COCLES_LEDGER_IDENTIFIER_HPP
 
 #include <ostream>
 #include <string>
@@ -24,4 +24,4 @@ namespace ledger {
 
 std::ostream& operator << (std::ostream &out, const ledger::identifier_t &id);
 
-#endif // COCLES_IDENTIFIER_HPP
+#endif // COCLES_LEDGER_IDENTIFIER_HPP

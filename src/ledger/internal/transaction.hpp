@@ -1,5 +1,5 @@
-#ifndef COCLES_LEDGER_TRANSACTION_HPP
-#define COCLES_LEDGER_TRANSACTION_HPP
+#ifndef COCLES_LEDGER_INTERNAL_TRANSACTION_HPP
+#define COCLES_LEDGER_INTERNAL_TRANSACTION_HPP
 
 #include "ledger/identifier.hpp"
 
@@ -16,4 +16,4 @@ namespace ledger {
       }; // transaction_t
    } // namespace internal
 } // namespace ledger
-#endif // COCLES_LEDGER_TRANSACTION_HPP
+#endif // COCLES_LEDGER_INTERNAL_TRANSACTION_HPP

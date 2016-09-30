@@ -1,5 +1,5 @@
-#ifndef COCLES_MONEY_HPP
-#define COCLES_MONEY_HPP
+#ifndef COCLES_LEDGER_MONEY_HPP
+#define COCLES_LEDGER_MONEY_HPP
 
 #include <ostream>
 #include <string>
@@ -28,4 +28,4 @@ namespace ledger {
 std::ostream& operator << (std::ostream &out, const ledger::money_t &a);
 
 ledger::money_t operator + (ledger::money_t lhs, const ledger::money_t &rhs);
-#endif // COCLES_MONEY_HPP
+#endif // COCLES_LEDGER_MONEY_HPP

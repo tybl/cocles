@@ -1,5 +1,5 @@
-#ifndef COCLES_LEDGER_ADJUSTMENTTABLE_HPP
-#define COCLES_LEDGER_ADJUSTMENTTABLE_HPP
+#ifndef COCLES_LEDGER_INTERNAL_ADJUSTMENTTABLE_HPP
+#define COCLES_LEDGER_INTERNAL_ADJUSTMENTTABLE_HPP
 
 #include "adjustment.hpp"
 #include "ledger/identifier.hpp"
@@ -23,4 +23,4 @@ namespace ledger {
       }; // struct adjustment_table_t
    } // namespace internal
 } // namespace ledger
-#endif // COCLES_LEDGER_ADJUSTMENTTABLE_HPP
+#endif // COCLES_LEDGER_INTERNAL_ADJUSTMENTTABLE_HPP
