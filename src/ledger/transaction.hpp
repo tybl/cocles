@@ -8,10 +8,12 @@
 #include <string>
 
 namespace ledger {
-   struct transaction_t {
-      identifier_t id;
-      std::string memo;
-      date::year_month_day date;
-   };
+   namespace internal {
+      struct transaction_t {
+         identifier_t id;
+         std::string memo;
+         date::year_month_day date;
+      }; // transaction_t
+   } // namespace internal
 } // namespace ledger
 #endif // COCLES_LEDGER_TRANSACTION_HPP
