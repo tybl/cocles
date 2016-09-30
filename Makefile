@@ -10,7 +10,7 @@ SOURCES := src/ledger/internal/account.cpp \
            src/ledger/adjustment.cpp \
            src/ledger/internal/adjustment_table.cpp \
            src/money.cpp \
-           src/identifier.cpp \
+           src/ledger/identifier.cpp \
            src/ledger/ledger.cpp
 
 TEST_SRC := test/identifier-test.cpp

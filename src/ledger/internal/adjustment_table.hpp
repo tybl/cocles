@@ -1,9 +1,9 @@
 #ifndef COCLES_LEDGER_ADJUSTMENTTABLE_HPP
 #define COCLES_LEDGER_ADJUSTMENTTABLE_HPP
 
-#include "../adjustment.hpp"
+#include "ledger/adjustment.hpp"
 #include "money.hpp"
-#include "identifier.hpp"
+#include "ledger/identifier.hpp"
 
 #include "rapidjson/document.h"
 

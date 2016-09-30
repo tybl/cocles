@@ -1,7 +1,7 @@
 #ifndef COCLES_LEDGER_TRANSACTION_HPP
 #define COCLES_LEDGER_TRANSACTION_HPP
 
-#include "identifier.hpp"
+#include "ledger/identifier.hpp"
 
 #include "date/date.hpp"
 

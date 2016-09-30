@@ -1,7 +1,7 @@
 #ifndef COCLES_LEDGER_ACCOUNT_HPP
 #define COCLES_LEDGER_ACCOUNT_HPP
 
-#include "identifier.hpp"
+#include "ledger/identifier.hpp"
 #include <string>
 
 namespace ledger {
