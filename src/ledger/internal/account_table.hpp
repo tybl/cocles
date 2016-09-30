@@ -1,7 +1,7 @@
 #ifndef COCLES_LEDGER_ACCOUNTTABLE_HPP
 #define COCLES_LEDGER_ACCOUNTTABLE_HPP
 
-#include "../account.hpp"
+#include "account.hpp"
 #include "identifier.hpp"
 
 #include <iostream>
