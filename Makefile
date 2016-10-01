@@ -14,6 +14,7 @@ SOURCES := \
 
 TEST_SRC := \
             test/identifier-test.cpp \
+            test/ledger/ledger-test.cpp \
 
 ifndef CONFIG
    CONFIG=Valgrind

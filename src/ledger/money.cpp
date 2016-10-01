@@ -40,6 +40,9 @@ namespace ledger {
       mpz_add(value, value, other.value);
       return *this;
    }
+   bool money_t::operator == (const money_t &other) const {
+      return 0 == mpz_cmp(value, other.value);
+   }
 } // namespace ledger
 
 std::ostream& operator << (std::ostream &out, const ledger::money_t &a) {

@@ -20,6 +20,8 @@ namespace ledger {
       money_t& operator = (money_t other);
 
       money_t& operator += (const money_t &other);
+
+      bool operator == (const money_t &other) const;
    private:
       mpz_t value;
    }; // struct money_t
