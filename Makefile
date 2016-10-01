@@ -5,13 +5,15 @@ OBJECTS = $(SOURCES:src/%.cpp=$(BLDDIR)/src/%.o)
 TEST_OBJ = $(TEST_SRC:test/%.cpp=$(BLDDIR)/test/%.o)
 DEPS = $(OBJECTS:.o=.d)
 INCLUDES := -I src -I include
-SOURCES := src/ledger/internal/account.cpp \
+SOURCES := \
+           src/ledger/internal/account.cpp \
            src/ledger/internal/adjustment.cpp \
            src/ledger/money.cpp \
            src/ledger/identifier.cpp \
-           src/ledger/ledger.cpp
+           src/ledger/ledger.cpp \
 
-TEST_SRC := test/identifier-test.cpp
+TEST_SRC := \
+            test/identifier-test.cpp \
 
 ifndef CONFIG
    CONFIG=Valgrind
