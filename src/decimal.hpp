@@ -1,6 +1,7 @@
 #ifndef COCLES_DECIMAL_HPP
 #define COCLES_DECIMAL_HPP
 
+#include <cstdint>
 #include <string>
 
 struct decimal_t {

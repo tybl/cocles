@@ -105,10 +105,10 @@ decimal_t::to_string(void) const {
    int64_t whole = m_value / m_factor;
    int64_t fraction = m_value % m_factor;
    fraction *= (0 < whole) ? 1 : -1;
-   const int ret_val = std::snprintf(nullptr, 0, "%lld.%0*lld", whole, decimal_places, fraction);
-   size_t size = (0 < ret_val) ? ret_val + 1 : 0;
+   const int ret_val = std::snprintf(nullptr, 0, "%ld.%0*ld", whole, decimal_places, fraction);
+   size_t size = (0 < ret_val) ? static_cast<size_t>(ret_val) + 1 : 0UL;
    std::string result(size + 1, '\0');
-   std::snprintf(&result[0], size, "%lld.%0*llu", whole, decimal_places, fraction);
+   std::snprintf(&result[0], size, "%ld.%0*lu", whole, decimal_places, fraction);
    return result;
 }
 
