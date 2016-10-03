@@ -3,6 +3,10 @@
 #include <iostream>
 
 namespace ledger {
+   money_t::money_t(void) {
+      mpz_init(value);
+   }
+
    money_t::money_t(std::string new_value) {
       mpz_init(value);
    }

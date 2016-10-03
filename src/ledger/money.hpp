@@ -7,6 +7,8 @@
 
 namespace ledger {
    struct money_t {
+      money_t(void);
+
       money_t(std::string new_value);
 
       money_t(double new_value);

@@ -1,5 +1,6 @@
 #include "ledger.hpp"
 
+#include "account.hpp"
 #include "internal/ledger_impl.hpp"
 
 namespace ledger {
@@ -14,6 +15,17 @@ namespace ledger {
 
    ledger_t&
    ledger_t::operator = (ledger_t &&) noexcept = default;
+
+   ledger_t&
+   ledger_t::operator += (const account_t& account) {
+      impl->accounts.emplace_back(std::make_unique<internal::account_t>(account.name, internal::EQUITY));
+      return *this;
+   }
+
+   ledger_t&
+   ledger_t::operator += (const transaction_t& transaction) {
+      return *this;
+   }
 
    money_t
    ledger_t::get_account_balance(std::string account_name) const {
