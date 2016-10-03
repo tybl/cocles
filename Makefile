@@ -11,8 +11,10 @@ SOURCES := \
            src/ledger/money.cpp \
            src/ledger/identifier.cpp \
            src/ledger/ledger.cpp \
+	   src/decimal.cpp \
 
 TEST_SRC := \
+	    test/decimal-test.cpp \
             test/identifier-test.cpp \
             test/ledger/ledger-test.cpp \
 
