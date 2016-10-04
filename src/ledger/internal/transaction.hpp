@@ -12,7 +12,7 @@ namespace ledger {
       struct adjustment_t;
 
       struct transaction_t {
-         transaction_t(const ::ledger::transaction_t& trans)
+         explicit transaction_t(const ::ledger::transaction_t& trans)
             : memo(trans.memo),
             date(trans.date),
             adjustments()

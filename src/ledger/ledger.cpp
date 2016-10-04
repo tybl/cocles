@@ -5,14 +5,14 @@
 #include "internal/ledger_impl.hpp"
 
 namespace ledger {
-   ledger_t::ledger_t(void)
+   ledger_t::ledger_t()
       : impl(std::make_unique<internal::ledger_impl_t>())
    {
    }
 
    ledger_t::ledger_t(ledger_t &&) noexcept = default;
 
-   ledger_t::~ledger_t(void) = default;
+   ledger_t::~ledger_t() = default;
 
    ledger_t&
    ledger_t::operator = (ledger_t &&) noexcept = default;
@@ -50,9 +50,9 @@ namespace ledger {
          auto acnt_ptr = get_account_ptr(account_name);
          // sum adjustment amounts for adjustments pointing to account
          if (nullptr != acnt_ptr) {
-            for (size_t i = 0; i < adjustments.size(); ++i) {
-               if (adjustments[i] && adjustments[i]->account_ptr == acnt_ptr) {
-                  result += adjustments[i]->amount;
+            for (auto& adjust_ptr : adjustments) {
+               if (adjust_ptr && adjust_ptr->account_ptr == acnt_ptr) {
+                  result += adjust_ptr->amount;
                }
             }
          }
@@ -72,4 +72,4 @@ namespace ledger {
       }
       return acnt_iter->get();
    }
-}
+} // namespace ledger
