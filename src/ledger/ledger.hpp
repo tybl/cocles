@@ -9,7 +9,10 @@
 namespace ledger {
    struct account_t;
    struct transaction_t;
-   namespace internal { struct ledger_impl_t; }
+   namespace internal {
+      struct account_t;
+      struct ledger_impl_t;
+   }
 
    struct ledger_t {
       ledger_t(void);
@@ -19,6 +22,9 @@ namespace ledger {
       money_t get_account_balance(std::string account_name) const;
       ledger_t& operator += (const account_t& account);
       ledger_t& operator += (const transaction_t& transaction);
+   private:
+      // TODO: Move get_account_ptr to ledger_impl_t
+      internal::account_t* get_account_ptr(std::string account_name) const;
    private:
       std::unique_ptr<internal::ledger_impl_t> impl;
    };
