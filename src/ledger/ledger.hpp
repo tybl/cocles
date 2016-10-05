@@ -23,9 +23,6 @@ namespace ledger {
       ledger_t& operator += (const account_t& account);
       ledger_t& operator += (const transaction_t& transaction);
    private:
-      // TODO: Move get_account_ptr to ledger_impl_t
-      internal::account_t* get_account_ptr(std::string account_name) const;
-   private:
       std::unique_ptr<internal::ledger_impl_t> impl;
    };
 } // namespace ledger

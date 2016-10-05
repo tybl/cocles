@@ -11,6 +11,16 @@
 namespace ledger {
    namespace internal {
       struct ledger_impl_t {
+         account_t* get_account_ptr(std::string account_name) {
+            auto account_iter = std::lower_bound(accounts.begin(), accounts.end(), account_name,
+                                                 [] (const std::unique_ptr<account_t>& account, const std::string& str) {
+                                                    return account->name < str;
+                                                 });
+            if (accounts.end() == account_iter) {
+               return nullptr;
+            }
+            return account_iter->get();
+         }
          std::vector<std::unique_ptr<account_t>> accounts;
          std::vector<std::unique_ptr<adjustment_t>> adjustments;
          std::vector<std::unique_ptr<transaction_t>> transactions;

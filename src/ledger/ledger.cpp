@@ -28,14 +28,14 @@ namespace ledger {
       impl->transactions.emplace_back(std::make_unique<internal::transaction_t>(transaction));
       //internal::transaction_t& new_transaction = *impl->transactions.back().get();
       for (auto adjust : transaction.adjustments) {
-         auto acnt_ptr = get_account_ptr(adjust.account.name);
-         if (nullptr == acnt_ptr) {
+         auto account_ptr = impl->get_account_ptr(adjust.account.name);
+         if (nullptr == account_ptr) {
             impl->accounts.emplace_back(std::make_unique<internal::account_t>(adjust.account.name, internal::EQUITY));
-            acnt_ptr = impl->accounts.back().get();
+            account_ptr = impl->accounts.back().get();
          }
          impl->adjustments.emplace_back(std::make_unique<internal::adjustment_t>());
          impl->adjustments.back()->amount = adjust.amount;
-         impl->adjustments.back()->account_ptr = acnt_ptr;
+         impl->adjustments.back()->account_ptr = account_ptr;
          impl->adjustments.back()->transaction_ptr = impl->transactions.back().get();
       }
       return *this;
@@ -47,29 +47,16 @@ namespace ledger {
       if (impl) {
          const auto& adjustments = impl->adjustments;
          // find account object
-         auto acnt_ptr = get_account_ptr(account_name);
+         auto account_ptr = impl->get_account_ptr(account_name);
          // sum adjustment amounts for adjustments pointing to account
-         if (nullptr != acnt_ptr) {
+         if (nullptr != account_ptr) {
             for (auto& adjust_ptr : adjustments) {
-               if (adjust_ptr && adjust_ptr->account_ptr == acnt_ptr) {
+               if (adjust_ptr && adjust_ptr->account_ptr == account_ptr) {
                   result += adjust_ptr->amount;
                }
             }
          }
       }
       return result;
-   }
-
-   internal::account_t*
-   ledger_t::get_account_ptr(std::string account_name) const {
-      const auto& accounts = impl->accounts;
-      auto acnt_iter = std::lower_bound(accounts.begin(), accounts.end(), account_name,
-                                        [] (const std::unique_ptr<internal::account_t> &a, const std::string &s) -> bool {
-                                           return a->name < s;
-                                        });
-      if (accounts.end() == acnt_iter) {
-         return nullptr;
-      }
-      return acnt_iter->get();
    }
 } // namespace ledger
