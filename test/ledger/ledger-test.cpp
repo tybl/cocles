@@ -24,7 +24,7 @@ TEST(ledger_t, insert_transaction) {
    trans.memo = "Test";
    ledger::adjustment_t adjust;
    adjust.account.name = "Credit Card";
-   adjust.amount = 5.00;
+   adjust.amount = ledger::money_t(5.00);
    trans.adjustments.push_back(adjust);
    ledger += trans;
    EXPECT_EQ(ledger.get_account_balance("Credit Card"), ledger::money_t(5.00));
