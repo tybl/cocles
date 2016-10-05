@@ -102,8 +102,9 @@ decimal_t::to_string(void) const {
    if (1 == m_factor) {
       return std::to_string(m_value);
    }
-   int64_t whole = m_value / m_factor;
-   int64_t fraction = m_value % m_factor;
+   static_assert(sizeof(long) == sizeof(int64_t), "long is not 64 bits");
+   long whole = m_value / m_factor;
+   long fraction = m_value % m_factor;
    fraction *= (0 < whole) ? 1 : -1;
    const int ret_val = std::snprintf(nullptr, 0, "%ld.%0*ld", whole, decimal_places, fraction);
    size_t size = (0 < ret_val) ? static_cast<size_t>(ret_val) + 1 : 0UL;
