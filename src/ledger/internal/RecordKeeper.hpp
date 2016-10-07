@@ -3,17 +3,30 @@
 
 #include "Record.hpp"
 
+#include <cassert>
+#include <cstddef>
+#include <vector>
+
+template <typename TYPE>
+struct Identifier {
+   explicit Identifier(size_t value) : m_value(value) {}
+   bool operator==(const Identifier& other) const { return (m_value == other.m_value); }
+   explicit operator size_t() const { return m_value; }
+private:
+   size_t m_value;
+};
+
 namespace ledger {
 
 namespace internal {
 
-template<typename TYPE = Record> // TODO: Does this template need a default value?
+template <typename TYPE>
 struct RecordKeeper {
    RecordKeeper();
 
-   TYPE& get_record(size_t index);
+   TYPE& get_record(Identifier<TYPE> index);
 
-   const TYPE& get_record(size_t index) const;
+   const TYPE& get_record(Identifier<TYPE> index) const;
 
    bool is_empty() const;
 
@@ -25,7 +38,7 @@ struct RecordKeeper {
 
    size_t get_first_used() const;
 
-   size_t get_next(size_t index) const; // TODO: Check the parameter type
+   Identifier<TYPE> get_next(Identifier<TYPE> index) const;
 
    size_t get_prev(size_t index) const;
 
@@ -35,18 +48,26 @@ struct RecordKeeper {
 
    void use(size_t index);
 
-   void free(size_t index);
+   void free(Identifier<TYPE> index);
 
-   size_t allocate(); // TODO: determine if this should be public
+   Identifier<TYPE> allocate();
 
    void push_back(); // TODO: determine if this should be public
 
 private:
    struct ListNode {
+      ListNode()
+         : next(0)
+         , prev(0)
+         , free(false) {}
+      ListNode(size_t p_next, size_t p_prev, bool p_free)
+         : next(p_next)
+         , prev(p_prev)
+         , free(p_free) {}
       TYPE data;
-      size_t next_index;
-      size_t prev_index;
-      // TODO: Figure out the interface if this included m_is_available instead of having it in Record
+      size_t next;
+      size_t prev;
+      bool free;
    };
    size_t used_count;
    std::vector<ListNode> records;
@@ -54,103 +75,103 @@ private:
    static constexpr size_t free_index = 1;
 };
 
-template<typename TYPE>
+template <typename TYPE>
 RecordKeeper<TYPE>::RecordKeeper()
    : used_count(0)
    , records(2)
 {
-   records[used_index].data.set_available(false);
+   records[used_index].free = false;
    records[used_index].next = used_index;
    records[used_index].prev = used_index;
 
-   records[free_index].data.set_available(true);
+   records[free_index].free = true;
    records[free_index].next = free_index;
    records[free_index].prev = free_index;
 }
 
-template<typename TYPE>
-TYPE& RecordKeeper<TYPE>::get_record(size_t index) {
-   return records[index].data;
+template <typename TYPE>
+TYPE& RecordKeeper<TYPE>::get_record(Identifier<TYPE> index) {
+   return records[static_cast<size_t>(index)].data;
 }
 
-template<typename TYPE>
-const TYPE& RecordKeeper<TYPE>::get_record(size_t index) const {
-   return records[index].data;
+template <typename TYPE>
+const TYPE& RecordKeeper<TYPE>::get_record(Identifier<TYPE> index) const {
+   return records[static_cast<size_t>(index)].data;
 }
 
-template<typename TYPE>
+template <typename TYPE>
 bool RecordKeeper<TYPE>::is_empty() const {
    return (0 == used_count);
 }
 
-template<typename TYPE>
+template <typename TYPE>
 size_t RecordKeeper<TYPE>::get_used_count() const {
    return used_count;
 }
 
-template<typename TYPE>
+template <typename TYPE>
 size_t RecordKeeper<TYPE>::size() const {
    return records.size() - 2; // First two used for bookkeeping
 }
 
-template<typename TYPE>
+template <typename TYPE>
 size_t RecordKeeper<TYPE>::get_first_free() const {
    return records[free_index].next;
 }
 
-template<typename TYPE>
+template <typename TYPE>
 size_t RecordKeeper<TYPE>::get_first_used() const {
    return records[used_index].next;
 }
 
-template<typename TYPE>
-size_t RecordKeeper<TYPE>::get_next(size_t index) const {
-   return records[index].next;
+template <typename TYPE>
+Identifier<TYPE> RecordKeeper<TYPE>::get_next(Identifier<TYPE> index) const {
+   return Identifier<TYPE>(records[static_cast<size_t>(index)].next);
 }
 
-template<typename TYPE>
+template <typename TYPE>
 size_t RecordKeeper<TYPE>::get_prev(size_t index) const {
    return records[index].prev;
 }
 
-template<typename TYPE>
+template <typename TYPE>
 bool RecordKeeper<TYPE>::is_free(size_t index) const {
-   return records[index].data.is_available();
+   return records[index].free;
 }
 
-template<typename TYPE>
+template <typename TYPE>
 bool RecordKeeper<TYPE>::is_used(size_t index) const {
-   return (1 < index) && (index < records.size()) && !records[index].data.is_available();
+   return 1 < index && index < records.size() && !records[index].free;
 }
 
-template<typename TYPE>
-size_t RecordKeeper<TYPE>::allocate() {
+template <typename TYPE>
+Identifier<TYPE> RecordKeeper<TYPE>::allocate() {
    size_t result = records[free_index].next;
    if (result == free_index) {
       push_back();
       result = records[free_index].next;
    }
    use(result);
-   return result;
+   return Identifier<TYPE>(result);
 }
 
-template<typename TYPE>
+template <typename TYPE>
 void RecordKeeper<TYPE>::push_back() {
    const size_t index = records.size();
-   records.push_back( { true, records[free_index].next, 1 } );
+   records.emplace_back(records[free_index].next, free_index, true);
 
    records[records[free_index].next].prev = index;
    records[free_index].next = index;
 }
 
-template<typename TYPE>
+template <typename TYPE>
 void RecordKeeper<TYPE>::use(size_t index) {
    assert(1 < index); // Cannot be bookkeeping indices
    assert(index < records.size()); // Must be within table
-   assert(records[index].data.is_available()); // Must be available
+   assert(records[index].free); // Must be available
 
    ListNode& record_being_used = records[index];
-   record_being_used.data.set_available(false); // It is no longer available
+   record_being_used.free = false; // It is no longer available
 
    // The record used to point to available nodes with next and prev,
    // now the available nodes at next and prev need to point to each other
@@ -170,26 +191,28 @@ void RecordKeeper<TYPE>::use(size_t index) {
    used_count++;
 }
 
-template<typename TYPE>
-void RecordKeeper<TYPE>::free(size_t index) {
+template <typename TYPE>
+void RecordKeeper<TYPE>::free(Identifier<TYPE> id) {
+   const auto index = static_cast<size_t>(id);
    assert(1 < index);
    assert(index < records.size());
-   assert(!records[index].data.is_free());
+   assert(!records[index].free);
 
-   Record &record_being_freed = records[index];
-   record_being_freed.data.set_free(true);
+   ListNode& record_being_freed = records[index];
+   record_being_freed.free = true;
 
    records[record_being_freed.prev].next = record_being_freed.next;
    records[record_being_freed.next].prev = record_being_freed.prev;
 
-   record_being_freed.next = records[free_list].next;
-   record_being_freed.prev= 1;
+   record_being_freed.next = records[free_index].next;
+   record_being_freed.prev = free_index;
 
-   records[records[free_list].next].prev = index;
-   records[free_list].next = index;
+   records[records[free_index].next].prev = index;
+   records[free_index].next = index;
 
    used_count--;
 }
+
 } // namespace internal
 
 } // namespace ledger
