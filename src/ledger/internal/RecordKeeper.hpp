@@ -1,20 +1,12 @@
 #ifndef COCLES_LEDGER_INTERNAL_RECORDKEEPER_HPP
 #define COCLES_LEDGER_INTERNAL_RECORDKEEPER_HPP
 
+#include "Identifier.hpp"
+#include "ListNode.hpp"
 #include "Record.hpp"
 
-#include <cassert>
-#include <cstddef>
+//#include <cassert>
 #include <vector>
-
-template <typename TYPE>
-struct Identifier {
-   explicit Identifier(size_t value) : m_value(value) {}
-   bool operator==(const Identifier& other) const { return (m_value == other.m_value); }
-   explicit operator size_t() const { return m_value; }
-private:
-   size_t m_value;
-};
 
 namespace ledger {
 
@@ -22,6 +14,7 @@ namespace internal {
 
 template <typename TYPE>
 struct RecordKeeper {
+
    RecordKeeper();
 
    TYPE& get_record(Identifier<TYPE> index);
@@ -48,32 +41,26 @@ struct RecordKeeper {
 
    void use(size_t index);
 
-   void free(Identifier<TYPE> index);
+   void free(Identifier<TYPE> id);
 
    Identifier<TYPE> allocate();
 
    void push_back(); // TODO: determine if this should be public
 
 private:
-   struct ListNode {
-      ListNode()
-         : next(0)
-         , prev(0)
-         , free(false) {}
-      ListNode(size_t p_next, size_t p_prev, bool p_free)
-         : next(p_next)
-         , prev(p_prev)
-         , free(p_free) {}
-      TYPE data;
-      size_t next;
-      size_t prev;
-      bool free;
-   };
    size_t used_count;
-   std::vector<ListNode> records;
+   std::vector<ListNode<TYPE>> records;
    static constexpr size_t used_index = 0;
    static constexpr size_t free_index = 1;
-};
+}; // struct RecordKeeper
+
+////////////////// Implementation Details //////////////////
+
+template <typename TYPE>
+constexpr size_t RecordKeeper<TYPE>::used_index;
+
+template <typename TYPE>
+constexpr size_t RecordKeeper<TYPE>::free_index;
 
 template <typename TYPE>
 RecordKeeper<TYPE>::RecordKeeper()
@@ -166,11 +153,11 @@ void RecordKeeper<TYPE>::push_back() {
 
 template <typename TYPE>
 void RecordKeeper<TYPE>::use(size_t index) {
-   assert(1 < index); // Cannot be bookkeeping indices
-   assert(index < records.size()); // Must be within table
-   assert(records[index].free); // Must be available
+   //assert(1 < index); // Cannot be bookkeeping indices
+   //assert(index < records.size()); // Must be within table
+   //assert(records[index].free); // Must be available
 
-   ListNode& record_being_used = records[index];
+   ListNode<TYPE>& record_being_used = records[index];
    record_being_used.free = false; // It is no longer available
 
    // The record used to point to available nodes with next and prev,
@@ -194,11 +181,11 @@ void RecordKeeper<TYPE>::use(size_t index) {
 template <typename TYPE>
 void RecordKeeper<TYPE>::free(Identifier<TYPE> id) {
    const auto index = static_cast<size_t>(id);
-   assert(1 < index);
-   assert(index < records.size());
-   assert(!records[index].free);
+   //assert(1 < index);
+   //assert(index < records.size());
+   //assert(!records[index].free);
 
-   ListNode& record_being_freed = records[index];
+   ListNode<TYPE>& record_being_freed = records[index];
    record_being_freed.free = true;
 
    records[record_being_freed.prev].next = record_being_freed.next;

@@ -8,6 +8,8 @@ INCLUDES := -I src -I include
 SOURCES := \
            src/ledger/internal/account.cpp \
            src/ledger/internal/adjustment.cpp \
+           src/ledger/internal/Database.cpp \
+           src/ledger/internal/TransactionTable.cpp \
            src/ledger/money.cpp \
            src/ledger/identifier.cpp \
            src/ledger/ledger.cpp \

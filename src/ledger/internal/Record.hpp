@@ -8,7 +8,7 @@ namespace internal {
 struct Record {
    Record();
 
-   Record(bool available);
+   explicit Record(bool available);
 
    void set_available(bool available);
 
