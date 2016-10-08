@@ -4,24 +4,17 @@
 #include "RecordKeeper.hpp"
 #include "AccountEntry.hpp"
 #include "AccountTypeEntry.hpp"
+#include "AdjustmentEntry.hpp"
 #include "TransactionEntry.hpp"
 
-struct Account;
-struct AccountTable;
-struct AccountTypeTable;
-struct Adjustment;
-struct TransactionTable;
-namespace date {
-   class year_month_day;
-} // namespace date
+template <typename TYPE> struct Table;
 
 struct Database {
-   friend struct AccountTable;
-   friend struct AccountTypeTable;
-   friend struct TransactionTable;
+   template <typename TYPE>
+   friend struct Table;
 
    // Methods for interacting with AccountTypes
-   AccountTypeTable get_account_type_table() const;
+   Table<AccountType> get_account_type_table() const;
 
    AccountTypeEntry new_account_type();
 
@@ -38,7 +31,7 @@ struct Database {
    AccountTypeEntry find_account_type_by_name(const std::string& name) const;
 
    // Methods for interacting with Accounts
-   AccountTable get_account_table() const;
+   Table<Account> get_account_table() const;
 
    AccountEntry new_account();
 
@@ -61,7 +54,7 @@ struct Database {
    AccountEntry find_account_by_type(AccountTypeEntry type) const;
 
    // Methods for interacting with Transactions
-   TransactionTable get_transaction_table() const;
+   Table<Transaction> get_transaction_table() const;
 
    TransactionEntry new_transaction();
 
@@ -82,11 +75,13 @@ struct Database {
    void set_memo(TransactionEntry record, const std::string& memo);
 
    TransactionEntry find_transaction_by_memo(const std::string& memo) const;
-
 private:
-   ledger::internal::RecordKeeper<AccountType> account_type_table;
+   template <typename TYPE>
+   const ledger::internal::RecordKeeper<TYPE>& get_record_keeper() const;
+private:
    ledger::internal::RecordKeeper<Account> account_table;
-//   ledger::internal::RecordKeeper<Adjustment> adjustment_table;
+   ledger::internal::RecordKeeper<AccountType> account_type_table;
+   ledger::internal::RecordKeeper<Adjustment> adjustment_table;
    ledger::internal::RecordKeeper<Transaction> transaction_table;
 };
 
