@@ -231,12 +231,13 @@ const ledger::internal::RecordKeeper<AccountType>& Database::get_record_keeper<A
    return account_type_table;
 }
 
-#if 0
-TEST() {
+// Test cases
+#include "doctest/doctest.h"
+
+TEST_CASE("Database::transaction::memo dogfood") {
    Database db;
    auto first_trans = db.new_transaction();
    std::string input = "Hello world!";
    db.set_memo(first_trans, input);
-   std::cout << db.get_memo(first_trans) << std::endl;
+   CHECK(input == db.get_memo(first_trans));
 }
-#endif

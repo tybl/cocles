@@ -134,3 +134,37 @@ decimal_t::shrink(void) {
       m_factor /= 10;
    }
 }
+
+// Test cases
+#include "doctest/doctest.h"
+
+TEST_CASE("Decimal::to_string") {
+   const decimal_t num(5.1, 6);
+   std::string expected("5.100000");
+   std::string result(num.to_string());
+   CHECK(8 == expected.length());
+   CHECK(8 == result.length());
+   CHECK(expected == result);
+}
+
+TEST_CASE("Decimal::operator*=") {
+   decimal_t price(29.99, 2);
+   decimal_t tax(1.08, 2);
+   price *= tax;
+   CHECK(std::string("32.3892") == price.to_string());
+}
+
+TEST_CASE("Decimal::round") {
+   decimal_t price(32.3892, 4);
+   REQUIRE(std::string("32.3892") == price.to_string());
+   price.round(2);
+   CHECK(std::string("32.39") == price.to_string());
+}
+
+TEST_CASE("Decimal::operator+=") {
+   decimal_t large(1234, 0);
+   decimal_t small(0.5678, 4);
+   decimal_t combined(1234.5678, 4);
+   large += small;
+   CHECK(large == combined);
+}
