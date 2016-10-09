@@ -98,6 +98,8 @@ decimal_t::operator *= (const decimal_t &other) {
 
 std::string
 decimal_t::to_string(void) const {
+   constexpr size_t buf_len = 24;
+   char buffer[buf_len]{ '\0' };
    auto decimal_places = ilog10(m_factor);
    if (1 == m_factor) {
       return std::to_string(m_value);
@@ -106,11 +108,8 @@ decimal_t::to_string(void) const {
    long whole = m_value / m_factor;
    long fraction = m_value % m_factor;
    fraction *= (0 < whole) ? 1 : -1;
-   const int ret_val = std::snprintf(nullptr, 0, "%ld.%0*ld", whole, decimal_places, fraction);
-   size_t size = (0 < ret_val) ? static_cast<size_t>(ret_val) + 1 : 0UL;
-   std::string result(size + 1, '\0');
-   std::snprintf(&result[0], size, "%ld.%0*lu", whole, decimal_places, fraction);
-   return result;
+   std::snprintf(buffer, buf_len, "%ld.%0*ld", whole, decimal_places, fraction);
+   return std::string(buffer);
 }
 
 decimal_t&
