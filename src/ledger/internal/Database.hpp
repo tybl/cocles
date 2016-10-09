@@ -75,6 +75,30 @@ struct Database {
    void set_memo(TransactionEntry record, const std::string& memo);
 
    TransactionEntry find_transaction_by_memo(const std::string& memo) const;
+
+   // Methods for interacting with Adjustments
+   Table<Adjustment> get_adjustment_table() const;
+
+   AdjustmentEntry new_adjustment();
+
+   AdjustmentEntry new_adjustment(AccountEntry account, TransactionEntry transaction);
+
+   void clear_adjustment_table();
+
+   void delete_adjustment(AdjustmentEntry record);
+
+   AccountEntry get_account(AdjustmentEntry record) const;
+
+   void set_account(AdjustmentEntry record, AccountEntry account);
+
+   AdjustmentEntry find_adjustment_by_account(AccountEntry account) const;
+
+   TransactionEntry get_transaction(AdjustmentEntry record) const;
+
+   void set_transaction(AdjustmentEntry record, TransactionEntry transaction);
+
+   AdjustmentEntry find_adjustment_by_transaction(TransactionEntry transaction) const;
+
 private:
    template <typename TYPE>
    const ledger::internal::RecordKeeper<TYPE>& get_record_keeper() const;

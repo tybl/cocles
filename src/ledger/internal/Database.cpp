@@ -150,6 +150,67 @@ void Database::set_memo(TransactionEntry record, const std::string& memo) {
    transaction_table.get_record(record.get_id()).memo = memo;
 }
 
+// Methods for interacting with Adjustments
+Table<Adjustment> Database::get_adjustment_table() const {
+   return Table<Adjustment>(*this);
+}
+
+AdjustmentEntry Database::new_adjustment() {
+   return AdjustmentEntry(adjustment_table.allocate());
+}
+
+AdjustmentEntry Database::new_adjustment(AccountEntry account, TransactionEntry transaction) {
+   AdjustmentEntry result(adjustment_table.allocate());
+   adjustment_table.get_record(result.get_id()).account = account;
+   adjustment_table.get_record(result.get_id()).transaction = transaction;
+   return result;
+}
+
+void Database::clear_adjustment_table() {
+   while (!get_adjustment_table().is_empty()) {
+      delete_adjustment(*get_adjustment_table().begin());
+   }
+}
+
+void Database::delete_adjustment(AdjustmentEntry record) {
+   adjustment_table.free(record.get_id());
+}
+
+AccountEntry Database::get_account(AdjustmentEntry record) const {
+   return adjustment_table.get_record(record.get_id()).account;
+}
+
+void Database::set_account(AdjustmentEntry record, AccountEntry account) {
+   adjustment_table.get_record(record.get_id()).account = account;
+}
+
+AdjustmentEntry Database::find_adjustment_by_account(AccountEntry account) const {
+   for (auto adjustment : get_adjustment_table()) {
+      if (get_account(adjustment) == account) {
+         return adjustment;
+      }
+   }
+   return AdjustmentEntry(ledger::internal::Identifier<Adjustment>(0));
+}
+
+TransactionEntry Database::get_transaction(AdjustmentEntry record) const {
+   return adjustment_table.get_record(record.get_id()).transaction;
+}
+
+void Database::set_transaction(AdjustmentEntry record, TransactionEntry transaction) {
+   adjustment_table.get_record(record.get_id()).transaction = transaction;
+}
+
+AdjustmentEntry Database::find_adjustment_by_transaction(TransactionEntry transaction) const {
+   for (auto adjustment : get_adjustment_table()) {
+      if (get_transaction(adjustment) == transaction) {
+         return adjustment;
+      }
+   }
+   return AdjustmentEntry(ledger::internal::Identifier<Adjustment>(0));
+}
+
+// Template function specializations
 template <>
 const ledger::internal::RecordKeeper<Account>& Database::get_record_keeper<Account>() const {
    return account_table;
