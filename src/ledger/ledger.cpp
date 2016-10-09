@@ -60,3 +60,32 @@ namespace ledger {
       return result;
    }
 } // namespace ledger
+
+// Test cases
+#include "doctest/doctest.h"
+
+TEST_CASE("ledger_t::get_account_balance") {
+   ledger::ledger_t ledger;
+   CHECK(ledger::money_t(0.0) == ledger.get_account_balance("Credit Card"));
+}
+
+TEST_CASE("ledger_t::insert_account") {
+   ledger::ledger_t ledger;
+   ledger::account_t a;
+   a.name = "Credit Card";
+   ledger += a;
+   CHECK(ledger::money_t(0.0) == ledger.get_account_balance("Credit Card"));
+}
+
+TEST_CASE("ledger_t::insert_transaction") {
+   ledger::ledger_t ledger;
+   ledger::transaction_t trans;
+   trans.date = date::year(2016)/10/2;
+   trans.memo = "Test";
+   ledger::adjustment_t adjust;
+   adjust.account.name = "Credit Card";
+   adjust.amount = ledger::money_t(5.00);
+   trans.adjustments.push_back(adjust);
+   ledger += trans;
+   CHECK(ledger.get_account_balance("Credit Card") == ledger::money_t(5.00));
+}

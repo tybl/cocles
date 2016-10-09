@@ -26,3 +26,35 @@ std::ostream&
 operator << (std::ostream &out, const ledger::identifier_t &id) {
    return out << id.ToString();
 }
+
+// Test cases
+#include "doctest/doctest.h"
+#include <random>
+
+TEST_CASE("identifier_t::operator()") {
+   std::random_device rd;
+   for (size_t i = 0; i < 10000; ++i) {
+      const unsigned long seed = (static_cast<unsigned long>(rd()) << 32) | rd();
+      ledger::identifier_t a(seed);
+      CHECK(seed == a());
+   }
+}
+
+TEST_CASE("identifier_t::to_string") {
+   std::random_device rd;
+   for (size_t i = 0; i < 10000; ++i) {
+      const unsigned long seed = (static_cast<unsigned long>(rd()) << 32) | rd();
+      ledger::identifier_t a(seed);
+      CHECK(std::to_string(seed) == a.ToString());
+   }
+}
+
+TEST_CASE("identifier_t::operator==") {
+   std::random_device rd;
+   for (size_t i = 0; i < 10000; ++i) {
+      const unsigned long seed = (static_cast<unsigned long>(rd()) << 32) | rd();
+      ledger::identifier_t a(seed);
+      ledger::identifier_t b(seed);
+      CHECK(a == b);
+   }
+}
