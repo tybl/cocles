@@ -7,10 +7,6 @@ namespace ledger {
       mpz_init(value);
    }
 
-   money_t::money_t(std::string new_value) {
-      mpz_init(value);
-   }
-
    money_t::money_t(double new_value) {
       mpz_init_set_d(value, new_value * 100);
    }

@@ -6,7 +6,6 @@
 
 struct decimal_t {
    decimal_t(double value, uint8_t decimal_places);
-   decimal_t(std::string value);
    bool operator == (const decimal_t &other) const;
    decimal_t& operator += (decimal_t other);
    decimal_t& operator -= (decimal_t other);

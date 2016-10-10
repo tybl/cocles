@@ -63,9 +63,6 @@ decimal_t::decimal_t(double value, uint8_t decimal_places)
    // Intentionally left blank
 }
 
-decimal_t::decimal_t(std::string value) {
-}
-
 bool
 decimal_t::operator == (const decimal_t &other) const {
    return ((m_value == other.m_value) && (m_factor == other.m_factor));

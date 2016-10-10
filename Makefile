@@ -33,7 +33,7 @@ ifeq ($(CONFIG), Release)
    LFLAGS := -g0 -O3
 endif
 
-WARNINGS = -pedantic -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded
+WARNINGS = -Werror -Weverything -Wno-c++98-compat-pedantic -Wno-padded
 CFLAGS += -c -std=c++14 -stdlib=libc++ -MP -MMD
 LFLAGS += -lc++ -lc++abi -lpthread -lgmp
 
