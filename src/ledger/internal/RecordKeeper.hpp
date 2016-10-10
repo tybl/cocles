@@ -43,6 +43,8 @@ struct RecordKeeper {
 
    Identifier<TYPE> allocate();
 
+   static constexpr Identifier<TYPE> used_id{0};
+   static constexpr Identifier<TYPE> free_id{1};
 private:
    void push_back();
 
@@ -51,8 +53,6 @@ private:
 private:
    std::vector<ListNode<TYPE>> records;
    size_t used_count;
-   static constexpr Identifier<TYPE> used_id{0};
-   static constexpr Identifier<TYPE> free_id{1};
 }; // struct RecordKeeper
 
 ////////////////// Implementation Details //////////////////

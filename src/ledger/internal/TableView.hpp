@@ -48,7 +48,7 @@ TableView<TYPE>::TableView(const ledger::internal::RecordKeeper<TYPE>& table)
 template <typename TYPE>
 TableView<TYPE>::Iterator::Iterator(const ledger::internal::RecordKeeper<TYPE>& t)
       : table(t)
-      , id(0) {}
+      , id(t.used_id) {}
 
 template <typename TYPE>
 bool TableView<TYPE>::Iterator::operator!=(const Iterator& other) const {
