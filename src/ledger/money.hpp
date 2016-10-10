@@ -6,28 +6,33 @@
 #include <gmp.h>
 
 namespace ledger {
-   struct money_t {
-      money_t(void);
 
-      explicit money_t(double new_value);
+struct money_t {
 
-      money_t(const money_t &other);
+   money_t(void);
 
-      ~money_t(void);
+   explicit money_t(double new_value);
 
-      std::string ToString(void) const;
+   money_t(const money_t &other);
 
-      money_t& operator = (money_t other);
+   ~money_t(void);
 
-      money_t& operator += (const money_t &other);
+   std::string to_string(void) const;
 
-      bool operator == (const money_t &other) const;
-   private:
-      mpz_t value;
-   }; // struct money_t
+   money_t& operator = (money_t other);
+
+   money_t& operator += (const money_t &other);
+
+   bool operator == (const money_t &other) const;
+
+private:
+   mpz_t value;
+}; // struct money_t
+
+std::ostream& operator << (std::ostream &out, const money_t &a);
+
+money_t operator + (money_t lhs, const money_t &rhs);
+
 } // namespace ledger
 
-std::ostream& operator << (std::ostream &out, const ledger::money_t &a);
-
-ledger::money_t operator + (ledger::money_t lhs, const ledger::money_t &rhs);
 #endif // COCLES_LEDGER_MONEY_HPP

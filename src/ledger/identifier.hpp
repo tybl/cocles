@@ -5,23 +5,23 @@
 #include <string>
 
 namespace ledger {
-   struct identifier_t {
-      identifier_t(unsigned long new_value);
 
-      std::string
-      ToString(void) const;
+struct identifier_t {
 
-      unsigned long
-      operator () (void) const;
+   identifier_t(uint64_t new_value);
 
-      bool
-      operator == (const identifier_t &other) const;
+   std::string to_string(void) const;
 
-   private:
-      unsigned long value;
-   }; // struct identifier_t
-} // namespace ledger
+   uint64_t operator () (void) const;
+
+   bool operator == (const identifier_t &other) const;
+
+private:
+   unsigned long value;
+}; // struct identifier_t
 
 std::ostream& operator << (std::ostream &out, const ledger::identifier_t &id);
+
+} // namespace ledger
 
 #endif // COCLES_LEDGER_IDENTIFIER_HPP
