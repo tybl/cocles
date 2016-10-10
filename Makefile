@@ -9,6 +9,7 @@ SOURCES := \
            src/ledger/money.cpp \
            src/ledger/identifier.cpp \
            src/ledger/ledger.cpp \
+           src/integer.cpp \
            src/decimal.cpp \
 
 ifndef CONFIG
