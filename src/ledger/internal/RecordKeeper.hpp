@@ -3,9 +3,7 @@
 
 #include "Identifier.hpp"
 #include "ListNode.hpp"
-#include "Record.hpp"
 
-//#include <cassert>
 #include <vector>
 
 namespace ledger {
