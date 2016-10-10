@@ -10,7 +10,7 @@ namespace internal {
 template <typename TYPE>
 struct Identifier {
 
-   constexpr explicit Identifier(size_t value)
+   constexpr explicit Identifier(size_t value) noexcept
       : m_value(value) {}
 
    bool operator==(const Identifier& other) const;

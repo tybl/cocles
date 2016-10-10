@@ -97,7 +97,7 @@ decimal_t::operator *= (const decimal_t &other) {
 }
 
 std::string
-decimal_t::to_string(void) const {
+decimal_t::to_string() const {
    constexpr size_t buf_len = 24;
    char buffer[buf_len]{ '\0' };
    auto decimal_places = ilog10(m_factor);
@@ -112,8 +112,7 @@ decimal_t::to_string(void) const {
    return std::string(buffer);
 }
 
-decimal_t&
-decimal_t::round(uint8_t decimal_places) {
+decimal_t& decimal_t::round(uint8_t decimal_places) {
    int64_t factor = ipow10(decimal_places);
    if (m_factor > factor) {
       m_value /= (m_factor / factor) / 10;
@@ -126,9 +125,8 @@ decimal_t::round(uint8_t decimal_places) {
    return *this;
 }
 
-void
-decimal_t::shrink(void) {
-   while (m_value && m_factor && (0 == m_value % 10)) {
+void decimal_t::shrink() {
+   while ((0 != m_value) && (0 != m_factor) && (0 == m_value % 10)) {
       m_value /= 10;
       m_factor /= 10;
    }
