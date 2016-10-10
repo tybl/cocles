@@ -1,5 +1,5 @@
-#ifndef COCLES_LEDGER_INTERNAL_TABLE_HPP
-#define COCLES_LEDGER_INTERNAL_TABLE_HPP
+#ifndef COCLES_LEDGER_INTERNAL_TABLEVIEW_HPP
+#define COCLES_LEDGER_INTERNAL_TABLEVIEW_HPP
 
 #include "EntryProxy.hpp"
 #include "Identifier.hpp"
@@ -13,9 +13,9 @@ namespace ledger {
 } // namespace ledger
 
 template <typename TYPE>
-struct Table {
+struct TableView {
 
-   explicit Table(const Database& database);
+   explicit TableView(const ledger::internal::RecordKeeper<TYPE>& database);
 
    struct Iterator {
       explicit Iterator(const ledger::internal::RecordKeeper<TYPE>& t);
@@ -38,46 +38,46 @@ struct Table {
    bool is_empty() const;
 
 private:
-   const Database& db;
-}; // struct Table
+   const ledger::internal::RecordKeeper<TYPE>& records;
+}; // struct TableView
 
 template <typename TYPE>
-Table<TYPE>::Table(const Database& database)
-   : db(database) {}
+TableView<TYPE>::TableView(const ledger::internal::RecordKeeper<TYPE>& table)
+   : records(table) {}
 
 template <typename TYPE>
-Table<TYPE>::Iterator::Iterator(const ledger::internal::RecordKeeper<TYPE>& t)
+TableView<TYPE>::Iterator::Iterator(const ledger::internal::RecordKeeper<TYPE>& t)
       : table(t)
       , id(0) {}
 
 template <typename TYPE>
-bool Table<TYPE>::Iterator::operator!=(const Iterator& other) const {
+bool TableView<TYPE>::Iterator::operator!=(const Iterator& other) const {
    return !(id == other.id);
 }
 
 template <typename TYPE>
-typename Table<TYPE>::Iterator& Table<TYPE>::Iterator::operator++() {
+typename TableView<TYPE>::Iterator& TableView<TYPE>::Iterator::operator++() {
    id = table.get_next(id);
    return *this;
 }
 
 template <typename TYPE>
-ledger::internal::EntryProxy<TYPE> Table<TYPE>::Iterator::operator*() {
+ledger::internal::EntryProxy<TYPE> TableView<TYPE>::Iterator::operator*() {
    return ledger::internal::EntryProxy<TYPE>(id);
 }
 
 template <typename TYPE>
-typename Table<TYPE>::Iterator Table<TYPE>::begin() {
-   return ++Iterator(db.get_record_keeper<TYPE>());
+typename TableView<TYPE>::Iterator TableView<TYPE>::begin() {
+   return ++Iterator(records);
 }
 
 template <typename TYPE>
-typename Table<TYPE>::Iterator Table<TYPE>::end() {
-   return Iterator(db.get_record_keeper<TYPE>());
+typename TableView<TYPE>::Iterator TableView<TYPE>::end() {
+   return Iterator(records);
 }
 
 template <typename TYPE>
-bool Table<TYPE>::is_empty() const {
-   return db.get_record_keeper<TYPE>().is_empty();
+bool TableView<TYPE>::is_empty() const {
+   return records.is_empty();
 }
 #endif // COCLES_LEDGER_INTERNAL_TABLE_HPP

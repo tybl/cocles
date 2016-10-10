@@ -1,10 +1,10 @@
 #include "Database.hpp"
 
-#include "TransactionTable.hpp"
+#include "TableView.hpp"
 
 // Methods for interacting with AccountTypes
-Table<AccountType> Database::get_account_type_table() const {
-   return Table<AccountType>(*this);
+TableView<AccountType> Database::get_account_type_table() const {
+   return TableView<AccountType>(account_type_table);
 }
 
 AccountTypeEntry Database::new_account_type() {
@@ -45,8 +45,8 @@ AccountTypeEntry Database::find_account_type_by_name(const std::string& name) co
 }
 
 // Methods for interacting with Accounts
-Table<Account> Database::get_account_table() const {
-   return Table<Account>(*this);
+TableView<Account> Database::get_account_table() const {
+   return TableView<Account>(account_table);
 }
 
 AccountEntry Database::new_account() {
@@ -105,8 +105,8 @@ AccountEntry Database::find_account_by_type(AccountTypeEntry type) const {
 }
 
 // Methods for interacting with Transactions
-Table<Transaction> Database::get_transaction_table() const {
-   return Table<Transaction>(*this);
+TableView<Transaction> Database::get_transaction_table() const {
+   return TableView<Transaction>(transaction_table);
 }
 
 TransactionEntry Database::new_transaction() {
@@ -151,8 +151,8 @@ void Database::set_memo(TransactionEntry record, const std::string& memo) {
 }
 
 // Methods for interacting with Adjustments
-Table<Adjustment> Database::get_adjustment_table() const {
-   return Table<Adjustment>(*this);
+TableView<Adjustment> Database::get_adjustment_table() const {
+   return TableView<Adjustment>(adjustment_table);
 }
 
 AdjustmentEntry Database::new_adjustment() {

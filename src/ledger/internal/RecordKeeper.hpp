@@ -25,7 +25,7 @@ struct RecordKeeper {
 
    size_t size() const;
 
-   Identifier<TYPE> get_first_free() const; // TODO: Check the return type
+   Identifier<TYPE> get_first_free() const;
 
    Identifier<TYPE> get_first_used() const;
 
@@ -43,9 +43,9 @@ struct RecordKeeper {
 
    Identifier<TYPE> allocate();
 
-   void push_back(); // TODO: determine if this should be public
-
 private:
+   void push_back();
+
    ListNode<TYPE>& at(Identifier<TYPE> id);
    const ListNode<TYPE>& at(Identifier<TYPE> id) const;
 private:

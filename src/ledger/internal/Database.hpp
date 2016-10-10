@@ -7,14 +7,12 @@
 #include "AdjustmentEntry.hpp"
 #include "TransactionEntry.hpp"
 
-template <typename TYPE> struct Table;
+template <typename TYPE> struct TableView;
 
 struct Database {
-   template <typename TYPE>
-   friend struct Table;
 
    // Methods for interacting with AccountTypes
-   Table<AccountType> get_account_type_table() const;
+   TableView<AccountType> get_account_type_table() const;
 
    AccountTypeEntry new_account_type();
 
@@ -31,7 +29,7 @@ struct Database {
    AccountTypeEntry find_account_type_by_name(const std::string& name) const;
 
    // Methods for interacting with Accounts
-   Table<Account> get_account_table() const;
+   TableView<Account> get_account_table() const;
 
    AccountEntry new_account();
 
@@ -54,7 +52,7 @@ struct Database {
    AccountEntry find_account_by_type(AccountTypeEntry type) const;
 
    // Methods for interacting with Transactions
-   Table<Transaction> get_transaction_table() const;
+   TableView<Transaction> get_transaction_table() const;
 
    TransactionEntry new_transaction();
 
@@ -77,7 +75,7 @@ struct Database {
    TransactionEntry find_transaction_by_memo(const std::string& memo) const;
 
    // Methods for interacting with Adjustments
-   Table<Adjustment> get_adjustment_table() const;
+   TableView<Adjustment> get_adjustment_table() const;
 
    AdjustmentEntry new_adjustment();
 
