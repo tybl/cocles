@@ -11,20 +11,12 @@ template <typename TYPE> struct TableView;
 
 struct Database {
 
-   // Methods for interacting with AccountTypes
+   Database();
+
+   // Methods for querying AccountTypes
    TableView<AccountType> get_account_type_table() const;
 
-   AccountTypeEntry new_account_type();
-
-   void clear_account_type_table();
-
-   AccountTypeEntry new_account_type(const std::string& name);
-
-   void delete_account_type(AccountTypeEntry record);
-
    const std::string& get_name(AccountTypeEntry record) const;
-
-   void set_name(AccountTypeEntry record, const std::string& name);
 
    AccountTypeEntry find_account_type_by_name(const std::string& name) const;
 
@@ -97,9 +89,6 @@ struct Database {
 
    AdjustmentEntry find_adjustment_by_transaction(TransactionEntry transaction) const;
 
-private:
-   template <typename TYPE>
-   const ledger::internal::RecordKeeper<TYPE>& get_record_keeper() const;
 private:
    ledger::internal::RecordKeeper<Account> account_table;
    ledger::internal::RecordKeeper<AccountType> account_type_table;

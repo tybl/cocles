@@ -2,37 +2,20 @@
 
 #include "TableView.hpp"
 
+Database::Database() {
+   account_type_table.get_record(account_type_table.allocate()).name = "Income/Expense";
+   account_type_table.get_record(account_type_table.allocate()).name = "Unbudgeted Asset";
+   account_type_table.get_record(account_type_table.allocate()).name = "Budgeted Asset";
+   account_type_table.get_record(account_type_table.allocate()).name = "Budget Category";
+}
+
 // Methods for interacting with AccountTypes
 TableView<AccountType> Database::get_account_type_table() const {
    return TableView<AccountType>(account_type_table);
 }
 
-AccountTypeEntry Database::new_account_type() {
-   return AccountTypeEntry(account_type_table.allocate());
-}
-
-AccountTypeEntry Database::new_account_type(const std::string& name) {
-   AccountTypeEntry result(account_type_table.allocate());
-   account_type_table.get_record(result.get_id()).name = name;
-   return result;
-}
-
-void Database::clear_account_type_table() {
-   while (!get_account_type_table().is_empty()) {
-      delete_account_type(*get_account_type_table().begin());
-   }
-}
-
-void Database::delete_account_type(AccountTypeEntry record) {
-   account_type_table.free(record.get_id());
-}
-
 const std::string& Database::get_name(AccountTypeEntry record) const {
    return account_type_table.get_record(record.get_id()).name;
-}
-
-void Database::set_name(AccountTypeEntry record, const std::string& name) {
-   account_type_table.get_record(record.get_id()).name = name;
 }
 
 AccountTypeEntry Database::find_account_type_by_name(const std::string& name) const {
@@ -208,27 +191,6 @@ AdjustmentEntry Database::find_adjustment_by_transaction(TransactionEntry transa
       }
    }
    return AdjustmentEntry(ledger::internal::Identifier<Adjustment>(0));
-}
-
-// Template function specializations
-template <>
-const ledger::internal::RecordKeeper<Account>& Database::get_record_keeper<Account>() const {
-   return account_table;
-}
-
-template <>
-const ledger::internal::RecordKeeper<Adjustment>& Database::get_record_keeper<Adjustment>() const {
-   return adjustment_table;
-}
-
-template <>
-const ledger::internal::RecordKeeper<Transaction>& Database::get_record_keeper<Transaction>() const {
-   return transaction_table;
-}
-
-template <>
-const ledger::internal::RecordKeeper<AccountType>& Database::get_record_keeper<AccountType>() const {
-   return account_type_table;
 }
 
 // Test cases
