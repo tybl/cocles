@@ -10,7 +10,8 @@ namespace internal {
 template <typename TYPE>
 struct Identifier {
 
-   explicit Identifier(size_t value);
+   constexpr explicit Identifier(size_t value)
+      : m_value(value) {}
 
    bool operator==(const Identifier& other) const;
 
@@ -21,10 +22,6 @@ private:
 }; // struct Identifier
 
 ////////////////// Implementation Details //////////////////
-
-template <typename TYPE>
-Identifier<TYPE>::Identifier(size_t value)
-   : m_value(value) {}
 
 template <typename TYPE>
 bool Identifier<TYPE>::operator==(const Identifier& other) const {

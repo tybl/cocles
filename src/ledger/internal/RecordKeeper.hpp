@@ -17,9 +17,9 @@ struct RecordKeeper {
 
    RecordKeeper();
 
-   TYPE& get_record(Identifier<TYPE> index);
+   TYPE& get_record(Identifier<TYPE> id);
 
-   const TYPE& get_record(Identifier<TYPE> index) const;
+   const TYPE& get_record(Identifier<TYPE> id) const;
 
    bool is_empty() const;
 
@@ -27,19 +27,19 @@ struct RecordKeeper {
 
    size_t size() const;
 
-   size_t get_first_free() const; // TODO: Check the return type
+   Identifier<TYPE> get_first_free() const; // TODO: Check the return type
 
-   size_t get_first_used() const;
+   Identifier<TYPE> get_first_used() const;
 
-   Identifier<TYPE> get_next(Identifier<TYPE> index) const;
+   Identifier<TYPE> get_next(Identifier<TYPE> id) const;
 
-   size_t get_prev(size_t index) const;
+   Identifier<TYPE> get_prev(Identifier<TYPE> id) const;
 
-   bool is_free(size_t index) const;
+   bool is_free(Identifier<TYPE> id) const;
 
-   bool is_used(size_t index) const;
+   bool is_used(Identifier<TYPE> id) const;
 
-   void use(size_t index);
+   void use(Identifier<TYPE> id);
 
    void free(Identifier<TYPE> id);
 
@@ -48,42 +48,36 @@ struct RecordKeeper {
    void push_back(); // TODO: determine if this should be public
 
 private:
-   size_t used_count;
+   ListNode<TYPE>& at(Identifier<TYPE> id);
+   const ListNode<TYPE>& at(Identifier<TYPE> id) const;
+private:
    std::vector<ListNode<TYPE>> records;
-   static constexpr size_t used_index = 0;
-   static constexpr size_t free_index = 1;
+   size_t used_count;
+   static constexpr Identifier<TYPE> used_id{0};
+   static constexpr Identifier<TYPE> free_id{1};
 }; // struct RecordKeeper
 
 ////////////////// Implementation Details //////////////////
 
 template <typename TYPE>
-constexpr size_t RecordKeeper<TYPE>::used_index;
+constexpr Identifier<TYPE> RecordKeeper<TYPE>::used_id;
 
 template <typename TYPE>
-constexpr size_t RecordKeeper<TYPE>::free_index;
+constexpr Identifier<TYPE> RecordKeeper<TYPE>::free_id;
 
 template <typename TYPE>
 RecordKeeper<TYPE>::RecordKeeper()
-   : used_count(0)
-   , records(2)
-{
-   records[used_index].free = false;
-   records[used_index].next = used_index;
-   records[used_index].prev = used_index;
+   : records({ ListNode<TYPE>(used_id, used_id, false), ListNode<TYPE>(free_id, free_id, true) })
+   , used_count(0) {}
 
-   records[free_index].free = true;
-   records[free_index].next = free_index;
-   records[free_index].prev = free_index;
+template <typename TYPE>
+TYPE& RecordKeeper<TYPE>::get_record(Identifier<TYPE> id) {
+   return at(id).data();
 }
 
 template <typename TYPE>
-TYPE& RecordKeeper<TYPE>::get_record(Identifier<TYPE> index) {
-   return records[static_cast<size_t>(index)].data;
-}
-
-template <typename TYPE>
-const TYPE& RecordKeeper<TYPE>::get_record(Identifier<TYPE> index) const {
-   return records[static_cast<size_t>(index)].data;
+const TYPE& RecordKeeper<TYPE>::get_record(Identifier<TYPE> id) const {
+   return at(id).data();
 }
 
 template <typename TYPE>
@@ -102,102 +96,105 @@ size_t RecordKeeper<TYPE>::size() const {
 }
 
 template <typename TYPE>
-size_t RecordKeeper<TYPE>::get_first_free() const {
-   return records[free_index].next;
+Identifier<TYPE> RecordKeeper<TYPE>::get_first_free() const {
+   return at(free_id).next();
 }
 
 template <typename TYPE>
-size_t RecordKeeper<TYPE>::get_first_used() const {
-   return records[used_index].next;
+Identifier<TYPE> RecordKeeper<TYPE>::get_first_used() const {
+   return at(used_id).next();
 }
 
 template <typename TYPE>
-Identifier<TYPE> RecordKeeper<TYPE>::get_next(Identifier<TYPE> index) const {
-   return Identifier<TYPE>(records[static_cast<size_t>(index)].next);
+Identifier<TYPE> RecordKeeper<TYPE>::get_next(Identifier<TYPE> id) const {
+   return at(id).next();
 }
 
 template <typename TYPE>
-size_t RecordKeeper<TYPE>::get_prev(size_t index) const {
-   return records[index].prev;
+Identifier<TYPE> RecordKeeper<TYPE>::get_prev(Identifier<TYPE> id) const {
+   return at(id).prev();
 }
 
 template <typename TYPE>
-bool RecordKeeper<TYPE>::is_free(size_t index) const {
-   return records[index].free;
+bool RecordKeeper<TYPE>::is_free(Identifier<TYPE> id) const {
+   return at(id).get_free();
 }
 
 template <typename TYPE>
-bool RecordKeeper<TYPE>::is_used(size_t index) const {
-   return 1 < index && index < records.size() && !records[index].free;
+bool RecordKeeper<TYPE>::is_used(Identifier<TYPE> id) const {
+   return (1 < static_cast<size_t>(id)) &&
+          (static_cast<size_t>(id) < records.size()) &&
+          !at(id).get_free();
 }
 
 template <typename TYPE>
 Identifier<TYPE> RecordKeeper<TYPE>::allocate() {
-   size_t result = records[free_index].next;
-   if (result == free_index) {
+   auto id = get_first_free();
+   if (id == free_id) {
       push_back();
-      result = records[free_index].next;
+      id = at(free_id).next();
    }
-   use(result);
-   return Identifier<TYPE>(result);
+   use(id);
+   return id;
 }
 
 template <typename TYPE>
 void RecordKeeper<TYPE>::push_back() {
-   const size_t index = records.size();
-   records.emplace_back(records[free_index].next, free_index, true);
+   Identifier<TYPE> id(records.size());
+   records.emplace_back(at(free_id).next(), free_id, true);
 
-   records[records[free_index].next].prev = index;
-   records[free_index].next = index;
+   at(at(free_id).next()).set_prev(id);
+   at(free_id).next() = id;
 }
 
 template <typename TYPE>
-void RecordKeeper<TYPE>::use(size_t index) {
-   //assert(1 < index); // Cannot be bookkeeping indices
-   //assert(index < records.size()); // Must be within table
-   //assert(records[index].free); // Must be available
-
-   ListNode<TYPE>& record_being_used = records[index];
-   record_being_used.free = false; // It is no longer available
+void RecordKeeper<TYPE>::use(Identifier<TYPE> id) {
+   ListNode<TYPE>& record_being_used = at(id);
+   record_being_used.set_free(false); // It is no longer available
 
    // The record used to point to available nodes with next and prev,
    // now the available nodes at next and prev need to point to each other
-   records[record_being_used.prev].next = record_being_used.next;
-   records[record_being_used.next].prev = record_being_used.prev;
+   at(record_being_used.get_prev()).next() = record_being_used.next();
+   at(record_being_used.next()).set_prev(record_being_used.get_prev());
 
    // The record needs to point to elements in the used list
    // I think this inserts the record at the beginning of the list...
    // TODO: Determine if values assigned to next and prev should be swapped
-   record_being_used.next = records[used_index].next;
-   record_being_used.prev = used_index;
+   record_being_used.next() = at(used_id).next();
+   record_being_used.set_prev(used_id);
 
    // The used list needs to point to the record
-   records[records[used_index].next].prev = index;
-   records[used_index].next = index;
+   at(at(used_id).next()).set_prev(id);
+   at(used_id).next() = id;
 
    used_count++;
 }
 
 template <typename TYPE>
 void RecordKeeper<TYPE>::free(Identifier<TYPE> id) {
-   const auto index = static_cast<size_t>(id);
-   //assert(1 < index);
-   //assert(index < records.size());
-   //assert(!records[index].free);
+   ListNode<TYPE>& record_being_freed = at(id);
+   record_being_freed.set_free(true);
 
-   ListNode<TYPE>& record_being_freed = records[index];
-   record_being_freed.free = true;
+   at(record_being_freed.get_prev()).next() = record_being_freed.next();
+   at(record_being_freed.next()).set_prev(record_being_freed.get_prev());
 
-   records[record_being_freed.prev].next = record_being_freed.next;
-   records[record_being_freed.next].prev = record_being_freed.prev;
+   record_being_freed.next() = at(free_id).next();
+   record_being_freed.set_prev(free_id);
 
-   record_being_freed.next = records[free_index].next;
-   record_being_freed.prev = free_index;
-
-   records[records[free_index].next].prev = index;
-   records[free_index].next = index;
+   at(at(free_id).next()).set_prev(id);
+   at(free_id).next() = id;
 
    used_count--;
+}
+
+template <typename TYPE>
+ListNode<TYPE>& RecordKeeper<TYPE>::at(Identifier<TYPE> id) {
+   return records.at(static_cast<size_t>(id));
+}
+
+template <typename TYPE>
+const ListNode<TYPE>& RecordKeeper<TYPE>::at(Identifier<TYPE> id) const {
+   return records.at(static_cast<size_t>(id));
 }
 
 } // namespace internal
