@@ -203,3 +203,19 @@ TEST_CASE("Database::transaction::memo dogfood") {
    db.set_memo(first_trans, input);
    CHECK(input == db.get_memo(first_trans));
 }
+
+TEST_CASE("Database::account_type list each") {
+   Database db;
+   std::string input("Income/Expense");
+   auto record = db.find_account_type_by_name(input);
+   CHECK(db.get_name(record) == input);
+   input = "Unbudgeted Asset";
+   record = db.find_account_type_by_name(input);
+   CHECK(db.get_name(record) == input);
+   input = "Budgeted Asset";
+   record = db.find_account_type_by_name(input);
+   CHECK(db.get_name(record) == input);
+   input = "Budget Category";
+   record = db.find_account_type_by_name(input);
+   CHECK(db.get_name(record) == input);
+}
