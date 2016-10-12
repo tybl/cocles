@@ -38,6 +38,16 @@ TEST_CASE("tbl::integer_t: integer_t(long), operator==(integer_t)") {
 }
 
 TEST_CASE("tbl::integer_t: integer_t(string)") {
+   tbl::integer_t num1a("1");
+   CHECK(num1a.buffer_length == 1);
+   tbl::integer_t num1b("1234");
+   CHECK(num1b.buffer_length == 1);
+   tbl::integer_t num1c("4294967295");
+   CHECK(num1c.buffer_length == 1);
+   tbl::integer_t num2a("4294967296");
+   CHECK(num2a.buffer_length == 2);
+   tbl::integer_t num2b("18446744073709551615");
+   CHECK(num2b.buffer_length == 2);
    tbl::integer_t num("123456789012345678901234567890");
-   CHECK(num.buffer_length == 30);
+   CHECK(num.buffer_length == 4);
 }

@@ -2,7 +2,6 @@
 #define TBL_INTEGER_HPP
 
 #include <cmath>
-#include <iostream>
 #include <limits>
 #include <string>
 
@@ -18,9 +17,9 @@ struct integer_t {
       , mantissa_length()
    {
       // ceil(log10(num)) == num_string.length()
-      // 
       constexpr double log10_max_uint32 = 9.632959861146281183071;
-      allocate_at_least(static_cast<uint32_t>(std::ceil(value.length() / log10_max_uint32)));
+      size_t requested_length = static_cast<size_t>(std::lround(value.length() / log10_max_uint32));
+      allocate_at_least(requested_length);
       for (auto c : value) {
          if (isdigit(c)) {
             multiply_mantissa_by_ui(10);
@@ -55,7 +54,10 @@ struct integer_t {
    void multiply_mantissa_at_index_by_ui(size_t index, uint32_t value) {
       uint64_t result = static_cast<uint64_t>(mantissa[index]) * value;
       mantissa[index] = result & 0xFFFFFFFF;
-      add_to_mantissa_at_index_ui(index + 1, result >> 32);
+      uint32_t next_value = result >> 32;
+      if (0 != next_value) {
+         add_to_mantissa_at_index_ui(index + 1, next_value);
+      }
    }
 
    void add_to_mantissa_at_index_ui(size_t index, uint32_t value) {
