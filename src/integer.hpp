@@ -92,6 +92,52 @@ struct integer_t {
    //bool is_negative;
 };
 
+template <typename Type>
+struct next_largest { };
+
+template <> struct next_largest<uint8_t> { using type = uint16_t; };
+template <> struct next_largest<uint16_t> { using type = uint32_t; };
+template <> struct next_largest<uint32_t> { using type = uint64_t; };
+template <> struct next_largest<int8_t> { using type = int16_t; };
+template <> struct next_largest<int16_t> { using type = int32_t; };
+template <> struct next_largest<int32_t> { using type = int64_t; };
+
+template <typename Type, size_t size>
+struct basic_unsigned_integer {
+   basic_unsigned_integer(unsigned long seed);
+   basic_unsigned_integer(const basic_unsigned_integer& other);
+   basic_unsigned_integer& operator=(const basic_unsigned_integer& other);
+   basic_unsigned_integer& operator+=(const basic_unsigned_integer& other);
+   basic_unsigned_integer& operator-=(const basic_unsigned_integer& other);
+   basic_unsigned_integer& operator*=(const basic_unsigned_integer& other);
+   basic_unsigned_integer& operator/=(const basic_unsigned_integer& other);
+   bool operator==(const basic_unsigned_integer& other) const;
+   bool operator!=(const basic_unsigned_integer& other) const;
+   bool operator<=(const basic_unsigned_integer& other) const;
+   bool operator>=(const basic_unsigned_integer& other) const;
+   bool operator<(const basic_unsigned_integer& other) const;
+   bool operator>(const basic_unsigned_integer& other) const;
+private:
+   Type mantissa[size];
+};
+
+using uint24_t = basic_unsigned_integer<uint8_t, 3>;
+static_assert(sizeof(uint24_t) == 3, "uint24_t is not 24bits long");
+using uint40_t = basic_unsigned_integer<uint8_t, 5>;
+static_assert(sizeof(uint40_t) == 5, "uint40_t is not 40bits long");
+using uint48_t = basic_unsigned_integer<uint16_t, 3>;
+static_assert(sizeof(uint48_t) == 6, "uint48_t is not 48bits long");
+using uint56_t = basic_unsigned_integer<uint8_t, 7>;
+static_assert(sizeof(uint56_t) == 7, "uint56_t is not 56bits long");
+using uint96_t = basic_unsigned_integer<uint32_t, 3>;
+static_assert(sizeof(uint96_t) == 12, "uint96_t is not 96bits long");
+using uint128_t = basic_unsigned_integer<uint32_t, 4>;
+static_assert(sizeof(uint128_t) == 16, "uint128_t is not 128bits long");
+using uint256_t = basic_unsigned_integer<uint32_t, 8>;
+static_assert(sizeof(uint256_t) == 32, "uint256_t is not 256bits long");
+using uint512_t = basic_unsigned_integer<uint32_t, 16>;
+static_assert(sizeof(uint512_t) == 64, "uint512_t is not 512bits long");
+
 } // namespace tbl
 
 #endif // TBL_INTEGER_HPP
