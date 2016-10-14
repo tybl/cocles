@@ -51,3 +51,25 @@ TEST_CASE("tbl::integer_t: integer_t(string)") {
    tbl::integer_t num("123456789012345678901234567890");
    CHECK(num.buffer_length == 4);
 }
+
+TEST_CASE("tbl::basic_unsigned_integer constructor") {
+   uint24_t a;
+   uint24_t b;
+   uint24_t c(4);
+   uint24_t d(c);
+   uint24_t e("512");
+   CHECK(a == b);
+   CHECK(c == d);
+   CHECK(!(c == b));
+   c = a;
+   CHECK(c == b);
+   CHECK(!(c == d));
+}
+
+TEST_CASE("tbl::basic_unsigned_integer::operator+=") {
+   uint24_t a(24);
+   uint24_t b(24);
+   a += b;
+   uint24_t c(48);
+   CHECK(a == c);
+}

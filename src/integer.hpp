@@ -1,8 +1,12 @@
 #ifndef TBL_INTEGER_HPP
 #define TBL_INTEGER_HPP
 
+#include <array>
 #include <cmath>
+#include <functional>
+#include <iostream>
 #include <limits>
+#include <ostream>
 #include <string>
 
 namespace tbl {
@@ -92,7 +96,7 @@ struct integer_t {
    //bool is_negative;
 };
 
-template <typename Type>
+template <typename TYPE>
 struct next_largest { };
 
 template <> struct next_largest<uint8_t> { using type = uint16_t; };
@@ -102,42 +106,133 @@ template <> struct next_largest<int8_t> { using type = int16_t; };
 template <> struct next_largest<int16_t> { using type = int32_t; };
 template <> struct next_largest<int32_t> { using type = int64_t; };
 
-template <typename Type, size_t size>
+template <typename TYPE, size_t size>
 struct basic_unsigned_integer {
-   basic_unsigned_integer(unsigned long seed);
-   basic_unsigned_integer(const basic_unsigned_integer& other);
-   basic_unsigned_integer& operator=(const basic_unsigned_integer& other);
-   basic_unsigned_integer& operator+=(const basic_unsigned_integer& other);
-   basic_unsigned_integer& operator-=(const basic_unsigned_integer& other);
-   basic_unsigned_integer& operator*=(const basic_unsigned_integer& other);
-   basic_unsigned_integer& operator/=(const basic_unsigned_integer& other);
-   bool operator==(const basic_unsigned_integer& other) const;
-   bool operator!=(const basic_unsigned_integer& other) const;
-   bool operator<=(const basic_unsigned_integer& other) const;
-   bool operator>=(const basic_unsigned_integer& other) const;
-   bool operator<(const basic_unsigned_integer& other) const;
-   bool operator>(const basic_unsigned_integer& other) const;
+   static_assert(std::is_unsigned<TYPE>::value, "basic_unsigned_integer must be instantiated with an unsigned type");
+   static_assert(0 < size, "basic_unsigned_integer must be instantiated with a non-zero number of limbs");
+
+   using larger_uint = typename next_largest<TYPE>::type;
+
+   basic_unsigned_integer() : mantissa{} { }
+   basic_unsigned_integer(TYPE seed) : mantissa{ { seed } } { }
+   basic_unsigned_integer(const std::string& seed) : mantissa{} {
+      for (auto character : seed) {
+         if (!isdigit(character)) { break; }
+         operator*=(10).operator+=(static_cast<TYPE>(character - '0'));
+      }
+   }
+   basic_unsigned_integer(const basic_unsigned_integer& other) {
+      std::copy(other.mantissa.begin(), other.mantissa.end(), mantissa.begin());
+   }
+   basic_unsigned_integer& operator=(basic_unsigned_integer other) {
+      std::swap(mantissa, other.mantissa);
+      return *this;
+   }
+   basic_unsigned_integer& operator+=(TYPE other) {
+      //std::cerr << __func__ << ": " << static_cast<uint64_t>(other) << std::endl;
+      larger_uint carry = other;
+      for (size_t i = 0; i < size && 0 != carry; ++i) {
+         carry = add_at_index(i, carry);
+      }
+      if (0 != carry) std::cerr << __LINE__ << ": carry: " << carry << std::endl;
+      return *this;
+   }
+   basic_unsigned_integer& operator+=(const basic_unsigned_integer& other) {
+      larger_uint carry = 0;
+      for (size_t i = 0; i < size; ++i) {
+         carry = add_at_index(i, carry + other.mantissa[i]);
+      }
+      if (0 != carry) std::cerr << __LINE__ << ": carry: " << carry << std::endl;
+      return *this;
+   }
+   basic_unsigned_integer& operator-=(const basic_unsigned_integer& /*other*/) {
+      return *this;
+   }
+   basic_unsigned_integer& operator*=(TYPE other) {
+      larger_uint carry = 0;
+      for (size_t i = 0; i < size; ++i) {
+         larger_uint overflow = multiply_at_index(i, other);
+         if (0 != carry) {
+            overflow += add_at_index(i, carry);
+         }
+         carry = overflow;
+      }
+      if (0 != carry) std::cerr << __LINE__ << ": carry: " << carry << std::endl;
+      return *this;
+   }
+   basic_unsigned_integer& operator*=(const basic_unsigned_integer& other) {
+      larger_uint carry = 0;
+      for (size_t i = 0; i < size; ++i) {
+         for (size_t j = 0; j < size && (i + j) < size; ++j) {
+            carry += multiply_at_index(i, other.mantissa[j]);
+            carry = add_at_index(i, carry);
+         }
+      }
+      if (0 != carry) std::cerr << __LINE__ << ": carry: " << carry << std::endl;
+      return *this;
+   }
+   basic_unsigned_integer& operator/=(const basic_unsigned_integer& /*other*/) {
+      return *this;
+   }
+   bool operator==(const basic_unsigned_integer& other) const {
+      return std::equal(mantissa.begin(), mantissa.end(), other.mantissa.begin());
+   }
+   bool operator!=(const basic_unsigned_integer& other) const {
+      return std::equal(mantissa.begin(), mantissa.end(), other.mantissa.begin(), std::not_equal_to<TYPE>());
+   }
+   bool operator<=(const basic_unsigned_integer& other) const {
+      return std::equal(mantissa.begin(), mantissa.end(), other.mantissa.begin(), std::less_equal<TYPE>());
+   }
+   bool operator>=(const basic_unsigned_integer& other) const {
+      return std::equal(mantissa.begin(), mantissa.end(), other.mantissa.begin(), std::greater_equal<TYPE>());
+   }
+   bool operator<(const basic_unsigned_integer& other) const {
+      return std::equal(mantissa.begin(), mantissa.end(), other.mantissa.begin(), std::less<TYPE>());
+   }
+   bool operator>(const basic_unsigned_integer& other) const {
+      return std::equal(mantissa.begin(), mantissa.end(), other.mantissa.begin(), std::greater<TYPE>());
+   }
 private:
-   Type mantissa[size];
+   TYPE multiply_at_index(size_t index, larger_uint value) {
+      larger_uint result = value * mantissa[index];
+      mantissa[index] = result & std::numeric_limits<TYPE>::max();
+      return result >> std::numeric_limits<TYPE>::digits;
+   }
+   TYPE add_at_index(size_t index, larger_uint value) {
+      larger_uint result = value + mantissa[index];
+      mantissa[index] = result & std::numeric_limits<TYPE>::max();
+      return result >> std::numeric_limits<TYPE>::digits;
+   }
+public:
+   std::array<TYPE, size> mantissa;
 };
 
-using uint24_t = basic_unsigned_integer<uint8_t, 3>;
-static_assert(sizeof(uint24_t) == 3, "uint24_t is not 24bits long");
-using uint40_t = basic_unsigned_integer<uint8_t, 5>;
-static_assert(sizeof(uint40_t) == 5, "uint40_t is not 40bits long");
-using uint48_t = basic_unsigned_integer<uint16_t, 3>;
-static_assert(sizeof(uint48_t) == 6, "uint48_t is not 48bits long");
-using uint56_t = basic_unsigned_integer<uint8_t, 7>;
-static_assert(sizeof(uint56_t) == 7, "uint56_t is not 56bits long");
-using uint96_t = basic_unsigned_integer<uint32_t, 3>;
-static_assert(sizeof(uint96_t) == 12, "uint96_t is not 96bits long");
-using uint128_t = basic_unsigned_integer<uint32_t, 4>;
-static_assert(sizeof(uint128_t) == 16, "uint128_t is not 128bits long");
-using uint256_t = basic_unsigned_integer<uint32_t, 8>;
-static_assert(sizeof(uint256_t) == 32, "uint256_t is not 256bits long");
-using uint512_t = basic_unsigned_integer<uint32_t, 16>;
-static_assert(sizeof(uint512_t) == 64, "uint512_t is not 512bits long");
+template <typename TYPE, size_t size>
+std::ostream& operator<<(std::ostream& out, const basic_unsigned_integer<TYPE, size>& value) {
+   out << std::hex;
+   for (auto limb : value.mantissa) {
+      out << static_cast<uint64_t>(limb) << " ";
+   }
+   return out;
+}
 
 } // namespace tbl
+
+using uint24_t = tbl::basic_unsigned_integer<uint8_t, 3>;
+static_assert(sizeof(uint24_t) == 3, "uint24_t is not 24bits long");
+using uint40_t = tbl::basic_unsigned_integer<uint8_t, 5>;
+static_assert(sizeof(uint40_t) == 5, "uint40_t is not 40bits long");
+using uint48_t = tbl::basic_unsigned_integer<uint16_t, 3>;
+static_assert(sizeof(uint48_t) == 6, "uint48_t is not 48bits long");
+using uint56_t = tbl::basic_unsigned_integer<uint8_t, 7>;
+static_assert(sizeof(uint56_t) == 7, "uint56_t is not 56bits long");
+using uint96_t = tbl::basic_unsigned_integer<uint32_t, 3>;
+static_assert(sizeof(uint96_t) == 12, "uint96_t is not 96bits long");
+using uint128_t = tbl::basic_unsigned_integer<uint32_t, 4>;
+static_assert(sizeof(uint128_t) == 16, "uint128_t is not 128bits long");
+using uint256_t = tbl::basic_unsigned_integer<uint32_t, 8>;
+static_assert(sizeof(uint256_t) == 32, "uint256_t is not 256bits long");
+using uint512_t = tbl::basic_unsigned_integer<uint32_t, 16>;
+static_assert(sizeof(uint512_t) == 64, "uint512_t is not 512bits long");
 
 #endif // TBL_INTEGER_HPP
