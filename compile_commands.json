@@ -26,6 +26,11 @@
    },
    {
       "directory": "/home/tblyons/dev/github/cocles",
+      "command": "clang++ -g3 -O0 -c -std=c++14 -stdlib=libc++ -MP -MMD -Werror -Weverything -Wno-c++98-compat-pedantic -Wno-padded -I src -I include -o build/debug/src/integer.o src/integer.cpp",
+      "file": "/home/tblyons/dev/github/cocles/src/integer.cpp"
+   },
+   {
+      "directory": "/home/tblyons/dev/github/cocles",
       "command": "clang++ -g3 -O0 -c -std=c++14 -stdlib=libc++ -MP -MMD -pedantic -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -I src -I include -o build/debug/src/ledger/ledger.o src/ledger/ledger.cpp",
       "file": "/home/tblyons/dev/github/cocles/src/ledger/ledger.cpp"
    },
