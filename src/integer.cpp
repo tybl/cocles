@@ -53,17 +53,18 @@ TEST_CASE("tbl::integer_t: integer_t(string)") {
 }
 
 TEST_CASE("tbl::basic_unsigned_integer constructor") {
-   uint24_t a;
-   uint24_t b;
+   uint24_t a; // uninitialized
+   uint24_t b; // uninitialized
    uint24_t c(4);
    uint24_t d(c);
-   uint24_t e("512");
-   CHECK(a == b);
+   uint24_t e(a);
+   CHECK((a == b) != (a != b)); // Their values are uninitialized, so may or may not equal, but not both
    CHECK(c == d);
    CHECK(!(c == b));
    c = a;
    CHECK(c == b);
    CHECK(!(c == d));
+   CHECK(a == e);
 }
 
 TEST_CASE("tbl::basic_unsigned_integer::operator+=") {
@@ -72,4 +73,12 @@ TEST_CASE("tbl::basic_unsigned_integer::operator+=") {
    a += b;
    uint24_t c(48);
    CHECK(a == c);
+}
+
+TEST_CASE("tbl::basic_unsigned_integer for loop") {
+   using namespace std::chrono_literals;
+   auto start = std::chrono::high_resolution_clock::now();
+   for (uint24_t i = 0; i < 10000000; ++i) { static_cast<void>(i); }
+   auto finish = std::chrono::high_resolution_clock::now();
+   CHECK(finish - start < 15us);
 }

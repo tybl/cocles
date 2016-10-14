@@ -102,6 +102,9 @@ struct next_largest { };
 template <> struct next_largest<uint8_t> { using type = uint16_t; };
 template <> struct next_largest<uint16_t> { using type = uint32_t; };
 template <> struct next_largest<uint32_t> { using type = uint64_t; };
+#ifdef __GNUC__
+template <> struct next_largest<uint64_t> { using type = unsigned __int128; };
+#endif
 template <> struct next_largest<int8_t> { using type = int16_t; };
 template <> struct next_largest<int16_t> { using type = int32_t; };
 template <> struct next_largest<int32_t> { using type = int64_t; };
@@ -113,9 +116,18 @@ struct basic_unsigned_integer {
 
    using larger_uint = typename next_largest<TYPE>::type;
 
-   basic_unsigned_integer() : mantissa{} { }
-   basic_unsigned_integer(TYPE seed) : mantissa{ { seed } } { }
-   basic_unsigned_integer(const std::string& seed) : mantissa{} {
+   basic_unsigned_integer() = default;
+   basic_unsigned_integer(uintmax_t seed)
+      : mantissa{}
+   {
+      for (size_t i = 0; i < size && 0 != seed; ++i) {
+         mantissa[i] = seed & std::numeric_limits<TYPE>::max();
+         seed >>= std::numeric_limits<TYPE>::digits;
+      }
+   }
+   basic_unsigned_integer(const std::string& seed)
+      : mantissa{}
+   {
       for (auto character : seed) {
          if (!isdigit(character)) { break; }
          operator*=(10).operator+=(static_cast<TYPE>(character - '0'));
@@ -129,7 +141,6 @@ struct basic_unsigned_integer {
       return *this;
    }
    basic_unsigned_integer& operator+=(TYPE other) {
-      //std::cerr << __func__ << ": " << static_cast<uint64_t>(other) << std::endl;
       larger_uint carry = other;
       for (size_t i = 0; i < size && 0 != carry; ++i) {
          carry = add_at_index(i, carry);
@@ -173,6 +184,14 @@ struct basic_unsigned_integer {
    }
    basic_unsigned_integer& operator/=(const basic_unsigned_integer& /*other*/) {
       return *this;
+   }
+   basic_unsigned_integer& operator++() {
+      return operator+=(1);
+   }
+   basic_unsigned_integer operator++(int) {
+      basic_unsigned_integer<TYPE, size> temp(*this);
+      operator+=(1);
+      return temp;
    }
    bool operator==(const basic_unsigned_integer& other) const {
       return std::equal(mantissa.begin(), mantissa.end(), other.mantissa.begin());
@@ -219,20 +238,27 @@ std::ostream& operator<<(std::ostream& out, const basic_unsigned_integer<TYPE, s
 } // namespace tbl
 
 using uint24_t = tbl::basic_unsigned_integer<uint8_t, 3>;
-static_assert(sizeof(uint24_t) == 3, "uint24_t is not 24bits long");
 using uint40_t = tbl::basic_unsigned_integer<uint8_t, 5>;
-static_assert(sizeof(uint40_t) == 5, "uint40_t is not 40bits long");
 using uint48_t = tbl::basic_unsigned_integer<uint16_t, 3>;
-static_assert(sizeof(uint48_t) == 6, "uint48_t is not 48bits long");
 using uint56_t = tbl::basic_unsigned_integer<uint8_t, 7>;
-static_assert(sizeof(uint56_t) == 7, "uint56_t is not 56bits long");
 using uint96_t = tbl::basic_unsigned_integer<uint32_t, 3>;
-static_assert(sizeof(uint96_t) == 12, "uint96_t is not 96bits long");
+#ifdef __GNUC__
+using uint128_t = tbl::basic_unsigned_integer<uint64_t, 2>;
+using uint256_t = tbl::basic_unsigned_integer<uint64_t, 4>;
+using uint512_t = tbl::basic_unsigned_integer<uint64_t, 8>;
+#else
 using uint128_t = tbl::basic_unsigned_integer<uint32_t, 4>;
-static_assert(sizeof(uint128_t) == 16, "uint128_t is not 128bits long");
 using uint256_t = tbl::basic_unsigned_integer<uint32_t, 8>;
-static_assert(sizeof(uint256_t) == 32, "uint256_t is not 256bits long");
 using uint512_t = tbl::basic_unsigned_integer<uint32_t, 16>;
+#endif
+
+static_assert(sizeof(uint24_t) == 3, "uint24_t is not 24bits long");
+static_assert(sizeof(uint40_t) == 5, "uint40_t is not 40bits long");
+static_assert(sizeof(uint48_t) == 6, "uint48_t is not 48bits long");
+static_assert(sizeof(uint56_t) == 7, "uint56_t is not 56bits long");
+static_assert(sizeof(uint96_t) == 12, "uint96_t is not 96bits long");
+static_assert(sizeof(uint128_t) == 16, "uint128_t is not 128bits long");
+static_assert(sizeof(uint256_t) == 32, "uint256_t is not 256bits long");
 static_assert(sizeof(uint512_t) == 64, "uint512_t is not 512bits long");
 
 #endif // TBL_INTEGER_HPP
