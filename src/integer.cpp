@@ -2,6 +2,7 @@
 
 namespace tbl {
 
+#if 0
 integer_t::integer_t(long value)
    : mantissa_length(static_cast<size_t>(value * ((0 <= value) ? 1 : -1))) {}
 
@@ -28,11 +29,12 @@ integer_t& integer_t::operator/=(integer_t ) {
 bool integer_t::is_negative() const {
    return false;// (0 > size);
 }
+#endif
 
 } // namespace tbl
 
 #include "doctest/doctest.h"
-
+#if 0
 TEST_CASE("tbl::integer_t: integer_t(long), operator==(integer_t)") {
    CHECK(tbl::integer_t(0) == tbl::integer_t(0));
 }
@@ -51,6 +53,7 @@ TEST_CASE("tbl::integer_t: integer_t(string)") {
    tbl::integer_t num("123456789012345678901234567890");
    CHECK(num.buffer_length == 4);
 }
+#endif
 
 TEST_CASE("tbl::basic_unsigned_integer constructor") {
    uint24_t a; // uninitialized
@@ -81,4 +84,18 @@ TEST_CASE("tbl::basic_unsigned_integer for loop") {
    for (uint24_t i = 0; i < 10000000; ++i) { static_cast<void>(i); }
    auto finish = std::chrono::high_resolution_clock::now();
    CHECK(finish - start < 15us);
+}
+
+TEST_CASE("tbl::basic_unsigned_integer::operator<<=") {
+   uint56_t num("320255973501901");
+   num <<= 0;
+   CHECK(num == uint56_t("320255973501901"));
+   num <<= 1;
+   CHECK(num == uint56_t("640511947003802"));
+   num <<= 8;
+   CHECK(num == uint56_t("163971058432973312"));
+   num <<= 7;
+   CHECK(num == uint56_t("2541551405711032320"));
+   num <<= 40;
+   CHECK(num == uint56_t("0"));
 }

@@ -11,6 +11,7 @@
 
 namespace tbl {
 
+#if 0
 struct integer_t {
 
    integer_t(long value);
@@ -95,6 +96,31 @@ struct integer_t {
    size_t mantissa_length; // Tracks index of the most significant bit
    //bool is_negative;
 };
+#endif
+
+template <typename TYPE>
+void slow_safe_multiply(TYPE a, TYPE b, TYPE& r_lo, TYPE& r_hi) {
+   constexpr size_t half_bits = std::numeric_limits<TYPE>::digits / 2;
+   constexpr TYPE lo_mask = std::numeric_limits<TYPE>::max() >> half_bits;
+   const TYPE a_lo = a & lo_mask;
+   const TYPE a_hi = a >> half_bits;
+   const TYPE b_lo = b & lo_mask;
+   const TYPE b_hi = b >> half_bits;
+   //
+   //                  [[a_hi] [a_lo]]
+   //                * [[b_hi] [b_lo]]
+   //  -------------------------------
+   //                   [a_lo * b_lo ]
+   //           [ a_lo * b_hi ]
+   //           [ a_hi * b_lo ]
+   //    [ a_hi * b_hi]
+   //  -------------------------------
+   //
+   r_lo = a_lo * b_lo;
+   // a_lo * b_hi
+   // a_hi * b_lo
+   r_hi = a_hi * b_hi;
+}
 
 template <typename TYPE>
 struct next_largest { };
@@ -105,9 +131,6 @@ template <> struct next_largest<uint32_t> { using type = uint64_t; };
 #ifdef __GNUC__
 template <> struct next_largest<uint64_t> { using type = unsigned __int128; };
 #endif
-template <> struct next_largest<int8_t> { using type = int16_t; };
-template <> struct next_largest<int16_t> { using type = int32_t; };
-template <> struct next_largest<int32_t> { using type = int64_t; };
 
 template <typename TYPE, size_t size>
 struct basic_unsigned_integer {
@@ -115,6 +138,7 @@ struct basic_unsigned_integer {
    static_assert(0 < size, "basic_unsigned_integer must be instantiated with a non-zero number of limbs");
 
    using larger_uint = typename next_largest<TYPE>::type;
+   static constexpr size_t binary_digits = std::numeric_limits<TYPE>::digits;
 
    basic_unsigned_integer() = default;
    basic_unsigned_integer(uintmax_t seed)
@@ -192,6 +216,52 @@ struct basic_unsigned_integer {
       basic_unsigned_integer<TYPE, size> temp(*this);
       operator+=(1);
       return temp;
+   }
+   basic_unsigned_integer& operator>>=(size_t places) {
+      const size_t whole_shifts = places / binary_digits;
+      //const size_t limb_shift = places % binary_digits;
+     // const size_t underflow_shift = binary_digits - limb_shift;
+      if (size <= whole_shifts) {
+         std::fill(mantissa.begin(), mantissa.end(), 0);
+         return *this;
+      } else if (0 < whole_shifts/* < size*/) {
+         std::copy(mantissa.crbegin() + static_cast<ptrdiff_t>(whole_shifts), mantissa.crend(), mantissa.rbegin());
+         std::fill(mantissa.begin(), mantissa.begin() + static_cast<ptrdiff_t>(whole_shifts), 0);
+      }
+#if 0
+      if (0 < limb_shift) {
+         TYPE carry = 0;
+         for (size_t i = whole_shifts; i < size; ++i) {
+            TYPE temp = mantissa[i];
+            TYPE underflow = temp >> underflow_shift;
+            mantissa[i] = static_cast<TYPE>((temp << limb_shift) | carry);
+            carry = underflow;
+         }
+      }
+#endif
+      return *this;
+   }
+   basic_unsigned_integer& operator<<=(size_t places) {
+      const size_t whole_shifts = places / binary_digits;
+      const size_t limb_shift = places % binary_digits;
+      const size_t overflow_shift = binary_digits - limb_shift;
+      if (size <= whole_shifts) {
+         std::fill(mantissa.begin(), mantissa.end(), 0);
+         return *this;
+      } else if (0 < whole_shifts/* < size*/) {
+         std::copy(mantissa.crbegin() + static_cast<ptrdiff_t>(whole_shifts), mantissa.crend(), mantissa.rbegin());
+         std::fill(mantissa.begin(), mantissa.begin() + static_cast<ptrdiff_t>(whole_shifts), 0);
+      }
+      if (0 < limb_shift) {
+         TYPE carry = 0;
+         for (size_t i = whole_shifts; i < size; ++i) {
+            TYPE temp = mantissa[i];
+            TYPE overflow = temp >> overflow_shift;
+            mantissa[i] = static_cast<TYPE>((temp << limb_shift) | carry);
+            carry = overflow;
+         }
+      }
+      return *this;
    }
    bool operator==(const basic_unsigned_integer& other) const {
       return std::equal(mantissa.begin(), mantissa.end(), other.mantissa.begin());
