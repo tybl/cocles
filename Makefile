@@ -1,6 +1,6 @@
-CXX := clang++
 TARGET := cocles
-OBJECTS = $(SOURCES:src/%.cpp=$(BLDDIR)/src/%.o)
+BLDDIR := build
+OBJECTS = $(SOURCES:%.cpp=$(BLDDIR)/%.o)
 DEPS = $(OBJECTS:.o=.d)
 INCLUDES := -I src -I include
 SOURCES := \
@@ -12,37 +12,29 @@ SOURCES := \
            src/integer.cpp \
            src/decimal.cpp \
 
-ifndef CONFIG
-   CONFIG=Valgrind
+CXXFLAGS += -c -std=c++14 -MP -MMD -Werror
+LFLAGS += -lpthread -lgmp
+
+ifeq ($(CXX), clang++)
+   CXXFLAGS += -Weverything -Wno-c++98-compat-pedantic -Wno-padded -stdlib=libc++
+   LFLAGS += -lc++ -lc++abi
 endif
 
-ifeq ($(CONFIG), AddSan)
-   BLDDIR := build/sanitize
-   CFLAGS := -g3 -O0 -fsanitize=address
-   LFLAGS := -g3 -O0 -fsanitize=address
+ifeq ($(CXX), g++)
+   CXXFLAGS += -Wall -Wextra
 endif
 
-ifeq ($(CONFIG), Valgrind)
-   BLDDIR := build/debug
-   CFLAGS := -g3 -O0
-   LFLAGS := -g3 -O0
-endif
+.PHONY: all debug release check clean
+all: debug
 
-ifeq ($(CONFIG), Release)
-   BLDDIR := build/release
-   CFLAGS := -g0 -O3
-   LFLAGS := -g0 -O3
-endif
+release: CXXFLAGS += -g0 -O3
+release: $(TARGET)
 
-WARNINGS = -Werror -Weverything -Wno-c++98-compat-pedantic -Wno-padded
-CFLAGS += -c -std=c++14 -stdlib=libc++ -MP -MMD
-LFLAGS += -lc++ -lc++abi -lpthread -lgmp
+debug: CXXFLAGS += -g3 -O0
+debug: $(TARGET)
 
-.PHONY: all check clean
-all: $(TARGET)
-
-check: $(TARGET)
-	./$(TARGET)
+check: debug
+	-./$(TARGET)
 
 clean:
 	$(RM) -r build $(TARGET)
@@ -54,6 +46,6 @@ $(BLDDIR):
 	mkdir -p $(dir $(OBJECTS))
 
 $(BLDDIR)/src/%.o: src/%.cpp | $(BLDDIR)
-	$(CXX) $(CFLAGS) $(WARNINGS) $(INCLUDES) -o $@ $<
+	$(CXX) $(CXXFLAGS) $(WARNINGS) $(INCLUDES) -o $@ $<
 
 -include $(DEPS)
