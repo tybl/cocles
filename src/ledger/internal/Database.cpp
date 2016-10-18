@@ -221,22 +221,28 @@ TEST_CASE("Database::account list each") {
    Database db;
    auto budgeted_asset = db.find_account_type_by_name("Budgeted Asset");
    auto income_expense = db.find_account_type_by_name("Income/Expense");
-   db.new_account("Walmart", income_expense);
-   db.new_account("Credit Card", budgeted_asset);
-   db.new_account("Target", income_expense);
-   db.new_account("Checking", budgeted_asset);
-   db.new_account("Whole Foods", income_expense);
-   db.new_account("Savings", budgeted_asset);
-   db.new_account("Subway", income_expense);
-   db.new_account("McDonald's", income_expense);
-   auto table = db.find_account_by_type(budgeted_asset);
-   std::cout << "Budgeted assets:" << std::endl;
-   for (auto a : table) {
-      std::cout << db.get_name(a) << std::endl;
+   db.new_account("Expense::Walmart", income_expense);
+   db.new_account("Asset::Credit Card", budgeted_asset);
+   db.new_account("Expense::Target", income_expense);
+   db.new_account("Asset::Checking", budgeted_asset);
+   db.new_account("Expense::Whole Foods", income_expense);
+   db.new_account("Asset::Savings", budgeted_asset);
+   db.new_account("Expense::Subway", income_expense);
+   db.new_account("Expense::McDonald's", income_expense);
+   size_t budgeted_asset_count = 0;
+   auto budgeted_asset_table = db.find_account_by_type(budgeted_asset);
+   for (auto a : budgeted_asset_table) {
+      CHECK(db.get_name(a).find("Asset") != std::string::npos);
+      static_cast<void>(a);
+      budgeted_asset_count += 1;
    }
-   auto table2 = db.find_account_by_type(income_expense);
-   std::cout << "Income/Expenses:" << std::endl;
-   for (auto a : table2) {
-      std::cout << db.get_name(a) << std::endl;
+   CHECK(budgeted_asset_count == 3);
+   size_t income_expense_count = 0;
+   auto income_expense_table = db.find_account_by_type(income_expense);
+   for (auto a : income_expense_table) {
+      CHECK(db.get_name(a).find("Expense") != std::string::npos);
+      static_cast<void>(a);
+      income_expense_count += 1;
    }
+   CHECK(income_expense_count == 5);
 }
