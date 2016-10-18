@@ -1,10 +1,11 @@
 #ifndef COCLES_LEDGER_INTERNAL_DATABASE_HPP
 #define COCLES_LEDGER_INTERNAL_DATABASE_HPP
 
-#include "RecordKeeper.hpp"
 #include "AccountEntry.hpp"
 #include "AccountTypeEntry.hpp"
 #include "AdjustmentEntry.hpp"
+#include "FilteredTableView.hpp"
+#include "RecordKeeper.hpp"
 #include "TransactionEntry.hpp"
 
 template <typename TYPE> struct TableView;
@@ -42,7 +43,7 @@ struct Database {
    void set_type(AccountEntry record, AccountTypeEntry type);
 
    // TODO(tblyons): find_account_by_type should be able to return many AccountEntrys
-   AccountEntry find_account_by_type(AccountTypeEntry type) const;
+   FilteredTableView<Account> find_account_by_type(AccountTypeEntry type) const;
 
    // Methods for interacting with Transactions
    TableView<Transaction> get_transaction_table() const;
@@ -60,7 +61,7 @@ struct Database {
    void set_date(TransactionEntry record, const date::year_month_day& date);
 
    // TODO(tblyons): find_transaction_by_date should be able to return many TransactionEntrys
-   TransactionEntry find_transaction_by_date(const date::year_month_day& date) const;
+   FilteredTableView<Transaction> find_transaction_by_date(const date::year_month_day& date) const;
 
    const std::string& get_memo(TransactionEntry record) const;
 

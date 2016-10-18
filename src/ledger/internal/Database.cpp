@@ -78,13 +78,8 @@ void Database::set_type(AccountEntry record, AccountTypeEntry type) {
    account_table.get_record(record.get_id()).type = type;
 }
 
-AccountEntry Database::find_account_by_type(AccountTypeEntry type) const {
-   for (auto account : get_account_table()) {
-      if (get_type(account) == type) {
-         return account;
-      }
-   }
-   return AccountEntry(ledger::internal::Identifier<Account>(0));
+FilteredTableView<Account> Database::find_account_by_type(AccountTypeEntry type) const {
+   return FilteredTableView<Account>(account_table, [type] (const Account& a) -> bool { return a.type == type; });
 }
 
 // Methods for interacting with Transactions
