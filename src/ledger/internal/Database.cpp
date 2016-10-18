@@ -191,6 +191,8 @@ AdjustmentEntry Database::find_adjustment_by_transaction(TransactionEntry transa
 // Test cases
 #include "doctest/doctest.h"
 
+#include <iostream>
+
 TEST_CASE("Database::transaction::memo dogfood") {
    Database db;
    auto first_trans = db.new_transaction();
@@ -213,4 +215,28 @@ TEST_CASE("Database::account_type list each") {
    input = "Budget Category";
    record = db.find_account_type_by_name(input);
    CHECK(db.get_name(record) == input);
+}
+
+TEST_CASE("Database::account list each") {
+   Database db;
+   auto budgeted_asset = db.find_account_type_by_name("Budgeted Asset");
+   auto income_expense = db.find_account_type_by_name("Income/Expense");
+   db.new_account("Walmart", income_expense);
+   db.new_account("Credit Card", budgeted_asset);
+   db.new_account("Target", income_expense);
+   db.new_account("Checking", budgeted_asset);
+   db.new_account("Whole Foods", income_expense);
+   db.new_account("Savings", budgeted_asset);
+   db.new_account("Subway", income_expense);
+   db.new_account("McDonald's", income_expense);
+   auto table = db.find_account_by_type(budgeted_asset);
+   std::cout << "Budgeted assets:" << std::endl;
+   for (auto a : table) {
+      std::cout << db.get_name(a) << std::endl;
+   }
+   auto table2 = db.find_account_by_type(income_expense);
+   std::cout << "Income/Expenses:" << std::endl;
+   for (auto a : table2) {
+      std::cout << db.get_name(a) << std::endl;
+   }
 }

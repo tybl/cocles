@@ -15,6 +15,8 @@ struct Identifier {
 
    bool operator==(const Identifier& other) const;
 
+   bool operator!=(const Identifier& other) const;
+
    explicit operator size_t() const;
 
 private:
@@ -26,6 +28,11 @@ private:
 template <typename TYPE>
 bool Identifier<TYPE>::operator==(const Identifier& other) const {
    return (m_value == other.m_value);
+}
+
+template <typename TYPE>
+bool Identifier<TYPE>::operator!=(const Identifier& other) const {
+   return !operator==(other);
 }
 
 template <typename TYPE>

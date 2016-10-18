@@ -12,7 +12,6 @@ struct FilteredTableView {
       , pred(p) { }
 
    struct Iterator {
-      // TODO(tblyons): Add predicate function to determine which entries to make available
       explicit Iterator(const ledger::internal::RecordKeeper<TYPE>& tab, std::function<bool(const TYPE&)> p)
          : table(tab)
          , id(tab.used_id)
@@ -23,10 +22,10 @@ struct FilteredTableView {
       }
 
       Iterator& operator++() {
-         while (id != table.used_id && !pred(table.get_record(id))) {
+         do {
             id = table.get_next(id);
-         }
-         return this;
+         } while (id != table.used_id && !pred(table.get_record(id)));
+         return *this;
       }
 
       ledger::internal::EntryProxy<TYPE> operator*() {
