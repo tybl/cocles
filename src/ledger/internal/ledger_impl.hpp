@@ -5,6 +5,7 @@
 #include "adjustment.hpp"
 #include "transaction.hpp"
 
+#include <algorithm>
 #include <memory>
 #include <vector>
 

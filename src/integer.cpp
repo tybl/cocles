@@ -34,6 +34,9 @@ bool integer_t::is_negative() const {
 } // namespace tbl
 
 #include "doctest/doctest.h"
+
+#include <chrono>
+
 #if 0
 TEST_CASE("tbl::integer_t: integer_t(long), operator==(integer_t)") {
    CHECK(tbl::integer_t(0) == tbl::integer_t(0));

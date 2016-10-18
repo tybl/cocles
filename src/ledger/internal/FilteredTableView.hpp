@@ -3,6 +3,8 @@
 
 #include "TableView.hpp"
 
+#include <functional>
+
 template<typename TYPE>
 struct FilteredTableView {
 
