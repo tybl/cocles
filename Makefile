@@ -14,14 +14,12 @@ LFLAGS += -lpthread -lgmp
 OBJECTS = $(SOURCES:%.cpp=$(BLDDIR)/%.o)
 DEPS = $(OBJECTS:.o=.d)
 
-ifeq ($(CXX), clang++)
+ifeq ($(CXX), g++)
+   CPPFLAGS += -Wall -Wextra
+else
    CPPFLAGS += -Weverything -Wno-padded
    CXXFLAGS += -Wno-c++98-compat-pedantic -stdlib=libc++
    LFLAGS += -lc++ -lc++abi
-endif
-
-ifeq ($(CXX), g++)
-   CPPFLAGS += -Wall -Wextra
 endif
 
 .PHONY: all debug release check clean
