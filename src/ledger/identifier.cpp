@@ -1,13 +1,12 @@
 #include "identifier.hpp"
 
 #include <cstdint>
+#include <string>
 
 namespace ledger {
 
 identifier_t::identifier_t(uint64_t new_value)
-   : value(new_value)
-{
-}
+   : value(new_value) {}
 
 std::string identifier_t::to_string() const {
    return std::to_string(value);

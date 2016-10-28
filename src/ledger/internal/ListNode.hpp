@@ -13,85 +13,58 @@ namespace internal {
 template <typename TYPE>
 struct ListNode {
 
-   ListNode();
+   constexpr ListNode()
+      : m_next(0)
+      , m_prev(0)
+      , m_data() {}
 
-   ListNode(Identifier<TYPE> p_next, Identifier<TYPE> p_prev, bool p_free);
+   constexpr ListNode(Identifier<TYPE> next, Identifier<TYPE> prev, bool p_free)
+      : m_next(next)
+      , m_prev((static_cast<size_t>(prev) << 1) | (p_free & 1))
+      , m_data() {}
 
-   void set_free(bool free);
-   bool get_free() const;
+   void set_free(bool free) {
+      m_prev |= 1 & free;
+   }
 
-   Identifier<TYPE>& next();
-   const Identifier<TYPE> next() const;
+   bool get_free() const {
+      return m_prev & 1;
+   }
 
-   void set_prev(Identifier<TYPE> id);
-   const Identifier<TYPE> get_prev() const;
+   Identifier<TYPE>& next() {
+      return m_next;
+   }
 
-   TYPE& data();
-   const TYPE& data() const;
+   const Identifier<TYPE>& next() const {
+      return m_next;
+   }
+
+   void set_prev(Identifier<TYPE> id) {
+      size_t temp = static_cast<size_t>(id);
+      // TODO: Figure out how to eliminate this check and thrown exception
+      if (std::numeric_limits<int64_t>::max() < temp) {
+         throw std::overflow_error("Identifier is too large");
+      }
+      m_prev = (temp << 1) | (m_prev & 1);
+   }
+
+   const Identifier<TYPE> get_prev() const {
+      return Identifier<TYPE>(m_prev >> 1);
+   }
+
+   TYPE& data() {
+      return m_data;
+   }
+
+   const TYPE& data() const {
+      return m_data;
+   }
 
 private:
    Identifier<TYPE> m_next;
    size_t m_prev;
    TYPE m_data;
 }; // struct ListNode
-
-////////////////// Implementation Details //////////////////
-
-template <typename TYPE>
-ListNode<TYPE>::ListNode()
-   : m_next(0)
-   , m_prev(0)
-   , m_data() {}
-
-template <typename TYPE>
-ListNode<TYPE>::ListNode(Identifier<TYPE> p_next, Identifier<TYPE> p_prev, bool p_free)
-   : m_next(p_next)
-   , m_prev((static_cast<size_t>(p_prev) << 1) | (p_free & 1))
-   , m_data() {}
-
-template <typename TYPE>
-void ListNode<TYPE>::set_free(bool free) {
-   m_prev |= 1 & free;
-}
-
-template <typename TYPE>
-bool ListNode<TYPE>::get_free() const {
-   return m_prev & 1;
-}
-
-template <typename TYPE>
-Identifier<TYPE>& ListNode<TYPE>::next() {
-   return m_next;
-}
-
-template <typename TYPE>
-const Identifier<TYPE> ListNode<TYPE>::next() const {
-   return m_next;
-}
-
-template <typename TYPE>
-void ListNode<TYPE>::set_prev(Identifier<TYPE> id) {
-   size_t temp = static_cast<size_t>(id);
-   if (temp >> 63) {
-      throw std::overflow_error("Identifier is too large");
-   }
-   m_prev = (temp << 1) | (m_prev & 1);
-}
-
-template <typename TYPE>
-const Identifier<TYPE> ListNode<TYPE>::get_prev() const {
-   return Identifier<TYPE>(m_prev >> 1);
-}
-
-template <typename TYPE>
-TYPE& ListNode<TYPE>::data() {
-   return m_data;
-}
-
-template <typename TYPE>
-const TYPE& ListNode<TYPE>::data() const {
-   return m_data;
-}
 
 } // namespace internal
 

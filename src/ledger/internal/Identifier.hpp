@@ -1,7 +1,7 @@
 #ifndef COCLES_LEDGER_INTERNAL_IDENTIFIER_HPP
 #define COCLES_LEDGER_INTERNAL_IDENTIFIER_HPP
 
-#include <cstddef>
+#include <cstddef> // size_t
 
 namespace ledger {
 
@@ -13,32 +13,21 @@ struct Identifier {
    constexpr explicit Identifier(size_t value) noexcept
       : m_value(value) {}
 
-   bool operator==(const Identifier& other) const;
+   bool operator==(const Identifier& other) const {
+      return (m_value == other.m_value);
+   }
 
-   bool operator!=(const Identifier& other) const;
+   bool operator!=(const Identifier& other) const {
+      return !operator==(other);
+   }
 
-   explicit operator size_t() const;
+   explicit operator size_t() const {
+      return m_value;
+   }
 
 private:
    size_t m_value;
 }; // struct Identifier
-
-////////////////// Implementation Details //////////////////
-
-template <typename TYPE>
-bool Identifier<TYPE>::operator==(const Identifier& other) const {
-   return (m_value == other.m_value);
-}
-
-template <typename TYPE>
-bool Identifier<TYPE>::operator!=(const Identifier& other) const {
-   return !operator==(other);
-}
-
-template <typename TYPE>
-Identifier<TYPE>::operator size_t() const {
-   return m_value;
-}
 
 } // namespace internal
 
