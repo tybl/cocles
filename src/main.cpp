@@ -1,18 +1,3 @@
-#if 0
-#include "ledger/internal/Database.hpp"
-
-#include <iostream>
-
-extern "C" int main(int argc, const char * argv[]) {
-   Database db;
-   auto first_trans = db.new_transaction();
-   std::string input = "Hello world!";
-   db.set_memo(first_trans, input);
-   std::cout << db.get_memo(first_trans) << std::endl;
-   return 0;
-}
-#endif
-
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest/doctest.h"
 
@@ -31,11 +16,42 @@ static int run_unit_tests(int argc, const char* argv[]) {
 
    int result = context.run();                       // run
 
-   if (context.shouldExit()) {          // important // query flags (and --exit) rely on the user doing this
+   if (context.shouldExit()) {          // important !! query flags (and --exit) rely on the user doing this
       exit(result);                                  // propagate the result of the tests
    }
    return result;
 }
+
+struct event_t {};
+struct account_t {};
+struct adjustment_t {};
+struct transaction_t {};
+
+struct ledger_impl_t {
+
+   ledger_impl_t(std::string filename);
+
+   ~ledger_impl_t() noexcept;
+
+   void append_event(event_t event);
+
+   void replay_event(event_t event);
+
+private:
+   std::vector<account_t> m_accounts;
+   std::vector<adjustment_t> m_adjustments;
+   std::vector<transaction_t> m_transactions;
+};
+
+struct ledger_t {
+
+   explicit ledger_t(std::string filename);
+
+   ~ledger_t() noexcept;
+
+private:
+   std::unique_ptr<ledger_impl_t> m_impl;
+};
 
 extern "C" int main(int argc, const char* argv[]) {
    int unit_test_results = run_unit_tests(argc, argv);
