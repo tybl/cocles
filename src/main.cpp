@@ -16,7 +16,7 @@ extern "C" int main(int argc, const char * argv[]) {
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest/doctest.h"
 
-extern "C" int main(int argc, const char* argv[]) {
+static int run_unit_tests(int argc, const char* argv[]) {
    doctest::Context context; // initialize
 
    // defaults
@@ -29,14 +29,18 @@ extern "C" int main(int argc, const char* argv[]) {
    // overrides
    context.setOption("no-breaks", true);             // don't break in the debugger when assertions fail
 
-   int res = context.run(); // run
+   int result = context.run();                       // run
 
-   if (context.shouldExit()) { // important - query flags (and --exit) rely on the user doing this
-      return res;          // propagate the result of the tests
+   if (context.shouldExit()) {          // important // query flags (and --exit) rely on the user doing this
+      exit(result);                                  // propagate the result of the tests
    }
+   return result;
+}
 
-   int client_stuff_return_code = 0;
-   // your program - if the testing framework is integrated in your production code
+extern "C" int main(int argc, const char* argv[]) {
+   int unit_test_results = run_unit_tests(argc, argv);
 
-   return res + client_stuff_return_code; // the result from doctest is propagated here as well
+
+
+   return unit_test_results; // the result from doctest is propagated here as well
 }
