@@ -8,7 +8,7 @@ SOURCES := \
            src/ledger/ledger.cpp \
            src/main.cpp \
 
-CPPFLAGS += -c -MP -MMD -Werror -I src -I include
+CPPFLAGS += -c -MP -MMD -pedantic -Werror -I src -I include
 CXXFLAGS += -std=c++14
 LFLAGS += -lpthread -lgmp
 OBJECTS = $(SOURCES:%.cpp=$(BLDDIR)/%.o)
