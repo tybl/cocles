@@ -26,6 +26,7 @@ static int run_unit_tests(int argc, const char* argv[]) {
    return result;
 }
 
+#if 0
 struct event_t {
 
    event_t() noexcept
@@ -33,6 +34,139 @@ struct event_t {
 
 private:
    std::chrono::high_resolution_clock::time_point m_time;
+};
+#endif
+
+
+#if 0
+struct add_account_event_t
+   : public event_t
+   , public account_t
+{
+
+   add_account_event_t(const std::string &name, account_type_t type)
+      : event_t()
+      , account_t(name, type) {}
+
+}; // struct add_account_event_t
+
+struct add_transaction_event_t
+   : public event_t
+   , public transaction_t
+{
+
+   add_transaction_event_t(const std::string &date)
+      : event_t()
+      , transaction_t(date) {}
+
+}; // add_transaction_event_t
+#endif
+
+template <typename TYPE>
+struct stable_table_t {
+
+   using value_type = TYPE;
+   using container_type = std::vector<TYPE>;
+   using size_type = typename std::vector<TYPE>::size_type;
+   using difference_type = typename std::vector<TYPE>::difference_type;
+
+   struct identifier_t {
+
+      constexpr explicit identifier_t(size_type value) noexcept
+         : m_value(value) {}
+
+      bool operator==(const identifier_t& other) const noexcept {
+         return (m_value == other.m_value);
+      }
+
+      bool operator!=(const identifier_t& other) const noexcept {
+         return !operator==(other);
+      }
+
+      explicit operator size_type() const noexcept {
+         return m_value;
+      }
+
+   private:
+      size_type m_value;
+   };
+
+   identifier_t insert(TYPE entry) {
+      size_type pos = 0;
+      if (m_free_rows.size()) {
+         pos = m_free_rows.back();
+         m_entries.insert(m_entries.begin() + static_cast<difference_type>(pos), entry);
+         m_free_rows.pop_back();
+      } else {
+         pos = m_entries.size();
+         m_entries.push_back(entry);
+      }
+      return identifier_t(pos);
+   }
+
+   TYPE remove(identifier_t id) {
+      std::size_t index = static_cast<std::size_t>(id);
+      auto iter = std::upper_bound(m_free_rows.begin(), m_free_rows.end(), index, std::greater<size_type>());
+      m_free_rows.insert(iter, index);
+      return m_entries.at(index);
+   }
+
+   std::size_t size() const {
+      return m_entries.size() - m_free_rows.size();
+   }
+
+private:
+   container_type m_entries;
+   std::vector<size_type> m_free_rows; // Sorted in reverse order
+};
+
+template <typename TYPE>
+struct table_t {
+
+   using value_type = TYPE;
+   using container_type = std::vector<TYPE>;
+   using size_type = typename std::vector<TYPE>::size_type;
+
+   struct identifier_t {
+
+      constexpr explicit identifier_t(size_type value) noexcept
+         : m_value(value) {}
+
+      bool operator==(const identifier_t& other) const noexcept {
+         return (m_value == other.m_value);
+      }
+
+      bool operator!=(const identifier_t& other) const noexcept {
+         return !operator==(other);
+      }
+
+      explicit operator size_type() const noexcept {
+         return m_value;
+      }
+
+   private:
+      size_type m_value;
+   };
+
+   identifier_t insert(TYPE entry) {
+      size_type pos = m_entries.size();
+      m_entries.push_back(entry);
+      return identifier_t(pos);
+   }
+
+   TYPE remove(identifier_t id) {
+      std::size_t index = static_cast<std::size_t>(id);
+      TYPE result = m_entries.at(index);
+      m_entries.erase(m_entries.begin() + index);
+      return result;
+   }
+
+   std::size_t size() const {
+      return m_entries.size();
+   }
+
+private:
+   std::vector<TYPE> m_entries;
 };
 
 enum class account_type_t {
@@ -71,117 +205,6 @@ private:
    //std::string m_memo;
 }; // struct transaction_t
 
-struct add_account_event_t
-   : public event_t
-   , public account_t
-{
-
-   add_account_event_t(const std::string &name, account_type_t type)
-      : event_t()
-      , account_t(name, type) {}
-
-}; // struct add_account_event_t
-
-struct add_transaction_event_t
-   : public event_t
-   , public transaction_t
-{
-
-   add_transaction_event_t(const std::string &date)
-      : event_t()
-      , transaction_t(date) {}
-
-}; // add_transaction_event_t
-
-struct transaction_table_t {
-private:
-   std::vector<transaction_t> m_entries;
-};
-
-template <typename TYPE>
-struct stable_table_t {
-
-   using value_type = TYPE;
-   using container_type = std::vector<TYPE>;
-   using size_type = typename std::vector<TYPE>::size_type;
-
-   struct identifier_t {
-
-      identifier_t(size_type index) : m_index(index) {}
-
-      explicit operator size_type() const { return m_index; }
-
-   private:
-      size_type m_index;
-   };
-
-   identifier_t insert(TYPE entry) {
-      size_type pos = 0;
-      if (m_free_rows.size()) {
-         pos = m_free_rows.back();
-         m_entries.insert(m_entries.begin() + pos, entry);
-         m_free_rows.pop_back();
-      } else {
-         pos = m_entries.size();
-         m_entries.push_back(entry);
-      }
-      return identifier_t(pos);
-   }
-
-   TYPE remove(identifier_t id) {
-      std::size_t index = static_cast<std::size_t>(id);
-      auto iter = std::upper_bound(m_free_rows.begin(), m_free_rows.end(), index, std::greater<size_type>());
-      m_free_rows.insert(iter, index);
-      return m_entries.at(index);
-   }
-
-   std::size_t size() const {
-      return m_entries.size() - m_free_rows.size();
-   }
-
-private:
-   container_type m_entries;
-   std::vector<size_type> m_free_rows; // Sorted in reverse order
-};
-
-template <typename TYPE>
-struct table_t {
-
-   using value_type = TYPE;
-   using container_type = std::vector<TYPE>;
-   using size_type = typename std::vector<TYPE>::size_type;
-
-   struct identifier_t {
-
-      identifier_t(std::size_t index) : m_index(index) {}
-
-      explicit operator std::size_t() const { return m_index; }
-
-   private:
-      std::size_t m_index;
-   };
-
-   identifier_t insert(TYPE entry) {
-      size_type pos = m_entries.size();
-      m_entries.push_back(entry);
-      return identifier_t(pos);
-   }
-
-   TYPE remove(identifier_t id) {
-      std::size_t index = static_cast<std::size_t>(id);
-      TYPE result = m_entries.at(index);
-      m_entries.erase(m_entries.begin() + index);
-      return result;
-   }
-
-   std::size_t size() const {
-      return m_entries.size();
-   }
-
-private:
-   std::vector<TYPE> m_entries;
-};
-
 struct adjustment_t {
    using transaction_id_t = stable_table_t<transaction_t>::identifier_t;
    using account_id_t = stable_table_t<account_t>::identifier_t;
@@ -195,6 +218,7 @@ private:
    account_id_t m_account_id;
 };
 
+#if 0
 struct ledger_impl_t {
 
    ledger_impl_t(std::string filename) {
@@ -249,21 +273,45 @@ struct ledger_t {
 private:
    std::unique_ptr<ledger_impl_t> m_impl;
 }; // struct ledger_t
+#endif
+
+struct ledger_t {
+   stable_table_t<transaction_t> transaction_table;
+   stable_table_t<account_t>         account_table;
+          table_t<adjustment_t>   adjustment_table;
+
+#if 0
+   template <typename ... TYPES>
+   std::vector<std::tuple<TYPES...>> select(std::function<std::tuple<TYPES...>(const stable_table_t<transaction_t>& transactions,
+                                                                               const stable_table_t<account_t>& accounts,
+                                                                               const table_t<adjustment_t>& adjustments))
+#endif
+};
+
+template <typename ... TYPES>
+std::vector<std::tuple<TYPES...>> make_vector_of_tuples(TYPES... args) {
+   std::vector<std::tuple<TYPES...>> result;
+   for (int i = 0; i < 5; ++i) {
+      result.emplace_back(args...);
+   }
+   return result;
+}
 
 extern "C" int main(int argc, const char* argv[]) {
    int unit_test_results = run_unit_tests(argc, argv);
 
-   ledger_t ledger("cocles.log");
-   ledger.add_account("Checking");
+   ledger_t ledger;
+   //ledger_t ledger("cocles.log");
+   //ledger.add_account("Checking");
 
-   stable_table_t<transaction_t> transaction_table;
-   auto tid = transaction_table.insert({"1999-12-31"});
+   auto l = make_vector_of_tuples<int, double, std::string>(5, 0.25, "hello");
+   for (auto i : l) {
+      std::cout << std::get<0>(i) << " " << std::get<1>(i) << " " << std::get<2>(i) << std::endl;
+   }
 
-   stable_table_t<account_t> account_table;
-   auto aid = account_table.insert({ "Checking", account_type_t::INCOME_EXPENSE });
-
-   table_t<adjustment_t> adjustment_table;
-   adjustment_table.insert({ tid, aid });
-   std::cout << adjustment_table.size() << std::endl;
+   auto tid = ledger.transaction_table.insert({ "1999-12-31" });
+   auto aid = ledger.account_table.insert({ "Checking", account_type_t::INCOME_EXPENSE });
+   ledger.adjustment_table.insert({ tid, aid });
+   std::cout << ledger.adjustment_table.size() << std::endl;
    return unit_test_results; // the result from doctest is propagated here as well
 }
