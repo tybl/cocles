@@ -63,35 +63,55 @@ struct add_transaction_event_t
 #endif
 
 template <typename TYPE>
+struct identifier_t {
+
+   class passkey {
+      friend TYPE;
+      passkey() = default;
+      passkey(const passkey&) = delete;
+   };
+
+   using parent_type = TYPE;
+   using element_type = typename parent_type::value_type;
+   using size_type = typename parent_type::size_type;
+
+   constexpr explicit identifier_t(passkey, const parent_type& owner, size_type index) noexcept
+      : m_owner(owner)
+      , m_index(index) {}
+
+   bool operator==(const identifier_t& other) const noexcept {
+      return (&m_owner == &other.m_owner) && (m_index == other.m_index);
+   }
+
+   bool operator!=(const identifier_t& other) const noexcept {
+      return !operator==(other);
+   }
+
+   explicit operator size_type() const noexcept {
+      return m_index;
+   }
+
+   // This method has very large implications for the API
+   const element_type& operator*() const {
+      return m_owner.m_entries.at(m_index);
+   }
+
+private:
+   const parent_type& m_owner;
+   size_type m_index;
+};
+
+template <typename TYPE>
 struct stable_table_t {
 
+   using identifier_type = identifier_t<stable_table_t>;
    using value_type = TYPE;
    using container_type = std::vector<TYPE>;
    using size_type = typename std::vector<TYPE>::size_type;
    using difference_type = typename std::vector<TYPE>::difference_type;
+   friend identifier_type;
 
-   struct identifier_t {
-
-      constexpr explicit identifier_t(size_type value) noexcept
-         : m_value(value) {}
-
-      bool operator==(const identifier_t& other) const noexcept {
-         return (m_value == other.m_value);
-      }
-
-      bool operator!=(const identifier_t& other) const noexcept {
-         return !operator==(other);
-      }
-
-      explicit operator size_type() const noexcept {
-         return m_value;
-      }
-
-   private:
-      size_type m_value;
-   };
-
-   identifier_t insert(TYPE entry) {
+   identifier_type insert(TYPE entry) {
       size_type pos = 0;
       if (m_free_rows.size()) {
          pos = m_free_rows.back();
@@ -101,10 +121,10 @@ struct stable_table_t {
          pos = m_entries.size();
          m_entries.push_back(entry);
       }
-      return identifier_t(pos);
+      return identifier_type({}, *this, pos);
    }
 
-   TYPE remove(identifier_t id) {
+   TYPE remove(identifier_type id) {
       std::size_t index = static_cast<std::size_t>(id);
       auto iter = std::upper_bound(m_free_rows.begin(), m_free_rows.end(), index, std::greater<size_type>());
       m_free_rows.insert(iter, index);
@@ -123,45 +143,25 @@ private:
 template <typename TYPE>
 struct table_t {
 
+   using identifier_type = identifier_t<table_t>;
    using value_type = TYPE;
    using container_type = std::vector<TYPE>;
    using size_type = typename std::vector<TYPE>::size_type;
 
-   struct identifier_t {
-
-      constexpr explicit identifier_t(size_type value) noexcept
-         : m_value(value) {}
-
-      bool operator==(const identifier_t& other) const noexcept {
-         return (m_value == other.m_value);
-      }
-
-      bool operator!=(const identifier_t& other) const noexcept {
-         return !operator==(other);
-      }
-
-      explicit operator size_type() const noexcept {
-         return m_value;
-      }
-
-   private:
-      size_type m_value;
-   };
-
-   identifier_t insert(TYPE entry) {
+   identifier_type insert(TYPE entry) {
       size_type pos = m_entries.size();
       m_entries.push_back(entry);
-      return identifier_t(pos);
+      return identifier_type({}, *this, pos);
    }
 
-   TYPE remove(identifier_t id) {
-      std::size_t index = static_cast<std::size_t>(id);
+   TYPE remove(identifier_type id) {
+      size_type index = static_cast<size_type>(id);
       TYPE result = m_entries.at(index);
       m_entries.erase(m_entries.begin() + index);
       return result;
    }
 
-   std::size_t size() const {
+   size_type size() const {
       return m_entries.size();
    }
 
@@ -206,8 +206,8 @@ private:
 }; // struct transaction_t
 
 struct adjustment_t {
-   using transaction_id_t = stable_table_t<transaction_t>::identifier_t;
-   using account_id_t = stable_table_t<account_t>::identifier_t;
+   using transaction_id_t = stable_table_t<transaction_t>::identifier_type;
+   using account_id_t = stable_table_t<account_t>::identifier_type;
 
    adjustment_t(transaction_id_t transaction_id, account_id_t account_id)
       : m_transaction_id(transaction_id)
@@ -216,7 +216,7 @@ struct adjustment_t {
 private:
    transaction_id_t m_transaction_id;
    account_id_t m_account_id;
-};
+}; // struct adjustment_t
 
 #if 0
 struct ledger_impl_t {
@@ -313,5 +313,6 @@ extern "C" int main(int argc, const char* argv[]) {
    auto aid = ledger.account_table.insert({ "Checking", account_type_t::INCOME_EXPENSE });
    ledger.adjustment_table.insert({ tid, aid });
    std::cout << ledger.adjustment_table.size() << std::endl;
+   std::cout << (*tid).date() << std::endl;
    return unit_test_results; // the result from doctest is propagated here as well
 }
