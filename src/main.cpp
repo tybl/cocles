@@ -35,10 +35,7 @@ struct event_t {
 private:
    std::chrono::high_resolution_clock::time_point m_time;
 };
-#endif
 
-
-#if 0
 struct add_account_event_t
    : public event_t
    , public account_t
@@ -182,9 +179,13 @@ struct account_t {
       : m_type(type)
       , m_name(name) {}
 
-   std::string name() const { return m_name; }
+   const std::string& name() const {
+      return m_name;
+   }
 
-   account_type_t type() const { return m_type; }
+   account_type_t type() const {
+      return m_type;
+   }
 
 private:
    account_type_t m_type;
