@@ -132,10 +132,56 @@ struct stable_table_t {
       return m_entries.size() - m_free_rows.size();
    }
 
+#if 0
+   struct iterator_t {
+
+      explicit iterator_t(size_type index)
+         : m_value(index) {}
+
+      iterator_t& operator++() {
+
+         // TODO(tblyons): Skip empty elements
+         return *this;
+      }
+
+      iterator_t operator++(int) {
+         iterator_t result = *this;
+         operator++();
+         return result;
+      }
+
+      bool operator==(iterator_t other) const {
+         return (m_value == other.m_iterator);
+      }
+
+      bool operator!=(iterator_t other) const {
+         return !operator==(other);
+      }
+
+   private:
+      size_type m_value;
+   }; // struct iterator_t
+
+   iterator_t begin() {
+      // Should this provide the first not deleted element?
+      return iterator_t(0);
+   }
+
+   iterator_t end() {
+      return iterator_t(size());
+   }
+#endif
+
+   bool is_used(identifier_type id) const {
+      size_type index = static_cast<size_type>(id);
+      auto iter = std::upper_bound(m_free_rows.begin(), m_free_rows.end(), index, std::greater<size_type>());
+      return index < m_entries.size() && *iter != index;
+   }
+
 private:
    container_type m_entries;
    std::vector<size_type> m_free_rows; // Sorted in reverse order
-};
+}; // struct stable_table_t
 
 template <typename TYPE>
 struct table_t {
@@ -164,7 +210,7 @@ struct table_t {
 
 private:
    std::vector<TYPE> m_entries;
-};
+}; // struct table_t
 
 enum class account_type_t {
    INCOME_EXPENSE,

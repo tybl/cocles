@@ -12,20 +12,21 @@ namespace internal {
 
 template <typename TYPE>
 struct RecordKeeper {
+   using id_t = Identifier<TYPE>;
 
-   static constexpr Identifier<TYPE> used_id{0};
+   static constexpr id_t used_id{0};
 
-   static constexpr Identifier<TYPE> free_id{1};
+   static constexpr id_t free_id{1};
 
    constexpr RecordKeeper()
       : records({ ListNode<TYPE>(used_id, used_id, false), ListNode<TYPE>(free_id, free_id, true) })
       , used_count(0) {}
 
-   TYPE& get_record(Identifier<TYPE> id) {
+   TYPE& get_record(id_t id) {
       return at(id).data();
    }
 
-   const TYPE& get_record(Identifier<TYPE> id) const {
+   const TYPE& get_record(id_t id) const {
       return at(id).data();
    }
 
@@ -41,33 +42,33 @@ struct RecordKeeper {
       return records.size() - 2; // First two used for bookkeeping
    }
 
-   Identifier<TYPE> get_first_free() const {
+   id_t get_first_free() const {
       return at(free_id).next();
    }
 
-   Identifier<TYPE> get_first_used() const {
+   id_t get_first_used() const {
       return at(used_id).next();
    }
 
-   Identifier<TYPE> get_next(Identifier<TYPE> id) const {
+   id_t get_next(id_t id) const {
       return at(id).next();
    }
 
-   Identifier<TYPE> get_prev(Identifier<TYPE> id) const {
+   id_t get_prev(id_t id) const {
       return at(id).prev();
    }
 
-   bool is_free(Identifier<TYPE> id) const {
+   bool is_free(id_t id) const {
       return at(id).get_free();
    }
 
-   bool is_used(Identifier<TYPE> id) const {
+   bool is_used(id_t id) const {
       return (1 < static_cast<size_t>(id)) &&
              (static_cast<size_t>(id) < records.size()) &&
              !at(id).get_free();
    }
 
-   void use(Identifier<TYPE> id) {
+   void use(id_t id) {
       ListNode<TYPE>& record_being_used = at(id);
       record_being_used.set_free(false); // It is no longer available
 
@@ -89,7 +90,7 @@ struct RecordKeeper {
       used_count++;
    }
 
-   void free(Identifier<TYPE> id) {
+   void free(id_t id) {
       ListNode<TYPE>& record_being_freed = at(id);
       record_being_freed.set_free(true);
 
@@ -105,7 +106,7 @@ struct RecordKeeper {
       used_count--;
    }
 
-   Identifier<TYPE> allocate() {
+   id_t allocate() {
       auto id = get_first_free();
       if (id == free_id) {
          push_back();
