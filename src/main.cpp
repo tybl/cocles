@@ -5,6 +5,7 @@
 #include <atomic>
 #include <chrono>
 #include <iostream>
+#include <map>
 
 static int run_unit_tests(int argc, const char* argv[]) {
    doctest::Context context; // initialize
@@ -26,39 +27,6 @@ static int run_unit_tests(int argc, const char* argv[]) {
    }
    return result;
 }
-
-#if 0
-struct event_t {
-
-   event_t() noexcept
-      : m_time(std::chrono::high_resolution_clock::now()) {}
-
-private:
-   std::chrono::high_resolution_clock::time_point m_time;
-};
-
-struct add_account_event_t
-   : public event_t
-   , public account_t
-{
-
-   add_account_event_t(const std::string &name, account_type_t type)
-      : event_t()
-      , account_t(name, type) {}
-
-}; // struct add_account_event_t
-
-struct add_transaction_event_t
-   : public event_t
-   , public transaction_t
-{
-
-   add_transaction_event_t(const std::string &date)
-      : event_t()
-      , transaction_t(date) {}
-
-}; // add_transaction_event_t
-#endif
 
 template <typename TYPE>
 struct identifier_t {
@@ -87,30 +55,72 @@ private:
 };
 
 template <typename TYPE>
+std::ostream& operator<<(std::ostream& out, const identifier_t<TYPE>& id) {
+   return out << static_cast<std::size_t>(id);
+}
+
+template <typename TYPE>
 struct table_t {
 
-   using identifier_type = identifier_t<TYPE>;
-   using value_type = TYPE;
-   using container_type = std::vector<TYPE>;
-   using size_type = typename std::vector<TYPE>::size_type;
+   using container_type = std::map<identifier_t<TYPE>, TYPE>;
+   using mapped_type    = typename container_type::mapped_type;
+   using key_type       = typename container_type::key_type;
+   using size_type      = typename container_type::size_type;
+   using value_type     = typename container_type::value_type;
+   using reference      = typename container_type::reference;
+   using const_reference = typename container_type::const_reference;
+   using iterator       = typename container_type::iterator;
+   using const_iterator = typename container_type::const_iterator;
 
-   void insert(TYPE entry) {
-      auto pos = std::upper_bound(m_entries.cbegin(), m_entries.cend(), entry);
-      m_entries.insert(pos, entry);
+   table_t()
+      : m_max_id() {}
+
+   key_type insert(TYPE entry) {
+      key_type ret_val(++m_max_id);
+      m_entries.insert(std::make_pair(ret_val, entry));
+      return ret_val;
    }
 
-   void remove(identifier_type id) {
-      auto pos = std::upper_bound(m_entries.cbegin(), m_entries.cend(), id, [](const identifier_type& pid, const TYPE& item) { return pid < item.id(); });
-      TYPE result = m_entries.at(index);
-      m_entries.erase(pos);
+   void remove(key_type key) noexcept {
+      const auto count = m_entries.erase(key);
+      assert(1 == count);
    }
 
-   size_type size() const {
+   size_type size() const noexcept {
       return m_entries.size();
    }
 
+   reference at(const key_type& key) {
+      return m_entries.at(key);
+   }
+
+   const_reference at(const key_type& key) const {
+      return m_entries.at(key);
+   }
+
+   size_type count(const key_type& key) const {
+      return m_entries.count(key);
+   }
+
+   iterator begin() noexcept {
+      return m_entries.begin();
+   }
+
+   const_iterator cbegin() const noexcept {
+      return m_entries.cbegin();
+   }
+
+   iterator end() noexcept {
+      return m_entries.end();
+   }
+
+   const_iterator cend() const noexcept {
+      return m_entries.cend();
+   }
+
 private:
-   std::vector<TYPE> m_entries;
+   container_type m_entries;
+   std::size_t m_max_id;
 }; // struct table_t
 
 enum class account_type_t {
@@ -118,95 +128,67 @@ enum class account_type_t {
    BUDGET_CATEGORY,
    BUDGETED_ACCOUNT,
    UNBUDGETED_ACCOUNT
-};
+}; // enum class account_type_t 
 
 struct account_t {
 
    account_t(std::string name, account_type_t type)
-      : m_id(++max_id)
-      , m_name(name)
+      : m_name(name)
       , m_type(type) {}
 
-   const std::string& name() const {
+   const std::string& name() const noexcept {
       return m_name;
    }
 
-   account_type_t type() const {
+   account_type_t type() const noexcept {
       return m_type;
    }
 
-   identifier_t<account_t> id() const {
-      return m_id;
-   }
-
-   bool operator<(const account_t& other) const {
-      return (m_name < other.m_name);
-   }
-
 private:
-   identifier_t<account_t> m_id;
    std::string m_name;
    account_type_t m_type;
-   static std::atomic_size_t max_id;
 }; // struct account_t
-
-std::atomic_size_t account_t::max_id{0};
 
 struct transaction_t {
 
    transaction_t(const std::string& date, const std::string& memo = "")
-      : transaction_t(identifier_t<transaction_t>(++max_id), date, memo) {}
-
-   transaction_t(identifier_t<transaction_t> id, const std::string& date, const std::string& memo)
-      : m_id(id)
-      , m_date(date)
+      : m_date(date)
       , m_memo(memo) {}
 
-   const std::string& date() const {
+   const std::string& date() const noexcept {
       return m_date;
    }
 
-   identifier_t<transaction_t> id() const {
-      return m_id;
-   }
-
-   bool operator<(const transaction_t& other) const noexcept {
-      return (m_id < other.m_id);
+   const std::string& memo() const noexcept {
+      return m_memo;
    }
 
 private:
-   identifier_t<transaction_t> m_id;
    std::string m_date;
    std::string m_memo;
-   static std::atomic_size_t max_id;
 }; // struct transaction_t
 
-std::atomic_size_t transaction_t::max_id{0};
-
 struct adjustment_t {
-   using transaction_id_t = table_t<transaction_t>::identifier_type;
-   using account_id_t = table_t<account_t>::identifier_type;
+   using transaction_id_t = identifier_t<transaction_t>;
+   using account_id_t = identifier_t<account_t>;
 
-   adjustment_t(transaction_id_t transaction_id, account_id_t account_id)
-      : m_id(++max_id)
-      , m_transaction_id(transaction_id)
-      , m_account_id(account_id) {}
+   adjustment_t(transaction_id_t transaction_id, account_id_t account_id, const std::string& amount)
+      : m_transaction_id(transaction_id)
+      , m_account_id(account_id)
+      , m_amount(amount) {}
 
-   identifier_t<adjustment_t> id() const {
-      return m_id;
+   const std::string& amount() const {
+      return m_amount;
    }
 
 private:
-   identifier_t<adjustment_t> m_id;
    transaction_id_t m_transaction_id;
    account_id_t m_account_id;
    std::string m_amount;
-   static std::atomic_size_t max_id;
 }; // struct adjustment_t
 
-std::atomic_size_t adjustment_t::max_id{0};
-
 struct ledger_t {
+
    table_t<transaction_t> transaction_table;
    table_t<account_t>         account_table;
    table_t<adjustment_t>   adjustment_table;
@@ -223,18 +205,21 @@ extern "C" int main(int argc, const char* argv[]) {
    int unit_test_results = run_unit_tests(argc, argv);
 
    ledger_t ledger;
-   ledger.account_table.insert({"Starting Balance", account_type_t::UNBUDGETED_ACCOUNT});
-   ledger.account_table.insert({"Checking", account_type_t::BUDGETED_ACCOUNT});
-   ledger.account_table.insert({"Savings", account_type_t::BUDGETED_ACCOUNT});
-   ledger.account_table.insert({"Groceries", account_type_t::BUDGET_CATEGORY});
-   ledger.account_table.insert({"Wegmans", account_type_t::INCOME_EXPENSE});
-   ledger.account_table.insert({"Walmart", account_type_t::INCOME_EXPENSE});
-   ledger.transaction_table.insert({"2016-11-14"});
-   //ledger.adjustment_table.insert({tid001, aid001});
+   auto aid001 = ledger.account_table.insert({"Credit Card", account_type_t::BUDGETED_ACCOUNT});
+   auto aid002 = ledger.account_table.insert({"Groceries", account_type_t::BUDGET_CATEGORY});
+   auto aid003 = ledger.account_table.insert({"Wegmans", account_type_t::INCOME_EXPENSE});
+   auto tid001 = ledger.transaction_table.insert({"2016-11-14"});
+   ledger.adjustment_table.insert({tid001, aid001, "-20.00"});
+   ledger.adjustment_table.insert({tid001, aid002, "-20.00"});
+   ledger.adjustment_table.insert({tid001, aid003, "20.00"});
 
-   ledger.transaction_table.insert({ "1999-12-31" });
-   ledger.account_table.insert({ "Checking", account_type_t::INCOME_EXPENSE });
-   //ledger.adjustment_table.insert({ tid, aid });
+   std::cout << ledger.account_table.size() << std::endl;
    std::cout << ledger.adjustment_table.size() << std::endl;
+   std::cout << ledger.transaction_table.size() << std::endl;
+
+   for (const auto pr : ledger.account_table) {
+      std::cout << pr.first << ": " << pr.second.name() << std::endl;
+   }
+
    return unit_test_results; // the result from doctest is propagated here as well
 }
