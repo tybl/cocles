@@ -90,11 +90,11 @@ struct table_t {
       return m_entries.size();
    }
 
-   reference at(const key_type& key) {
+   mapped_type& at(const key_type& key) {
       return m_entries.at(key);
    }
 
-   const_reference at(const key_type& key) const {
+   const mapped_type& at(const key_type& key) const {
       return m_entries.at(key);
    }
 
@@ -128,7 +128,7 @@ enum class account_type_t {
    BUDGET_CATEGORY,
    BUDGETED_ACCOUNT,
    UNBUDGETED_ACCOUNT
-}; // enum class account_type_t 
+}; // enum class account_type_t
 
 struct account_t {
 
@@ -202,9 +202,46 @@ struct ledger_t {
 };
 
 extern "C" int main(int argc, const char* argv[]) {
+   using namespace std::literals;
    int unit_test_results = run_unit_tests(argc, argv);
 
    ledger_t ledger;
+   ledger.account_table.insert({"Checking", account_type_t::BUDGETED_ACCOUNT});
+
+   //                       1         2           3          4
+   //            0123456789 012345678901234567 89 0123456 7890
+   auto input = "2016-11-15\"Starting Balances\"1\t501318\t100"s;
+   std::size_t start = 0;
+   std::size_t end = input.find('-', start);
+   std::cout << "start: " << start << " end: " << end << std::endl;
+   int year = std::stoi(input.substr(start, end - start));
+   start = end + 1;
+   end = input.find('-', start);
+   std::cout << "start: " << start << " end: " << end << std::endl;
+   int month = std::stoi(input.substr(start, end - start));
+   start = end + 1;
+   end = input.find('"', start);
+   std::cout << "start: " << start << " end: " << end << std::endl;
+   int day = std::stoi(input.substr(start, end - start));
+   start = end + 1;
+   end = input.find('"', start);
+   std::cout << "start: " << start << " end: " << end << std::endl;
+   std::string memo = input.substr(start, end - start);
+   start = end + 1;
+   end = input.find('\t', start);
+   std::cout << "start: " << start << " end: " << end << std::endl;
+   account_t account = ledger.account_table.at(identifier_t<account_t>(std::stoull(input.substr(start, end - start))));
+   start = end + 1;
+   end = input.find('\t', start);
+   std::cout << "start: " << start << " end: " << end << std::endl;
+   double amount = std::stoll(input.substr(start, end - start));
+   start = end + 1;
+   end = input.find('\t', start);
+   std::cout << "start: " << start << " end: " << end << std::endl;
+   double denom = std::stoull(input.substr(start, end - start));
+
+   std::cout << year << "-" << month << "-" << day << " \"" << memo << "\", account: " << account.name() << ": " << amount / denom << std::endl;
+
    auto aid001 = ledger.account_table.insert({"Credit Card", account_type_t::BUDGETED_ACCOUNT});
    auto aid002 = ledger.account_table.insert({"Groceries", account_type_t::BUDGET_CATEGORY});
    auto aid003 = ledger.account_table.insert({"Wegmans", account_type_t::INCOME_EXPENSE});
