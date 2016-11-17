@@ -211,10 +211,19 @@ struct add_adjustment_event_t {
 
 struct add_transaction_event_t {
 
+   add_transaction_event_t() = default;
+
+   add_transaction_event_t(const std::string& input) {
+      deserialize(input);
+   }
+
    void deserialize(const std::string& input) {
 
       std::size_t start = 0;
       std::size_t end = input.find('\t', start);
+      assert(2 == std::stoi(input.substr(start, end - start)));
+      start = end + 1;
+      end = input.find('\t', start);
       time = std::chrono::system_clock::time_point(std::chrono::microseconds(std::stoull(input.substr(start, end - start))));
 
       start = end + 1;
@@ -240,11 +249,23 @@ struct add_transaction_event_t {
          end = input.find('\t', start);
          double denom = std::stoull(input.substr(start, end - start));
          adjustment.amount = std::to_string(amount / denom);
+         adjustments.push_back(adjustment);
       }
    }
 
    std::string serialize() const {
       std::string result;
+      //return               std::to_string(1) + '\t' + std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()).count()) + '\t' + name + '\t' + std::to_string(static_cast<int>(type));
+      result += std::to_string(2) + '\t';
+      result += std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()).count()) + '\t';
+      result += std::to_string(date.time_since_epoch().count()) + '\t';
+      result += memo;
+      for (auto adj : adjustments) {
+         result += '\t' + std::to_string(static_cast<uint64_t>(adj.account_id));
+         result += '\t' + adj.memo;
+         result += "\t501318"; // TODO(tblyons): Fix!
+         result += "\t100"; // TODO(tblyons): Fix!
+      }
       return result;
    }
 
@@ -254,7 +275,21 @@ struct add_transaction_event_t {
    std::vector<add_adjustment_event_t> adjustments;
 };
 
+TEST_CASE("add_account_event dogfood") {
+   using namespace std::literals;
+   auto input = "2\t1479263536123456\t17121\tStarting Balances\t1\t\t501318\t100"s;
+   add_transaction_event_t transaction(input);
+   CHECK(transaction.serialize() == input);
+}
+
 struct add_account_event_t {
+
+   add_account_event_t() = default;
+
+   add_account_event_t(const std::string& input) {
+      deserialize(input);
+   }
+
    void deserialize(const std::string& input) {
       std::size_t start = 0;
       std::size_t end = input.find('\t', start);
@@ -274,8 +309,9 @@ struct add_account_event_t {
 
    std::string serialize() const {
       return std::to_string(1) + '\t' +
-         std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()).count()) + '\t'
-         + name + '\t' + std::to_string(static_cast<int>(type));
+             std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()).count()) + '\t' +
+             name + '\t' +
+             std::to_string(static_cast<int>(type));
    }
 
    std::chrono::system_clock::time_point time;
@@ -286,9 +322,7 @@ struct add_account_event_t {
 TEST_CASE("add_account_event dogfood") {
    using namespace std::literals;
    auto account_input = "1\t1479263530123456\tChecking\t2"s;
-   add_account_event_t a;
-   a.deserialize(account_input);
-   CHECK("Checking"s == a.name);
+   add_account_event_t a(account_input);
    CHECK(a.serialize() == account_input);
 }
 
@@ -318,21 +352,16 @@ extern "C" int main(int argc, const char* argv[]) {
    int unit_test_results = run_unit_tests(argc, argv);
 
    ledger_t ledger;
-   ledger.account_table.insert({"Checking", account_type_t::BUDGETED_ACCOUNT});
-   ledger.account_table.insert({"Checking", account_type_t::BUDGETED_ACCOUNT});
-
-   auto account_input = "1\t1479263530123456\tChecking\t2"s;
-   add_account_event_t a;
-   a.deserialize(account_input);
-   assert("Checking"s == a.name);
+   add_account_event_t account("1\t1479263530123456\tChecking\t2");
+   ledger.replay_event(account);
 
    // TODO(tblyons): Add information about event type
-   auto transaction_input = "1479263536123456\t17121\tStarting Balances\t1\t\t501318\t100"s;
+   auto transaction_input = "2\t1479263536123456\t17121\tStarting Balances\t1\t\t501318\t100"s;
 
    add_transaction_event_t e;
    e.deserialize(transaction_input);
-   std::cout << e.time.time_since_epoch().count() << " " << date::year_month_day(e.date) << " " << e.memo << std::endl;
 
+#if 0
    auto aid001 = ledger.account_table.insert({"Credit Card", account_type_t::BUDGETED_ACCOUNT});
    auto aid002 = ledger.account_table.insert({"Groceries", account_type_t::BUDGET_CATEGORY});
    auto aid003 = ledger.account_table.insert({"Wegmans", account_type_t::INCOME_EXPENSE});
@@ -340,6 +369,7 @@ extern "C" int main(int argc, const char* argv[]) {
    ledger.adjustment_table.insert({tid001, aid001, "-20.00"});
    ledger.adjustment_table.insert({tid001, aid002, "-20.00"});
    ledger.adjustment_table.insert({tid001, aid003, "20.00"});
+#endif
 
    std::cout << ledger.account_table.size() << std::endl;
    std::cout << ledger.adjustment_table.size() << std::endl;
