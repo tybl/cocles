@@ -1,9 +1,9 @@
 [submodule "deps/date"]
-	path = deps/date
+	path = 3rdparty/date
 	url = https://github.com/HowardHinnant/date.git
 [submodule "deps/rapidjson"]
-	path = deps/rapidjson
+	path = 3rdparty/rapidjson
 	url = https://github.com/miloyip/rapidjson.git
 [submodule "deps/doctest"]
-	path = deps/doctest
+	path = 3rdparty/doctest
 	url = https://github.com/onqtam/doctest.git
