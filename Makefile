@@ -9,7 +9,7 @@ SOURCES := \
            src/main.cpp \
 
 CPPFLAGS += -c -MP -MMD -pedantic -Werror -I src -I include
-CXXFLAGS += -std=c++14
+CXXFLAGS += -std=c++1z
 LFLAGS += -lpthread -lgmp
 OBJECTS = $(SOURCES:%.cpp=$(BLDDIR)/%.o)
 DEPS = $(OBJECTS:.o=.d)

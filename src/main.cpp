@@ -30,6 +30,55 @@ static int run_unit_tests(int argc, const char* argv[]) {
    return result;
 }
 
+inline constexpr uint64_t pow10(uint32_t exponent) {
+   return (exponent == 0) ? 1 : (10ULL * pow10(exponent - 1));
+}
+
+template <uint32_t DECIMAL_PLACES>
+struct fixed_point_t {
+
+   static constexpr uint64_t exponent = pow10(DECIMAL_PLACES);
+
+   constexpr fixed_point_t()
+      : m_value() {}
+
+   constexpr fixed_point_t(double value)
+      : m_value(value * exponent) {}
+
+   fixed_point_t& operator+=(const fixed_point_t& other) {
+      m_value += other.m_value;
+      return *this;
+   }
+
+   fixed_point_t& operator-=(const fixed_point_t& other) {
+      m_value -= other.m_value;
+      return *this;
+   }
+
+   int64_t whole_number() const {
+      return m_value / exponent;
+   }
+
+
+private:
+   int64_t m_value;
+}; // struct fixed_point_t
+
+TEST_CASE("fixed_point_t") {
+   fixed_point_t<4> fp(10.1234);
+   CHECK(fp.whole_number() == 10);
+}
+
+TEST_CASE("fixed_point_t::operator+=()") {
+   fixed_point_t<4> a(1.2345);
+   fixed_point_t<4> b(5.4321);
+   CHECK(a.whole_number() == 1);
+   CHECK(b.whole_number() == 5);
+   a += b;
+   CHECK(a.whole_number() == 6);
+   CHECK(b.whole_number() == 5);
+}
+
 template <typename TYPE>
 struct identifier_t {
 
@@ -181,23 +230,27 @@ struct rational_t {
    uint64_t m_denominator;
 };
 
+struct decimal_t {
+
+};
+
 struct adjustment_t {
    using transaction_id_t = identifier_t<transaction_t>;
    using account_id_t = identifier_t<account_t>;
 
-   adjustment_t(transaction_id_t transaction_id, account_id_t account_id, const std::string& amount)
+   adjustment_t(transaction_id_t transaction_id, account_id_t account_id, const rational_t& amount)
       : m_transaction_id(transaction_id)
       , m_account_id(account_id)
       , m_amount(amount) {}
 
-   const std::string& amount() const {
+   const rational_t& amount() const {
       return m_amount;
    }
 
 private:
    transaction_id_t m_transaction_id;
    account_id_t m_account_id;
-   std::string m_amount;
+   rational_t m_amount;
 }; // struct adjustment_t
 
 struct add_adjustment_event_t {
@@ -206,7 +259,7 @@ struct add_adjustment_event_t {
 
    identifier_t<account_t> account_id;
    std::string memo;
-   std::string amount;
+   rational_t amount;
 };
 
 struct add_transaction_event_t {
@@ -244,11 +297,10 @@ struct add_transaction_event_t {
          adjustment.memo = input.substr(start, end - start);
          start = end + 1;
          end = input.find('\t', start);
-         double amount = std::stoll(input.substr(start, end - start));
+         adjustment.amount.m_numerator = std::stoll(input.substr(start, end - start));
          start = end + 1;
          end = input.find('\t', start);
-         double denom = std::stoull(input.substr(start, end - start));
-         adjustment.amount = std::to_string(amount / denom);
+         adjustment.amount.m_denominator = std::stoull(input.substr(start, end - start));
          adjustments.push_back(adjustment);
       }
    }
@@ -263,8 +315,8 @@ struct add_transaction_event_t {
       for (auto adj : adjustments) {
          result += '\t' + std::to_string(static_cast<uint64_t>(adj.account_id));
          result += '\t' + adj.memo;
-         result += "\t501318"; // TODO(tblyons): Fix!
-         result += "\t100"; // TODO(tblyons): Fix!
+         result += '\t' + std::to_string(adj.amount.m_numerator);
+         result += '\t' + std::to_string(adj.amount.m_denominator);
       }
       return result;
    }
