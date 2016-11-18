@@ -281,7 +281,18 @@ TEST_CASE("add_account_event dogfood") {
    CHECK(a.serialize() == account_input);
 }
 
+// This class defines an object that is responsible for keeping track of the current state of the system.
+// The state can be queried.
+// It also keeps track of state changes in the form of a log
+// During initialization, the log is read in and the actions are applied to the state of the system.
+// After initialization, messages that modify the state are appended to the log
 struct ledger_t {
+
+   ledger_t(std::iostream& io)
+      : m_event_io(io)
+   {
+
+   }
 
    void replay_event(const add_transaction_event_t& event) {
       ledger::identifier_t<transaction_t> tid = transaction_table.insert({event.date, event.memo});
@@ -300,13 +311,17 @@ struct ledger_t {
    table_t<transaction_t> transaction_table;
    table_t<account_t>         account_table;
    table_t<adjustment_t>   adjustment_table;
+private:
+   std::iostream& m_event_io;
 };
 
 extern "C" int main(int argc, const char* argv[]) {
    using namespace std::literals;
    int unit_test_results = run_unit_tests(argc, argv);
 
-   ledger_t ledger;
+   std::stringstream log("1\t1479263530123456\tChecking\t2\n2\t1479263536123456\t17121\tStarting Balances\t1\t\t501318");
+   ledger_t ledger(log);
+
    add_account_event_t account("1\t1479263530123456\tChecking\t2");
    ledger.replay_event(account);
 
