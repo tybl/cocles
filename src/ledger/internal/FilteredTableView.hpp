@@ -36,7 +36,7 @@ struct FilteredTableView {
 
    private:
       const ledger::internal::RecordKeeper<TYPE>& table;
-      ledger::internal::Identifier<TYPE> id;
+      ledger::identifier_t<TYPE> id;
       std::function<bool(const TYPE&)> pred;
    };
 

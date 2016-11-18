@@ -24,7 +24,7 @@ AccountTypeEntry Database::find_account_type_by_name(const std::string& name) co
          return account_type;
       }
    }
-   return AccountTypeEntry(ledger::internal::Identifier<AccountType>(0));
+   return AccountTypeEntry(ledger::identifier_t<AccountType>(0));
 }
 
 // Methods for interacting with Accounts
@@ -67,7 +67,7 @@ AccountEntry Database::find_account_by_name(const std::string& name) const {
          return account;
       }
    }
-   return AccountEntry(ledger::internal::Identifier<Account>(0));
+   return AccountEntry(ledger::identifier_t<Account>(0));
 }
 
 AccountTypeEntry Database::get_type(AccountEntry record) const {
@@ -168,7 +168,7 @@ AdjustmentEntry Database::find_adjustment_by_account(AccountEntry account) const
          return adjustment;
       }
    }
-   return AdjustmentEntry(ledger::internal::Identifier<Adjustment>(0));
+   return AdjustmentEntry(ledger::identifier_t<Adjustment>(0));
 }
 
 TransactionEntry Database::get_transaction(AdjustmentEntry record) const {
@@ -185,7 +185,7 @@ AdjustmentEntry Database::find_adjustment_by_transaction(TransactionEntry transa
          return adjustment;
       }
    }
-   return AdjustmentEntry(ledger::internal::Identifier<Adjustment>(0));
+   return AdjustmentEntry(ledger::identifier_t<Adjustment>(0));
 }
 
 // Test cases

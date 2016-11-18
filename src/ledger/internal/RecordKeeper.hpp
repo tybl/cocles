@@ -1,7 +1,7 @@
 #ifndef COCLES_LEDGER_INTERNAL_RECORDKEEPER_HPP
 #define COCLES_LEDGER_INTERNAL_RECORDKEEPER_HPP
 
-#include "Identifier.hpp"
+#include "ledger/identifier.hpp"
 #include "ListNode.hpp"
 
 #include <vector>
@@ -12,7 +12,7 @@ namespace internal {
 
 template <typename TYPE>
 struct RecordKeeper {
-   using id_t = Identifier<TYPE>;
+   using id_t = identifier_t<TYPE>;
 
    static constexpr id_t used_id{0};
 
@@ -119,18 +119,18 @@ struct RecordKeeper {
 private:
 
    void push_back() {
-      Identifier<TYPE> id(records.size());
+      identifier_t<TYPE> id(records.size());
       records.emplace_back(at(free_id).next(), free_id, true);
 
       at(at(free_id).next()).set_prev(id);
       at(free_id).next() = id;
    }
 
-   ListNode<TYPE>& at(Identifier<TYPE> id) {
+   ListNode<TYPE>& at(identifier_t<TYPE> id) {
       return records.at(static_cast<size_t>(id));
    }
 
-   const ListNode<TYPE>& at(Identifier<TYPE> id) const {
+   const ListNode<TYPE>& at(identifier_t<TYPE> id) const {
       return records.at(static_cast<size_t>(id));
    }
 
@@ -142,10 +142,10 @@ private:
 ////////////////// Implementation Details //////////////////
 
 template <typename TYPE>
-constexpr Identifier<TYPE> RecordKeeper<TYPE>::used_id;
+constexpr identifier_t<TYPE> RecordKeeper<TYPE>::used_id;
 
 template <typename TYPE>
-constexpr Identifier<TYPE> RecordKeeper<TYPE>::free_id;
+constexpr identifier_t<TYPE> RecordKeeper<TYPE>::free_id;
 
 } // namespace internal
 

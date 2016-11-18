@@ -1,7 +1,7 @@
 #ifndef COCLES_LEDGER_INTERNAL_ENTRYPROXY_HPP
 #define COCLES_LEDGER_INTERNAL_ENTRYPROXY_HPP
 
-#include "Identifier.hpp"
+#include "ledger/identifier.hpp"
 
 #include <utility> // std::move()
 
@@ -12,7 +12,7 @@ namespace internal {
 template <typename TYPE>
 struct EntryProxy {
 
-   constexpr explicit EntryProxy(Identifier<TYPE> id)
+   constexpr explicit EntryProxy(identifier_t<TYPE> id)
       : m_id(std::move(id)) {}
 
    constexpr EntryProxy()
@@ -22,7 +22,7 @@ struct EntryProxy {
       return (0 == static_cast<size_t>(m_id));
    }
 
-   Identifier<TYPE> get_id() const {
+   identifier_t<TYPE> get_id() const {
       return m_id;
    }
 
@@ -31,7 +31,7 @@ struct EntryProxy {
    }
 
 private:
-   Identifier<TYPE> m_id;
+   identifier_t<TYPE> m_id;
 }; // struct EntryProxy
 
 } // namespace internal

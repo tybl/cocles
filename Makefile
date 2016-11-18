@@ -4,7 +4,6 @@ SOURCES := \
            src/ledger/internal/account.cpp \
            src/ledger/internal/Database.cpp \
            src/ledger/money.cpp \
-           src/ledger/identifier.cpp \
            src/ledger/ledger.cpp \
            src/main.cpp \
 

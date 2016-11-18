@@ -2,6 +2,7 @@
 #include "doctest/doctest.h"
 #include "date/date.h"
 #include "math/fixed_point.hpp"
+#include "ledger/identifier.hpp"
 
 #include <algorithm>
 #include <atomic>
@@ -32,40 +33,9 @@ static int run_unit_tests(int argc, const char* argv[]) {
 }
 
 template <typename TYPE>
-struct identifier_t {
-
-   constexpr explicit identifier_t(uint64_t value) noexcept
-      : m_value(value) {}
-
-   bool operator==(const identifier_t& other) const noexcept {
-      return (m_value == other.m_value);
-   }
-
-   bool operator!=(const identifier_t& other) const noexcept {
-      return !operator==(other);
-   }
-
-   explicit operator uint64_t() const noexcept {
-      return m_value;
-   }
-
-   bool operator<(const identifier_t& other) const noexcept {
-      return (m_value < other.m_value);
-   }
-
-private:
-   uint64_t m_value;
-};
-
-template <typename TYPE>
-std::ostream& operator<<(std::ostream& out, const identifier_t<TYPE>& id) {
-   return out << static_cast<uint64_t>(id);
-}
-
-template <typename TYPE>
 struct table_t {
 
-   using container_type = std::map<identifier_t<TYPE>, TYPE>;
+   using container_type = std::map<ledger::identifier_t<TYPE>, TYPE>;
    using mapped_type    = typename container_type::mapped_type;
    using key_type       = typename container_type::key_type;
    using size_type      = typename container_type::size_type;
@@ -172,8 +142,8 @@ private:
 }; // struct transaction_t
 
 struct adjustment_t {
-   using transaction_id_t = identifier_t<transaction_t>;
-   using account_id_t = identifier_t<account_t>;
+   using transaction_id_t = ledger::identifier_t<transaction_t>;
+   using account_id_t = ledger::identifier_t<account_t>;
 
    adjustment_t(transaction_id_t transaction_id, account_id_t account_id, math::fixed_point_t<std::centi> amount)
       : m_transaction_id(transaction_id)
@@ -194,7 +164,7 @@ struct add_adjustment_event_t {
    add_adjustment_event_t()
       : account_id(0) {}
 
-   identifier_t<account_t> account_id;
+   ledger::identifier_t<account_t> account_id;
    std::string memo;
    math::fixed_point_t<std::centi> amount;
 };
@@ -227,7 +197,7 @@ struct add_transaction_event_t {
          add_adjustment_event_t adjustment;
          start = end + 1;
          end = input.find('\t', start);
-         adjustment.account_id = identifier_t<account_t>(std::stoull(input.substr(start, end - start)));
+         adjustment.account_id = ledger::identifier_t<account_t>(std::stoull(input.substr(start, end - start)));
          start = end + 1;
          end = input.find('\t', start);
          adjustment.memo = input.substr(start, end - start);
@@ -314,7 +284,7 @@ TEST_CASE("add_account_event dogfood") {
 struct ledger_t {
 
    void replay_event(const add_transaction_event_t& event) {
-      identifier_t<transaction_t> tid = transaction_table.insert({event.date, event.memo});
+      ledger::identifier_t<transaction_t> tid = transaction_table.insert({event.date, event.memo});
       for (auto adj : event.adjustments) {
          // TODO(tblyons): throw exception if adjustment already exists
          adjustment_table.insert({tid, adj.account_id, adj.amount});

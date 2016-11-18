@@ -1,7 +1,7 @@
 #ifndef COCLES_LEDGER_INTERNAL_LISTNODE_HPP
 #define COCLES_LEDGER_INTERNAL_LISTNODE_HPP
 
-#include "Identifier.hpp"
+#include "ledger/identifier.hpp"
 
 #include <cstddef> // size_t
 #include <stdexcept>
@@ -18,7 +18,7 @@ struct ListNode {
       , m_prev(0)
       , m_data() {}
 
-   constexpr ListNode(Identifier<TYPE> next, Identifier<TYPE> prev, bool p_free)
+   constexpr ListNode(identifier_t<TYPE> next, identifier_t<TYPE> prev, bool p_free)
       : m_next(next)
       , m_prev((static_cast<size_t>(prev) << 1) | (p_free & 1))
       , m_data() {}
@@ -31,15 +31,15 @@ struct ListNode {
       return m_prev & 1;
    }
 
-   Identifier<TYPE>& next() {
+   identifier_t<TYPE>& next() {
       return m_next;
    }
 
-   const Identifier<TYPE>& next() const {
+   const identifier_t<TYPE>& next() const {
       return m_next;
    }
 
-   void set_prev(Identifier<TYPE> id) {
+   void set_prev(identifier_t<TYPE> id) {
       size_t temp = static_cast<size_t>(id);
       // TODO: Figure out how to eliminate this check and thrown exception
       if (std::numeric_limits<int64_t>::max() < temp) {
@@ -48,8 +48,8 @@ struct ListNode {
       m_prev = (temp << 1) | (m_prev & 1);
    }
 
-   const Identifier<TYPE> get_prev() const {
-      return Identifier<TYPE>(m_prev >> 1);
+   const identifier_t<TYPE> get_prev() const {
+      return identifier_t<TYPE>(m_prev >> 1);
    }
 
    TYPE& data() {
@@ -61,7 +61,7 @@ struct ListNode {
    }
 
 private:
-   Identifier<TYPE> m_next;
+   identifier_t<TYPE> m_next;
    size_t m_prev;
    TYPE m_data;
 }; // struct ListNode

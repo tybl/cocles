@@ -2,7 +2,7 @@
 #define COCLES_LEDGER_INTERNAL_TABLEVIEW_HPP
 
 #include "EntryProxy.hpp"
-#include "Identifier.hpp"
+#include "ledger/identifier.hpp"
 
 struct Database;
 namespace ledger {
@@ -28,7 +28,7 @@ struct TableView {
 
    private:
       const ledger::internal::RecordKeeper<TYPE>& table;
-      ledger::internal::Identifier<TYPE> id;
+      ledger::identifier_t<TYPE> id;
    }; // class Iterator
 
    Iterator begin();

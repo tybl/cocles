@@ -1,26 +1,41 @@
 #ifndef COCLES_LEDGER_IDENTIFIER_HPP
 #define COCLES_LEDGER_IDENTIFIER_HPP
 
+#include <cstdint>
 #include <ostream>
-#include <string>
 
 namespace ledger {
 
+template <typename TYPE>
 struct identifier_t {
 
-   identifier_t(uint64_t new_value);
+   constexpr explicit identifier_t(uint64_t value) noexcept
+      : m_value(value) {}
 
-   std::string to_string(void) const;
+   bool operator==(const identifier_t& other) const noexcept {
+      return (m_value == other.m_value);
+   }
 
-   uint64_t operator () (void) const;
+   bool operator!=(const identifier_t& other) const noexcept {
+      return !operator==(other);
+   }
 
-   bool operator == (const identifier_t &other) const;
+   explicit operator uint64_t() const noexcept {
+      return m_value;
+   }
+
+   bool operator<(const identifier_t& other) const noexcept {
+      return (m_value < other.m_value);
+   }
 
 private:
-   unsigned long value;
+   uint64_t m_value;
 }; // struct identifier_t
 
-std::ostream& operator << (std::ostream &out, const ledger::identifier_t &id);
+template <typename TYPE>
+std::ostream& operator<<(std::ostream& out, const identifier_t<TYPE>& id) {
+   return out << static_cast<uint64_t>(id);
+}
 
 } // namespace ledger
 
