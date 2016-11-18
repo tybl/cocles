@@ -1,6 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest/doctest.h"
 #include "date/date.h"
+#include "math/fixed_point.hpp"
 
 #include <algorithm>
 #include <atomic>
@@ -28,54 +29,6 @@ static int run_unit_tests(int argc, const char* argv[]) {
       exit(result);                                  // propagate the result of the tests
    }
    return result;
-}
-
-inline constexpr int64_t pow10(uint32_t exponent) {
-   return (exponent == 0) ? 1 : (10 * pow10(exponent - 1));
-}
-
-template <uint32_t DECIMAL_PLACES>
-struct fixed_point_t {
-
-   static constexpr int64_t exponent = pow10(DECIMAL_PLACES);
-
-   constexpr fixed_point_t()
-      : m_value() {}
-
-   constexpr fixed_point_t(double value)
-      : m_value(static_cast<int64_t>(value * exponent)) {}
-
-   fixed_point_t& operator+=(const fixed_point_t& other) {
-      m_value += other.m_value;
-      return *this;
-   }
-
-   fixed_point_t& operator-=(const fixed_point_t& other) {
-      m_value -= other.m_value;
-      return *this;
-   }
-
-   int64_t whole_number() const {
-      return m_value / exponent;
-   }
-
-private:
-   int64_t m_value;
-}; // struct fixed_point_t
-
-TEST_CASE("fixed_point_t") {
-   fixed_point_t<4> fp(10.1234);
-   CHECK(fp.whole_number() == 10);
-}
-
-TEST_CASE("fixed_point_t::operator+=()") {
-   fixed_point_t<4> a(1.2345);
-   fixed_point_t<4> b(5.4321);
-   CHECK(a.whole_number() == 1);
-   CHECK(b.whole_number() == 5);
-   a += b;
-   CHECK(a.whole_number() == 6);
-   CHECK(b.whole_number() == 5);
 }
 
 template <typename TYPE>
@@ -218,38 +171,23 @@ private:
    std::string m_memo;
 }; // struct transaction_t
 
-struct rational_t {
-
-   rational_t()
-      : m_numerator()
-      , m_denominator() {}
-
-//private:
-   int64_t m_numerator;
-   uint64_t m_denominator;
-};
-
-struct decimal_t {
-
-};
-
 struct adjustment_t {
    using transaction_id_t = identifier_t<transaction_t>;
    using account_id_t = identifier_t<account_t>;
 
-   adjustment_t(transaction_id_t transaction_id, account_id_t account_id, const rational_t& amount)
+   adjustment_t(transaction_id_t transaction_id, account_id_t account_id, math::fixed_point_t<2> amount)
       : m_transaction_id(transaction_id)
       , m_account_id(account_id)
       , m_amount(amount) {}
 
-   const rational_t& amount() const {
+   math::fixed_point_t<2> amount() const {
       return m_amount;
    }
 
 private:
    transaction_id_t m_transaction_id;
    account_id_t m_account_id;
-   rational_t m_amount;
+   math::fixed_point_t<2> m_amount;
 }; // struct adjustment_t
 
 struct add_adjustment_event_t {
@@ -258,7 +196,7 @@ struct add_adjustment_event_t {
 
    identifier_t<account_t> account_id;
    std::string memo;
-   rational_t amount;
+   math::fixed_point_t<2> amount;
 };
 
 struct add_transaction_event_t {
@@ -270,7 +208,6 @@ struct add_transaction_event_t {
    }
 
    void deserialize(const std::string& input) {
-
       std::size_t start = 0;
       std::size_t end = input.find('\t', start);
       assert(2 == std::stoi(input.substr(start, end - start)));
@@ -286,7 +223,7 @@ struct add_transaction_event_t {
       end = input.find('\t', start);
       memo = input.substr(start, end - start);
 
-      while (std::string::npos != end) {
+      while (end < input.length()) {
          add_adjustment_event_t adjustment;
          start = end + 1;
          end = input.find('\t', start);
@@ -296,17 +233,13 @@ struct add_transaction_event_t {
          adjustment.memo = input.substr(start, end - start);
          start = end + 1;
          end = input.find('\t', start);
-         adjustment.amount.m_numerator = std::stoll(input.substr(start, end - start));
-         start = end + 1;
-         end = input.find('\t', start);
-         adjustment.amount.m_denominator = std::stoull(input.substr(start, end - start));
+         adjustment.amount.significand() = std::stoll(input.substr(start, end - start));
          adjustments.push_back(adjustment);
       }
    }
 
    std::string serialize() const {
       std::string result;
-      //return               std::to_string(1) + '\t' + std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()).count()) + '\t' + name + '\t' + std::to_string(static_cast<int>(type));
       result += std::to_string(2) + '\t';
       result += std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()).count()) + '\t';
       result += std::to_string(date.time_since_epoch().count()) + '\t';
@@ -314,8 +247,7 @@ struct add_transaction_event_t {
       for (auto adj : adjustments) {
          result += '\t' + std::to_string(static_cast<uint64_t>(adj.account_id));
          result += '\t' + adj.memo;
-         result += '\t' + std::to_string(adj.amount.m_numerator);
-         result += '\t' + std::to_string(adj.amount.m_denominator);
+         result += '\t' + std::to_string(adj.amount.significand());
       }
       return result;
    }
@@ -326,9 +258,11 @@ struct add_transaction_event_t {
    std::vector<add_adjustment_event_t> adjustments;
 };
 
-TEST_CASE("add_account_event dogfood") {
+TEST_CASE("add_transaction_event dogfood") {
    using namespace std::literals;
-   auto input = "2\t1479263536123456\t17121\tStarting Balances\t1\t\t501318\t100"s;
+   //                       1          2          3         4            5
+   //            0 12345678901234567 890123 456789012345678901 23 4 5678901
+   auto input = "2\t1479263536123456\t17121\tStarting Balances\t1\t\t501318"s;
    add_transaction_event_t transaction(input);
    CHECK(transaction.serialize() == input);
 }
@@ -406,9 +340,7 @@ extern "C" int main(int argc, const char* argv[]) {
    add_account_event_t account("1\t1479263530123456\tChecking\t2");
    ledger.replay_event(account);
 
-   // TODO(tblyons): Add information about event type
-   auto transaction_input = "2\t1479263536123456\t17121\tStarting Balances\t1\t\t501318\t100"s;
-
+   auto transaction_input = "2\t1479263536123456\t17121\tStarting Balances\t1\t\t501318"s;
    add_transaction_event_t e;
    e.deserialize(transaction_input);
 
