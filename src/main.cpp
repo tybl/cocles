@@ -175,19 +175,19 @@ struct adjustment_t {
    using transaction_id_t = identifier_t<transaction_t>;
    using account_id_t = identifier_t<account_t>;
 
-   adjustment_t(transaction_id_t transaction_id, account_id_t account_id, math::fixed_point_t<2> amount)
+   adjustment_t(transaction_id_t transaction_id, account_id_t account_id, math::fixed_point_t<std::centi> amount)
       : m_transaction_id(transaction_id)
       , m_account_id(account_id)
       , m_amount(amount) {}
 
-   math::fixed_point_t<2> amount() const {
+   math::fixed_point_t<std::centi> amount() const {
       return m_amount;
    }
 
 private:
    transaction_id_t m_transaction_id;
    account_id_t m_account_id;
-   math::fixed_point_t<2> m_amount;
+   math::fixed_point_t<std::centi> m_amount;
 }; // struct adjustment_t
 
 struct add_adjustment_event_t {
@@ -196,7 +196,7 @@ struct add_adjustment_event_t {
 
    identifier_t<account_t> account_id;
    std::string memo;
-   math::fixed_point_t<2> amount;
+   math::fixed_point_t<std::centi> amount;
 };
 
 struct add_transaction_event_t {
