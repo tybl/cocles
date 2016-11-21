@@ -33,6 +33,66 @@ static int run_unit_tests(int argc, const char* argv[]) {
 }
 
 template <typename TYPE>
+struct table_column_t {
+
+   using value_type = std::pair<std::size_t, TYPE>;
+
+   std::size_t size() const {
+      return m_data.size();
+   }
+
+   void push_back(value_type&& value) {
+      auto cmp = [](const value_type& a, const value_type& b) -> bool { return a.first < b.first; };
+      std::sort(m_data.begin(), m_data.end(), cmp);
+      auto iter = std::lower_bound(m_data.begin(), m_data.end(), value, cmp);
+      m_data.insert(iter, value);
+   }
+
+   const TYPE& value_at(std::size_t index) {
+      auto temp = std::make_pair(index, TYPE());
+      auto cmp = [](const value_type& a, const value_type& b) -> bool { return a.first < b.first; };
+      std::sort(m_data.begin(), m_data.end(), cmp);
+      auto iter = std::lower_bound(m_data.begin(), m_data.end(), temp, cmp);
+      if (m_data.end() == iter) {
+         std::cerr << __LINE__ << std::endl;
+         throw 0;
+      }
+      if (index != iter->first) {
+         std::cerr << __LINE__ << ": " << "index: " << index << ", found: " << iter->first << "\n";
+         throw 0;
+      }
+      return iter->second;
+   }
+
+   std::size_t index_for(const TYPE& value) {
+      auto temp = std::make_pair(0, value);
+      auto cmp = [](const value_type& a, const value_type& b) -> bool { return a.second < b.second; };
+      std::sort(m_data.begin(), m_data.end(), cmp);
+      auto iter = std::lower_bound(m_data.begin(), m_data.end(), temp, cmp);
+      if (m_data.end() == iter) {
+         std::cerr << __LINE__ << std::endl;
+         throw 0;
+      }
+      if (value != iter->second) {
+         std::cerr << __LINE__ << ": " << "value: " << value << ", found: " << iter->second << "\n";
+         throw 0;
+      }
+      return iter->first;
+   }
+
+private:
+   std::vector<value_type> m_data;
+};
+
+TEST_CASE("table_column_t") {
+   table_column_t<std::string> blah;
+   blah.push_back({234, "Hello"});
+   CHECK(blah.size() == 1);
+   CHECK(blah.value_at(234) == std::string("Hello"));
+   CHECK(blah.index_for("Hello") == 234);
+}
+
+template <typename TYPE>
 struct table_t {
 
    using container_type = std::map<ledger::identifier_t<TYPE>, TYPE>;
@@ -288,8 +348,8 @@ TEST_CASE("add_account_event dogfood") {
 // After initialization, messages that modify the state are appended to the log
 struct ledger_t {
 
-   ledger_t(std::iostream& io)
-      : m_event_io(io)
+   ledger_t(std::iostream& /*io*/)
+      //: m_event_io(io)
    {
 
    }
@@ -312,12 +372,13 @@ struct ledger_t {
    table_t<account_t>         account_table;
    table_t<adjustment_t>   adjustment_table;
 private:
-   std::iostream& m_event_io;
+   //std::iostream& m_event_io;
 };
 
 extern "C" int main(int argc, const char* argv[]) {
    using namespace std::literals;
    int unit_test_results = run_unit_tests(argc, argv);
+
 
    std::stringstream log("1\t1479263530123456\tChecking\t2\n2\t1479263536123456\t17121\tStarting Balances\t1\t\t501318");
    ledger_t ledger(log);

@@ -63,8 +63,8 @@ struct RecordKeeper {
    }
 
    bool is_used(id_t id) const {
-      return (1 < static_cast<size_t>(id)) &&
-             (static_cast<size_t>(id) < records.size()) &&
+      return (1 < static_cast<uint64_t>(id)) &&
+             (static_cast<uint64_t>(id) < records.size()) &&
              !at(id).get_free();
    }
 
@@ -127,11 +127,11 @@ private:
    }
 
    ListNode<TYPE>& at(identifier_t<TYPE> id) {
-      return records.at(static_cast<size_t>(id));
+      return records.at(static_cast<uint64_t>(id));
    }
 
    const ListNode<TYPE>& at(identifier_t<TYPE> id) const {
-      return records.at(static_cast<size_t>(id));
+      return records.at(static_cast<uint64_t>(id));
    }
 
 private:

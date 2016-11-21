@@ -20,7 +20,7 @@ struct ListNode {
 
    constexpr ListNode(identifier_t<TYPE> next, identifier_t<TYPE> prev, bool p_free)
       : m_next(next)
-      , m_prev((static_cast<size_t>(prev) << 1) | (p_free & 1))
+      , m_prev((static_cast<uint64_t>(prev) << 1) | (p_free & 1))
       , m_data() {}
 
    void set_free(bool free) {
@@ -40,7 +40,7 @@ struct ListNode {
    }
 
    void set_prev(identifier_t<TYPE> id) {
-      size_t temp = static_cast<size_t>(id);
+      size_t temp = static_cast<uint64_t>(id);
       // TODO: Figure out how to eliminate this check and thrown exception
       if (std::numeric_limits<int64_t>::max() < temp) {
          throw std::overflow_error("Identifier is too large");
