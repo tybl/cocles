@@ -2,6 +2,7 @@
 #include "doctest/doctest.h"
 #include "date/date.h"
 #include "math/fixed_point.hpp"
+#include "math/integer.hpp"
 #include "ledger/identifier.hpp"
 
 #include <algorithm>
@@ -9,6 +10,7 @@
 #include <cassert>
 #include <chrono>
 #include <iostream>
+#include <list>
 #include <map>
 
 static int run_unit_tests(int argc, const char* argv[]) {
@@ -35,49 +37,68 @@ static int run_unit_tests(int argc, const char* argv[]) {
 template <typename TYPE>
 struct table_column_t {
 
-   using value_type = std::pair<std::size_t, TYPE>;
+   struct value_type {
+      std::size_t index;
+      TYPE value;
+   };
 
    std::size_t size() const {
       return m_data.size();
    }
 
    void push_back(value_type&& value) {
-      auto cmp = [](const value_type& a, const value_type& b) -> bool { return a.first < b.first; };
-      std::sort(m_data.begin(), m_data.end(), cmp);
-      auto iter = std::lower_bound(m_data.begin(), m_data.end(), value, cmp);
-      m_data.insert(iter, value);
+      std::sort(m_data.begin(), m_data.end(), index_cmp);
+      auto iter = std::lower_bound(m_data.begin(), m_data.end(), value, index_cmp);
+      if ((m_data.end() == iter) || (iter->index != value.index)) {
+         m_data.insert(iter, value);
+      }
    }
 
    const TYPE& value_at(std::size_t index) {
-      auto temp = std::make_pair(index, TYPE());
-      auto cmp = [](const value_type& a, const value_type& b) -> bool { return a.first < b.first; };
-      std::sort(m_data.begin(), m_data.end(), cmp);
-      auto iter = std::lower_bound(m_data.begin(), m_data.end(), temp, cmp);
-      if (m_data.end() == iter) {
+      std::sort(m_data.begin(), m_data.end(), index_cmp);
+      auto iter = std::lower_bound(m_data.begin(), m_data.end(), index, lb_index_cmp);
+      if ((m_data.end() == iter) || (index != iter->index)) {
          std::cerr << __LINE__ << std::endl;
          throw 0;
       }
-      if (index != iter->first) {
-         std::cerr << __LINE__ << ": " << "index: " << index << ", found: " << iter->first << "\n";
-         throw 0;
-      }
-      return iter->second;
+      return iter->value;
    }
 
    std::size_t index_for(const TYPE& value) {
-      auto temp = std::make_pair(0, value);
-      auto cmp = [](const value_type& a, const value_type& b) -> bool { return a.second < b.second; };
-      std::sort(m_data.begin(), m_data.end(), cmp);
-      auto iter = std::lower_bound(m_data.begin(), m_data.end(), temp, cmp);
-      if (m_data.end() == iter) {
+      std::sort(m_data.begin(), m_data.end(), value_cmp);
+      auto iter = std::lower_bound(m_data.begin(), m_data.end(), value, lb_value_cmp);
+      if ((m_data.end() == iter) || (value != iter->value)) {
          std::cerr << __LINE__ << std::endl;
          throw 0;
       }
-      if (value != iter->second) {
-         std::cerr << __LINE__ << ": " << "value: " << value << ", found: " << iter->second << "\n";
-         throw 0;
+      return iter->index;
+   }
+
+   void remove(std::size_t index) {
+      std::sort(m_data.begin(), m_data.end(), index_cmp);
+      auto iter = std::lower_bound(m_data.begin(), m_data.end(), index, lb_index_cmp);
+      if ((m_data.end() != iter) && (index == iter->index)) {
+         std::iter_swap(iter, std::prev(m_data.end()));
+         m_data.erase(std::prev(m_data.end()));
       }
-      return iter->first;
+   }
+
+private:
+
+   static constexpr bool index_cmp(const value_type& a, const value_type& b) {
+      return a.index < b.index;
+   }
+
+   static constexpr bool value_cmp(const value_type& a, const value_type& b) {
+      return a.value < b.value;
+   }
+
+   static constexpr bool lb_index_cmp(const value_type& obj, const std::size_t& index) {
+      return obj.index < index;
+   }
+
+   static constexpr bool lb_value_cmp(const value_type& obj, const TYPE& value) {
+      return obj.value < value;
    }
 
 private:
@@ -87,6 +108,18 @@ private:
 TEST_CASE("table_column_t") {
    table_column_t<std::string> blah;
    blah.push_back({234, "Hello"});
+   CHECK(blah.size() == 1);
+   CHECK(blah.value_at(234) == std::string("Hello"));
+   CHECK(blah.index_for("Hello") == 234);
+   blah.push_back({235, "World"});
+   CHECK(blah.size() == 2);
+   CHECK(blah.value_at(234) == std::string("Hello"));
+   CHECK(blah.index_for("Hello") == 234);
+   CHECK(blah.value_at(235) == std::string("World"));
+   CHECK(blah.index_for("World") == 235);
+   blah.push_back({235, "Foo"});
+   CHECK(blah.size() == 2);
+   blah.remove(235);
    CHECK(blah.size() == 1);
    CHECK(blah.value_at(234) == std::string("Hello"));
    CHECK(blah.index_for("Hello") == 234);
@@ -156,7 +189,7 @@ private:
    uint64_t m_max_id;
 }; // struct table_t
 
-enum class account_type_t {
+enum class account_type_t: uint8_t {
    INCOME_EXPENSE,
    BUDGET_CATEGORY,
    BUDGETED_ACCOUNT,
@@ -228,6 +261,83 @@ struct add_adjustment_event_t {
    std::string memo;
    math::fixed_point_t<std::centi> amount;
 };
+
+namespace internal {
+
+struct transaction_t {
+   uint64_t m_id;                //  8 bytes
+   std::string m_memo;           // 32 bytes
+   date::sys_days m_date;        //  4 bytes
+                                 // ========
+                                 // 44 bytes
+                                 // 48 bytes (aligned)
+   // 20 bytes off of cache line (16 once padded)
+};
+
+static_assert(48 == sizeof(transaction_t), "internal::transaction_t changed size");
+
+struct account_t {
+   std::string m_memo;            // 32 bytes
+   std::string m_name;            // 32 bytes
+   uint64_t m_id;                 //  8 bytes
+   account_type_t m_account_type; //  1 byte
+                                  // ========
+                                  // 73 bytes
+                                  // 80 bytes (aligned)
+   // 55 bytes off of cache line (48 once padded)
+};
+
+static_assert(80 == sizeof(account_t), "internal::account_t changed size");
+
+struct adjustment_t {
+   uint64_t m_id;                            //  8 bytes
+   uint64_t m_account_id;                    //  8 bytes
+   uint64_t m_transaction_id;                //  8 bytes
+   math::fixed_point_t<std::centi> m_amount; //  8 bytes
+   uint64_t m_flags; // cleared, reconciled  //  8 bytes
+                                             // ========
+                                             // 40 bytes
+                                             // 40 bytes (aligned)
+   // 24 bytes off of cache line
+};
+
+static_assert(40 == sizeof(adjustment_t), "internal::adjustment_t changed size");
+
+struct account_table_t {
+
+   std::size_t size() const {
+      assert(m_data.size() == m_id_index.size());
+      assert(m_data.size() == m_name_index.size());
+      return m_data.size();
+   }
+
+#if 0
+   insert(const account_t& account) {
+
+   }
+#endif
+
+private:
+   std::list<account_t> m_data;
+   std::map<uint64_t, uint64_t> m_id_index;
+   std::map<std::string, uint64_t> m_name_index;
+};
+
+struct transaction_table_t {
+private:
+   std::list<transaction_t> m_data;
+   std::map<uint64_t, uint64_t> m_id_index;
+   std::multimap<date::sys_days, uint64_t> m_date_index;
+};
+
+struct adjustment_table_t {
+private:
+   std::list<adjustment_t> m_data;
+   std::map<uint64_t, uint64_t> m_id_index;
+   std::multimap<uint64_t, uint64_t> m_account_id_index;
+};
+
+} // namespace internal
 
 struct add_transaction_event_t {
 
@@ -379,7 +489,6 @@ extern "C" int main(int argc, const char* argv[]) {
    using namespace std::literals;
    int unit_test_results = run_unit_tests(argc, argv);
 
-
    std::stringstream log("1\t1479263530123456\tChecking\t2\n2\t1479263536123456\t17121\tStarting Balances\t1\t\t501318");
    ledger_t ledger(log);
 
@@ -408,5 +517,9 @@ extern "C" int main(int argc, const char* argv[]) {
       std::cout << pr.first << ": " << pr.second.name() << std::endl;
    }
 
+   std::cout << sizeof(internal::transaction_t) << std::endl;
+   std::cout << sizeof(std::string) << std::endl;
+
+   std::cout << "sizeof(internal::account_t): " << sizeof(internal::account_t) << std::endl;
    return unit_test_results; // the result from doctest is propagated here as well
 }
