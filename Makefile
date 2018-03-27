@@ -17,8 +17,8 @@ ifeq ($(CXX), g++)
    CPPFLAGS += -Wall -Wextra
 else
    CPPFLAGS += -Weverything -Wno-padded
-   CXXFLAGS += -Wno-c++98-compat-pedantic -stdlib=libc++
-   LFLAGS += -lc++ -lc++abi
+   CXXFLAGS += -Wno-c++98-compat-pedantic
+   LFLAGS += -lstdc++
 endif
 
 .PHONY: all debug release check clean
