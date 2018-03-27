@@ -513,7 +513,7 @@ extern "C" int main(int argc, const char* argv[]) {
    std::cout << ledger.adjustment_table.size() << std::endl;
    std::cout << ledger.transaction_table.size() << std::endl;
 
-   for (const auto pr : ledger.account_table) {
+   for (const auto& pr : ledger.account_table) {
       std::cout << pr.first << ": " << pr.second.name() << std::endl;
    }
 
