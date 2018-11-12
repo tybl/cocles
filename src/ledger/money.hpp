@@ -1,3 +1,12 @@
+///////////////////////////////////////////////////////////////////////////////
+// Defines class to represent money
+//
+// Only represent up to 10,000,000,000,000,000.00
+//
+// Use cases:
+// - Sum up amounts from each adjustment for a specific account
+// - Convert to a string for display
+///////////////////////////////////////////////////////////////////////////////
 #ifndef COCLES_LEDGER_MONEY_HPP
 #define COCLES_LEDGER_MONEY_HPP
 
