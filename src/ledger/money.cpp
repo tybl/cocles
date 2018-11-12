@@ -8,8 +8,12 @@ money_t::money_t() {
    mpz_init(value);
 }
 
-money_t::money_t(double new_value) {
-   mpz_init_set_d(value, new_value * 100);
+money_t::money_t(const std::string& new_value) {
+   mpz_init(value);
+   int err = mpz_set_str(value, new_value.c_str(), 10);
+   if (0 != err) {
+      throw err;
+   }
 }
 
 money_t::money_t(const money_t &other) {

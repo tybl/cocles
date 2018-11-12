@@ -10,6 +10,7 @@
 #ifndef COCLES_LEDGER_MONEY_HPP
 #define COCLES_LEDGER_MONEY_HPP
 
+//TODO: which is larger, ostream or iosfwd? Put the smaller here
 #include <ostream>
 #include <string>
 #include <gmp.h>
@@ -20,7 +21,7 @@ struct money_t {
 
    money_t(void);
 
-   explicit money_t(double new_value);
+   explicit money_t(const std::string& new_value);
 
    money_t(const money_t &other);
 

@@ -15,7 +15,7 @@ namespace ledger {
    ledger_t& ledger_t::operator=(ledger_t &&) noexcept = default;
 
    money_t ledger_t::get_account_balance(std::string account_name) const {
-      money_t result(0.0);
+      money_t result("0");
       if (impl) {
          const auto& adjustments = impl->adjustments;
          // find account object
@@ -61,7 +61,7 @@ namespace ledger {
 
 TEST_CASE("ledger_t::get_account_balance") {
    ledger::ledger_t ledger;
-   CHECK(ledger::money_t(0.0) == ledger.get_account_balance("Credit Card"));
+   CHECK(ledger::money_t("0") == ledger.get_account_balance("Credit Card"));
 }
 
 TEST_CASE("ledger_t::insert_account") {
@@ -69,7 +69,7 @@ TEST_CASE("ledger_t::insert_account") {
    ledger::account_t a;
    a.name = "Credit Card";
    ledger += a;
-   CHECK(ledger::money_t(0.0) == ledger.get_account_balance("Credit Card"));
+   CHECK(ledger::money_t("0") == ledger.get_account_balance("Credit Card"));
 }
 
 TEST_CASE("ledger_t::insert_transaction") {
@@ -79,8 +79,8 @@ TEST_CASE("ledger_t::insert_transaction") {
    trans.memo = "Test";
    ledger::adjustment_t adjust;
    adjust.account.name = "Credit Card";
-   adjust.amount = ledger::money_t(5.00);
+   adjust.amount = ledger::money_t("500");
    trans.adjustments.push_back(adjust);
    ledger += trans;
-   CHECK(ledger.get_account_balance("Credit Card") == ledger::money_t(5.00));
+   CHECK(ledger.get_account_balance("Credit Card") == ledger::money_t("500"));
 }
