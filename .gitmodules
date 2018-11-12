@@ -4,6 +4,7 @@
 [submodule "deps/rapidjson"]
 	path = 3rdparty/rapidjson
 	url = https://github.com/miloyip/rapidjson.git
+	ignore = dirty
 [submodule "deps/doctest"]
 	path = 3rdparty/doctest
 	url = https://github.com/onqtam/doctest.git
