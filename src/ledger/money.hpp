@@ -13,7 +13,7 @@
 //TODO: which is larger, ostream or iosfwd? Put the smaller here
 #include <ostream>
 #include <string>
-#include <gmp.h>
+//#include <gmp.h>
 
 namespace ledger {
 
@@ -25,8 +25,6 @@ struct money_t {
 
    money_t(const money_t &other);
 
-   ~money_t(void);
-
    std::string to_string(void) const;
 
    money_t& operator = (money_t other);
@@ -36,7 +34,8 @@ struct money_t {
    bool operator == (const money_t &other) const;
 
 private:
-   mpz_t value;
+   //mpz_t value;
+   int64_t value;
 }; // struct money_t
 
 std::ostream& operator << (std::ostream &out, const money_t &a);

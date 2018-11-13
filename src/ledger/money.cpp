@@ -4,50 +4,45 @@
 
 namespace ledger {
 
-money_t::money_t() {
-   mpz_init(value);
-}
+money_t::money_t()
+   : value(0) { }
 
 money_t::money_t(const std::string& new_value) {
-   mpz_init(value);
-   int err = mpz_set_str(value, new_value.c_str(), 10);
-   if (0 != err) {
-      throw err;
+   int64_t whole, frac;
+   int result = sscanf(new_value.c_str(), "%ld.%2ld", &whole, &frac);
+   if (result > 0) {
+      value = whole * 100;
+      if (result > 1) {
+         value += frac;
+      }
    }
 }
 
-money_t::money_t(const money_t &other) {
-   mpz_init_set(value, other.value);
-}
-
-money_t::~money_t() {
-   mpz_clear(value);
-}
+money_t::money_t(const money_t &other)
+   : value(other.value) { }
 
 std::string money_t::to_string() const {
-   mpz_t whole;
-   mpz_init(whole);
-   unsigned long fraction = mpz_tdiv_q_ui(whole, value, 100);
-   int length = gmp_snprintf(nullptr, 0, "%Zd.%02lu", whole, fraction);
-   length = (0 < length) ? length : 0;
-   std::string result(static_cast<unsigned>(length), '\0');
-   gmp_snprintf(&result[0], length + 1, "%Zd.%02lu", whole, fraction);
-   mpz_clear(whole);
-   return result;
+   //TODO: Force frac to positive (whole should also be affected)
+   int64_t whole = value / 100;
+   int64_t frac = value % 100;
+   char buffer[24];
+   std::snprintf(buffer, 24, "%ld.%02ld", whole, frac);
+   return std::string(buffer);
 }
 
 money_t& money_t::operator = (money_t other) {
-   mpz_swap(value, other.value);
+   //TODO: This is not implemented in the standard copy-and-swap paradigm
+   std::swap(value, other.value);
    return *this;
 }
 
 money_t& money_t::operator += (const money_t &other) {
-   mpz_add(value, value, other.value);
+   value += other.value;
    return *this;
 }
 
 bool money_t::operator == (const money_t &other) const {
-   return 0 == mpz_cmp(value, other.value);
+   return value == other.value;
 }
 
 std::ostream& operator << (std::ostream &out, const money_t &a) {
