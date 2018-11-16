@@ -1,5 +1,6 @@
 #include "money.hpp"
 
+#include "doctest/doctest.h"
 #include <iostream>
 
 namespace ledger {
@@ -54,3 +55,17 @@ ledger::money_t operator + (money_t lhs, const money_t &rhs) {
 }
 
 } // namespace ledger
+
+TEST_CASE("ledger::money_t") {
+   std::string amount_a_str("12345678.90");
+   std::string amount_b_str("98765432.10");
+   std::string amount_sum_str("111111111.00");
+   ledger::money_t amount_a(amount_a_str);
+   ledger::money_t amount_b(amount_b_str);
+   ledger::money_t amount_sum(amount_sum_str);
+   CHECK(amount_a.to_string() == amount_a_str);
+   CHECK(amount_b.to_string() == amount_b_str);
+   CHECK(amount_sum.to_string() == amount_sum_str);
+   amount_a += amount_b;
+   CHECK(amount_a == amount_sum);
+}
