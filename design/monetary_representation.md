@@ -60,5 +60,27 @@ Therefore:
 | 12 | money | money | number | money | Yes |
 | 13 | number | number | money | money | No (1.1) |
 | 14 | money | number | money | money | Yes |
-| 15 | number | money | money | money | No (4) |
-| 16 | money | money | money | money | No (4) |
+| 15 | number | money | money | money | No (4.1) |
+| 16 | money | money | money | money | No (4.1) |
+
+Thus, valid equations are:
+
+money = number * money + money, and
+
+money = money * number + money
+
+money / money = number (remainder: money)
+
+money / number = money (remainder: money)
+
+C++ interface:
+```
+money operator+(money, money)
+money operator-(money, money)
+money operator*(money, number)
+money operator*(number, money)
+money operator%(money, number)
+money operator%(number, money)
+money operator/(money, number)
+number operator/(money, money)
+```
