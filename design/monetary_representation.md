@@ -1,6 +1,17 @@
-The IEEE standard for representing decimal floating point: http://www.dsc.ufcg.edu.br/~cnum/modulos/Modulo2/IEEE754_2008.pdf
+# Considerations
+* Arithmetic
+    * Addition: The majority of operations will be addition (may be addition of negative values)
+    * Rounding: Only necessary for multiplication or division
+* Fractionals: Most monetary representations have whole units and fractional units
+* Currency representation/codes
 
-Intel Decimal Floating-Point Math Library (software implementation of the IEEE 754-2008 Decimal Floating-Point Arithmetic specification: https://software.intel.com/en-us/articles/intel-decimal-floating-point-math-library
+# Standards
+* IEEE 754-2008 Decimal Floating-Point Arithmetic specification: http://www.dsc.ufcg.edu.br/~cnum/modulos/Modulo2/IEEE754_2008.pdf
+* ISO 4217 International Standard for currency codes: https://www.iso.org/iso-4217-currency-codes.html, https://en.wikipedia.org/wiki/ISO_4217
+* ISO 3166 International Standard for country codes: https://www.iso.org/iso-3166-country-codes.html, https://en.wikipedia.org/wiki/ISO_3166
+
+# Implementations
+Intel Decimal Floating-Point Math Library (implementation of IEEE 754-2008): https://software.intel.com/en-us/articles/intel-decimal-floating-point-math-library
 
 A C/C++ library for money and ISO 4217 currency codes: https://github.com/castedo/isomon, http://ref.castedo.com/isomon
 
