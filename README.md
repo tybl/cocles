@@ -9,7 +9,7 @@ InsertPayee(payee_name)
 InsertTransaction(date)
 InsertTransfer()
 
-GetBalanceForAccount(account)
-GetTransfersForAccount(account)
-std::vector<account> GetAccountsWithNameContaining(string)
+GetBalanceForAccount(account) const;
+std::vector<transfer> GetTransfersForAccount(account) const;
+std::vector<account> GetAccountsWithNameContaining(string) const;
 ```
