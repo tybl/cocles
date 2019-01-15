@@ -3,7 +3,7 @@
 Cocles uses an internal, custom database for accumulating and querying ledger
 entries. This database has the following interface for recording transactions:
 
-```c++
+```cpp
 InsertAccount(account_name)
 InsertPayee(payee_name)
 InsertTransaction(date)
