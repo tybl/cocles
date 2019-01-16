@@ -12,8 +12,8 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ******************************************************************************/
-#ifndef COCLES_MONEY_MONEY_HPP
-#define COCLES_MONEY_MONEY_HPP
+#ifndef COCLES_UTIL_MONEY_HPP
+#define COCLES_UTIL_MONEY_HPP
 ///////////////////////////////////////////////////////////////////////////////
 // Defines class to represent money
 //
@@ -26,7 +26,7 @@ PERFORMANCE OF THIS SOFTWARE.
 
 #include <string>
 
-namespace money {
+namespace util {
 
 struct money_t {
 
@@ -103,6 +103,6 @@ private:
    int64_t m_value;
 }; // struct money_t
 
-} // namespace money
+} // namespace util
 
-#endif // COCLES_MONEY_MONEY_HPP
+#endif // COCLES_UTIL_MONEY_HPP
