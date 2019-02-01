@@ -9,3 +9,10 @@
 * Sum balance for transaction
 * Sum balances for accounts
 * Sum balances for budget categories
+
+# Tables
+* Transactions
+	* ID
+	* Date
+* Accounts
+* Payees
