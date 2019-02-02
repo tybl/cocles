@@ -30,9 +30,16 @@ std::vector<transaction_t> database;
 This design captures the essential characteristics of a transaction in that it contains a date, memo, and a list of account adjustments. It is very simple to add a transaction. However, an account cannot be added without adding a transaction. This 
 
 * Add account
+
 Cannot add an account separate from a transaction.
+
 * Add transaction
-Very simple to add a transaction
+
+```
+database.insert(transaction);
+```
+It doesn't get any simpler than this.
+
 * List accounts
 ```
 boost::container::flat_set<std::string> accounts;
