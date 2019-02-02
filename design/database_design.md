@@ -10,9 +10,8 @@
 * Sum balances for accounts
 * Sum balances for budget categories
 
-# Tables
-* Transactions
-	* ID
-	* Date
-* Accounts
-* Payees
+# Naive Design
+```
+struct transaction_t {
+}; // struct transaction_t
+```
