@@ -45,16 +45,24 @@ It doesn't get any simpler than this.
 boost::container::flat_set<std::string> accounts;
 for (const auto&& transaction : database) {
    for (const auto&& adjustment : transaction.adjustments) {
-      const auto& account = adjustment.account;
-      const auto& act_pos = accounts.find(account);
-      if (account != act_pos) {
-         accounts.insert(act_pos, account);
+      const auto& act_pos = accounts.lower_bound(adjustment.account);
+      if (accounts.end() == act_pos || adjustment.account != *act_pos) {
+         accounts.insert(act_pos, adjustment.account);
       }
    }
 }
 ```
 * List budget categories
 * List payees
+```
+boost::container::flat_set<std::string> payees;
+for (const auto&& transaction : database) {
+   const auto& payee_pos = payees.lower_bound(transaction.payee);
+   if (payees.end() == payee_pos || transaction.payee != *payee_pos) {
+      payees.insert(payee_pos, transaction.payee);
+   }
+} // for (transaction : database)
+```
 * List transactions for a payee
 * List transactions for an account
 * Sum balance for transaction
