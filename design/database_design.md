@@ -5,7 +5,7 @@
 * List budget categories
 * List payees
 * List transactions for a payee
-* List transactions for an account
+* List adjustments for an account
 * Sum balance for transaction
 * Sum balances for accounts
 * Sum balances for budget categories
@@ -64,7 +64,7 @@ for (const auto&& transaction : database) {
 } // for (transaction : database)
 ```
 * List transactions for a payee
-* List transactions for an account
+* List adjustments for an account
 * Sum balance for transaction
 * Sum balances for accounts
 * Sum balances for budget categories
