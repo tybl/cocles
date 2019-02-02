@@ -65,6 +65,10 @@ for (const auto&& transaction : database) {
 ```
 * List transactions for a payee
 * List adjustments for an account
+```
+std::vector<adjustment_t> adjustments;
+```
+A new type is required to return all the information that needs to be associated with this UC. 
 * Sum balance for transaction
 * Sum balances for accounts
 * Sum balances for budget categories
