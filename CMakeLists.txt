@@ -1,11 +1,13 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.13) # target_compile_options in 3.13
 
+# Name the project
 project(cocles)
 
 include_directories(include)
 
 set(LIBCOCLES_SOURCES src/main.cpp)
 
+# Define executable and required source files
 add_executable(cocles ${LIBCOCLES_SOURCES})
 
 # Compile with the latest C++ standard
