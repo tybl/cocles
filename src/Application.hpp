@@ -19,13 +19,18 @@
 #ifndef COCLES_APPLICATION_HPP
 #define COCLES_APPLICATION_HPP
 
+#include <atomic>
+
 struct Application
 {
    Application(int argc, const char * argv[], const char * envp[]);
 
+   ~Application();
+
    int run();
 
 private:
+   static std::atomic<bool> mInstanceExists;
 }; // class Application
 
 #endif // COCLES_APPLICATION_HPP

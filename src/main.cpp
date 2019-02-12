@@ -16,10 +16,10 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include "Application.hpp"
+
 int main(int argc, const char * argv[], const char * envp[])
 {
-   static_cast<void>(argc);
-   static_cast<void>(argv);
-   static_cast<void>(envp);
-   return 0;
+   Application app(argc, argv, envp);
+   return app.run();
 }

@@ -18,3 +18,28 @@
 
 #include "Application.hpp"
 
+#include <stdexcept>
+
+std::atomic<bool> Application::mInstanceExists = false;
+
+Application::Application(int argc, const char * argv[], const char * envp[])
+{
+   static_cast<void>(argc);
+   static_cast<void>(argv);
+   static_cast<void>(envp);
+
+   if (mInstanceExists) {
+      throw std::runtime_error("Error: An instance of Application already exists");
+   }
+   mInstanceExists = true;
+}
+
+Application::~Application()
+{
+   mInstanceExists = false;
+}
+
+int Application::run()
+{
+   return 0;
+}
