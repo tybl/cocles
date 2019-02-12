@@ -5,7 +5,9 @@ project(cocles)
 
 include_directories(include)
 
-set(LIBCOCLES_SOURCES src/main.cpp)
+set(LIBCOCLES_SOURCES
+	src/Application.cpp
+	src/main.cpp)
 
 # Define executable and required source files
 add_executable(cocles ${LIBCOCLES_SOURCES})
