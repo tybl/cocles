@@ -18,6 +18,9 @@
 
 #include "Application.hpp"
 
+#include <string>
+#include <vector>
+
 int main(int argc, const char * argv[], const char * envp[])
 {
    std::vector<std::string> args;
