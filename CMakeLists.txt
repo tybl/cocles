@@ -18,7 +18,7 @@ target_compile_options(cocles PUBLIC -std=c++17)
 
 # Enable all available warnings
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
-	target_compile_options(cocles PUBLIC -Weverything)
+	target_compile_options(cocles PUBLIC -Weverything -Wno-c++98-compat)
 elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 	target_compile_options(cocles PUBLIC -Wall -Wextra)
 else()
