@@ -32,7 +32,7 @@ Money::Money(std::string const& new_value)
    long double temp;
    std::istringstream value_stream(new_value);
    value_stream >> std::get_money(temp);
-   m_value = temp;
+   m_value = static_cast<int64_t>(temp);
 }
 
 Money::Money(Money const& other)

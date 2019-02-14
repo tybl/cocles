@@ -26,7 +26,7 @@ int main(int argc, const char * argv[], const char * envp[])
    std::vector<std::string> args;
    for (int i = 1; i < argc; ++i)
    {
-      args.push_back(argv[i]);
+      args.emplace_back(argv[i]);
    }
    Application app(argc, argv, envp);
    return app.run();
