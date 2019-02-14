@@ -35,15 +35,11 @@ namespace util {
 
 struct Money {
 
-   Money(void);
+   Money();
 
    explicit Money(std::string const& value);
 
-   Money(Money const& other);
-
-   std::string to_string(void) const;
-
-   Money& operator=(Money other);
+   std::string to_string() const;
 
    bool operator==(Money const& other) const;
 
@@ -62,7 +58,7 @@ struct Money {
    friend void swap(Money& first, Money& second);
 
 private:
-   int64_t m_value;
+   int64_t m_value{0};
 }; // struct Money
 
 } // namespace util

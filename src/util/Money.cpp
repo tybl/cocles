@@ -23,29 +23,21 @@
 
 namespace util {
 
-Money::Money(void)
+Money::Money()
    : m_value(0) {}
 
 Money::Money(std::string const& new_value)
    : m_value(0) {
-   long double temp;
-   std::istringstream value_stream(new_value);
-   value_stream >> std::get_money(temp);
+   auto temp = 0.0L;
+   std::istringstream value_stream(new_value, std::ios_base::in);
+   value_stream >> std::get_money(temp, false);
    m_value = static_cast<int64_t>(temp);
 }
 
-Money::Money(Money const& other)
-   : m_value(other.m_value) {}
-
-std::string Money::to_string(void) const {
-   std::ostringstream value_stream;
-   value_stream << std::put_money(m_value);
+std::string Money::to_string() const {
+   std::ostringstream value_stream(std::ios_base::out);
+   value_stream << std::put_money(m_value, false);
    return value_stream.str();
-}
-
-Money& Money::operator=(Money other) {
-   swap(*this, other);
-   return *this;
 }
 
 bool Money::operator==(Money const& other) const {
