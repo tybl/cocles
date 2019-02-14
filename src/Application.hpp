@@ -28,6 +28,12 @@ struct Application {
 
    int run();
 
+   // Deleted functions
+   Application(Application const&) = delete;
+   Application(Application&&) = delete;
+   Application& operator=(Application) = delete;
+   Application& operator=(Application&&) = delete;
+
 private:
    static std::atomic<bool> mInstanceExists;
 }; // class Application
