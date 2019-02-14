@@ -43,21 +43,21 @@ struct Money {
 
    std::string to_string(void) const;
 
-   Money& operator = (Money other);
+   Money& operator=(Money other);
 
-   bool operator == (Money const& other) const;
+   bool operator==(Money const& other) const;
 
-   Money& operator += (Money const& other);
+   Money& operator+=(Money const& other);
 
-   Money& operator -= (Money const& other);
+   Money& operator-=(Money const& other);
 
    //Money& operator %= (Money const& other);
    //Money& operator /= (Money const& other);
 
-   Money& operator *= (int64_t other);
+   Money& operator*=(int64_t other);
 
-   Money& operator %= (int64_t other);
-   Money& operator /= (int64_t other);
+   Money& operator%=(int64_t other);
+   Money& operator/=(int64_t other);
 
    friend void swap(Money& first, Money& second);
 

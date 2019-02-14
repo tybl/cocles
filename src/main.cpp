@@ -21,11 +21,9 @@
 #include <string>
 #include <vector>
 
-int main(int argc, const char * argv[], const char * envp[])
-{
+int main(int argc, const char* argv[], const char* envp[]) {
    std::vector<std::string> args;
-   for (int i = 1; i < argc; ++i)
-   {
+   for (int i = 1; i < argc; ++i) {
       args.emplace_back(argv[i]);
    }
    Application app(argc, argv, envp);

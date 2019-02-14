@@ -21,8 +21,7 @@
 
 #include <string>
 
-struct Account
-{
+struct Account {
 
 private:
    std::string mName;

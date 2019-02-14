@@ -21,8 +21,7 @@
 
 #include "util/Money.hpp"
 
-struct Adjustment
-{
+struct Adjustment {
 
    enum class AdjustmentStatus { UNKNOWN, PENDING, CLEARED, RECONCILED };
 

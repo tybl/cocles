@@ -24,11 +24,10 @@
 namespace util {
 
 Money::Money(void)
-   : m_value(0) { }
+   : m_value(0) {}
 
 Money::Money(std::string const& new_value)
-   : m_value(0)
-{
+   : m_value(0) {
    long double temp;
    std::istringstream value_stream(new_value);
    value_stream >> std::get_money(temp);
@@ -36,7 +35,7 @@ Money::Money(std::string const& new_value)
 }
 
 Money::Money(Money const& other)
-   : m_value(other.m_value) { }
+   : m_value(other.m_value) {}
 
 std::string Money::to_string(void) const {
    std::ostringstream value_stream;
@@ -44,21 +43,21 @@ std::string Money::to_string(void) const {
    return value_stream.str();
 }
 
-Money& Money::operator = (Money other) {
+Money& Money::operator=(Money other) {
    swap(*this, other);
    return *this;
 }
 
-bool Money::operator == (Money const& other) const {
+bool Money::operator==(Money const& other) const {
    return m_value == other.m_value;
 }
 
-Money& Money::operator += (Money const& other) {
+Money& Money::operator+=(Money const& other) {
    m_value += other.m_value;
    return *this;
 }
 
-Money& Money::operator -= (Money const& other) {
+Money& Money::operator-=(Money const& other) {
    m_value -= other.m_value;
    return *this;
 }
@@ -66,17 +65,17 @@ Money& Money::operator -= (Money const& other) {
 //Money& operator %= (Money const& other);
 //Money& operator /= (Money const& other);
 
-Money& Money::operator *= (int64_t other) {
+Money& Money::operator*=(int64_t other) {
    m_value *= other;
    return *this;
 }
 
-Money& Money::operator %= (int64_t other) {
+Money& Money::operator%=(int64_t other) {
    m_value %= other;
    return *this;
 }
 
-Money& Money::operator /= (int64_t other) {
+Money& Money::operator/=(int64_t other) {
    m_value /= other;
    return *this;
 }

@@ -21,9 +21,8 @@
 
 #include <atomic>
 
-struct Application
-{
-   Application(int argc, const char * argv[], const char * envp[]);
+struct Application {
+   Application(int argc, const char* argv[], const char* envp[]);
 
    ~Application();
 
