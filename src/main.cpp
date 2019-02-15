@@ -18,14 +18,33 @@
 
 #include "Application.hpp"
 
+#include <list>
+#include <map>
 #include <string>
 #include <vector>
 
+struct Account {
+   std::string Name;
+}; // struct Account
+
+struct Accounts {
+   std::string Name;
+}; // struct Accounts
+
+struct Ledger {
+   void AddAccount(std::string pName);
+   void AddTransaction();
+private:
+   std::list<Account> mAccounts;
+}; // struct Ledger
+
 int main(int argc, const char* argv[], const char* envp[]) {
+#if 0
    std::vector<std::string> args;
    for (int i = 1; i < argc; ++i) {
       args.emplace_back(argv[i]);
    }
+#endif
    Application app(argc, argv, envp);
    return app.run();
 }

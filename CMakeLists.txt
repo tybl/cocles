@@ -8,7 +8,7 @@ include_directories(include)
 set(LIBCOCLES_SOURCES
 	src/Application.cpp
 	src/main.cpp
-	src/util/Money.cpp)
+	src/ledger/util/Money.cpp)
 
 # Define executable and required source files
 add_executable(cocles ${LIBCOCLES_SOURCES})
