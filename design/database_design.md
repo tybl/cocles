@@ -1,3 +1,8 @@
+# Notes
+* Return types for queries:
+    * http://www.drdobbs.com/cpp/c-view-objects/196513737
+    * https://www.fluentcpp.com/?s=filter+iterator
+
 # Use cases
 * Add account
 * Add transaction
