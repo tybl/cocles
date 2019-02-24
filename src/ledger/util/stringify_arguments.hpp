@@ -16,28 +16,20 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "Application.hpp"
-#include "ledger/util/stringify_arguments.hpp"
+#ifndef COCLES_LEDGER_UTIL_STRINGIFY_ARGUMENTS_HPP
+#define COCLES_LEDGER_UTIL_STRINGIFY_ARGUMENTS_HPP
 
-#include <list>
-#include <map>
+#include <string>
+#include <vector>
 
-struct Account {
-   std::string Name;
-}; // struct Account
+namespace ledger {
 
-struct Accounts {
-   std::string Name;
-}; // struct Accounts
+namespace util {
 
-struct Ledger {
-   void AddAccount(std::string pName);
-   void AddTransaction();
-private:
-   std::list<Account> mAccounts;
-}; // struct Ledger
+std::vector<std::string> stringify_arguments(int argc, const char* argv[]);
 
-int main(int argc, const char* argv[], const char* envp[]) {
-   Application app(ledger::util::stringify_arguments(argc, argv), envp);
-   return app.run();
-}
+} // namespace util
+
+} // namespace ledger
+
+#endif // COCLES_LEDGER_UTIL_STRINGIFY_ARGUMENTS_HPP

@@ -16,28 +16,20 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "Application.hpp"
-#include "ledger/util/stringify_arguments.hpp"
+#include "stringify_arguments.hpp"
 
-#include <list>
-#include <map>
+namespace ledger {
 
-struct Account {
-   std::string Name;
-}; // struct Account
+namespace util {
 
-struct Accounts {
-   std::string Name;
-}; // struct Accounts
+std::vector<std::string> stringify_arguments(int argc, const char* argv[]) {
+   std::vector<std::string> args;
+   for (int i = 1; i < argc; ++i) {
+      args.emplace_back(argv[i]);
+   }
+   return args;
+} // stringify_arguments()
 
-struct Ledger {
-   void AddAccount(std::string pName);
-   void AddTransaction();
-private:
-   std::list<Account> mAccounts;
-}; // struct Ledger
+} // namespace util
 
-int main(int argc, const char* argv[], const char* envp[]) {
-   Application app(ledger::util::stringify_arguments(argc, argv), envp);
-   return app.run();
-}
+} // namespace ledger

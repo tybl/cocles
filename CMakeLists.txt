@@ -8,7 +8,8 @@ include_directories(include)
 set(LIBCOCLES_SOURCES
 	src/Application.cpp
 	src/main.cpp
-	src/ledger/util/Money.cpp)
+	src/ledger/util/Money.cpp
+   src/ledger/util/stringify_arguments.cpp)
 
 # Define executable and required source files
 add_executable(cocles ${LIBCOCLES_SOURCES})
@@ -18,6 +19,8 @@ target_compile_options(cocles PUBLIC -std=c++17)
 
 # Enable all available warnings
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+	target_compile_options(cocles PUBLIC -Weverything -Wno-c++98-compat)
+elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang")
 	target_compile_options(cocles PUBLIC -Weverything -Wno-c++98-compat)
 elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 	target_compile_options(cocles PUBLIC -Wall -Wextra)

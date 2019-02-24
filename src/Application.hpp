@@ -20,9 +20,11 @@
 #define COCLES_APPLICATION_HPP
 
 #include <atomic>
+#include <vector>
 
 struct Application {
-   Application(int argc, const char* argv[], const char* envp[]);
+
+   Application(std::vector<std::string> args, const char* envp[]);
 
    ~Application();
 

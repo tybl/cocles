@@ -22,9 +22,8 @@
 
 std::atomic<bool> Application::mInstanceExists = false;
 
-Application::Application(int argc, const char* argv[], const char* envp[]) {
-   static_cast<void>(argc);
-   static_cast<void>(argv);
+Application::Application(std::vector<std::string> args, const char* envp[]) {
+   static_cast<void>(args);
    static_cast<void>(envp);
 
    if (mInstanceExists) {
