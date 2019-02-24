@@ -8,3 +8,16 @@ https://www.geeksforgeeks.org/counting-number-words-trie/
 
 https://abseil.io/ appears to be a high-quality library with useful abstractions. The webpage also offers tips on C++ usage.
 
+https://github.com/LoopPerfect/valuable is a smart pointer that clones the object it points to when it is copied.
+This is useful for classes using the pimpl idiom that need to be copyable.
+
+Examples using JUCE:
+* https://github.com/asit-dhal/CurrencyExchange
+* https://github.com/asit-dhal/Juce-Qt-Menubar-Demo
+
+Implementing a singly linked list using smart pointers: https://solarianprogrammer.com/2019/02/22/cpp-17-implementing-singly-linked-list-smart-pointers/
+
+C++ hints and best practices:
+* https://github.com/isocpp/CppCoreGuidelines
+* https://github.com/lefticus/cppbestpractices
+* https://www.fluentcpp.com/
