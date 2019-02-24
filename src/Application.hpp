@@ -20,6 +20,7 @@
 #define COCLES_APPLICATION_HPP
 
 #include <atomic>
+#include <string>
 #include <vector>
 
 struct Application {

@@ -6,9 +6,8 @@ project(cocles)
 include_directories(include)
 
 set(LIBCOCLES_SOURCES
-	src/Application.cpp
-	src/main.cpp
-	src/ledger/util/Money.cpp
+   src/main.cpp
+   src/ledger/util/Money.cpp
    src/ledger/util/stringify_arguments.cpp)
 
 # Define executable and required source files
