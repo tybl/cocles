@@ -13,13 +13,14 @@ namespace internal {
 template <typename TYPE>
 struct RecordKeeper {
    using id_t = identifier_t<TYPE>;
+   using node_t = ListNode<TYPE>;
 
    static constexpr id_t used_id{0};
 
    static constexpr id_t free_id{1};
 
    constexpr RecordKeeper()
-      : records({ ListNode<TYPE>(used_id, used_id, false), ListNode<TYPE>(free_id, free_id, true) })
+      : records({ node_t(used_id, used_id, false), node_t(free_id, free_id, true) })
       , used_count(0) {}
 
    TYPE& get_record(id_t id) {
@@ -69,7 +70,7 @@ struct RecordKeeper {
    }
 
    void use(id_t id) {
-      ListNode<TYPE>& record_being_used = at(id);
+      node_t& record_being_used = at(id);
       record_being_used.set_free(false); // It is no longer available
 
       // The record used to point to available nodes with next and prev,
@@ -91,7 +92,7 @@ struct RecordKeeper {
    }
 
    void free(id_t id) {
-      ListNode<TYPE>& record_being_freed = at(id);
+      node_t& record_being_freed = at(id);
       record_being_freed.set_free(true);
 
       at(record_being_freed.get_prev()).next() = record_being_freed.next();
@@ -126,16 +127,16 @@ private:
       at(free_id).next() = id;
    }
 
-   ListNode<TYPE>& at(identifier_t<TYPE> id) {
+   node_t& at(identifier_t<TYPE> id) {
       return records.at(static_cast<uint64_t>(id));
    }
 
-   const ListNode<TYPE>& at(identifier_t<TYPE> id) const {
+   const node_t& at(identifier_t<TYPE> id) const {
       return records.at(static_cast<uint64_t>(id));
    }
 
 private:
-   std::vector<ListNode<TYPE>> records;
+   std::vector<node_t> records;
    size_t used_count;
 }; // struct RecordKeeper
 
