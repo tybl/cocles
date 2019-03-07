@@ -21,3 +21,8 @@ C++ hints and best practices:
 * https://github.com/isocpp/CppCoreGuidelines
 * https://github.com/lefticus/cppbestpractices
 * https://www.fluentcpp.com/
+
+This is an interesting backend where I wouldn't have to create my own:
+* https://www.remi-coulom.fr/joedb/intro.html
+* https://github.com/Remi-Coulom/joedb
+
