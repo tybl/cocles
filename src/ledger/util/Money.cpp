@@ -27,7 +27,8 @@ Money::Money()
    : m_value(0) {}
 
 Money::Money(std::string const& new_value)
-   : m_value(0) {
+   : m_value(0)
+{
    auto temp = 0.0L;
    std::istringstream value_stream(new_value, std::ios_base::in);
    value_stream >> std::get_money(temp, false);

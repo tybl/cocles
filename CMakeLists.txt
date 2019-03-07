@@ -3,7 +3,11 @@ cmake_minimum_required(VERSION 3.13) # target_compile_options in 3.13
 # Name the project
 project(cocles)
 
-include_directories(include)
+enable_testing()
+
+include_directories(
+	include
+	src)
 
 set(LIBCOCLES_SOURCES
 	src/ledger/parse/transaction.cpp
@@ -11,6 +15,7 @@ set(LIBCOCLES_SOURCES
 	src/ledger/util/stringify_arguments.cpp)
 
 set(LIBCOCLES_TEST_SOURCES
+	${LIBCOCLES_SOURCES}
 	test/ledger/parse/transaction.cpp)
 
 # Define executable and required source files
@@ -21,6 +26,8 @@ add_executable(cocles
 add_executable(UnitTests
 	test/main.cpp
 	${LIBCOCLES_TEST_SOURCES})
+
+add_test(UnitTests UnitTests)
 
 # Compile with the latest C++ standard
 target_compile_options(cocles PUBLIC -std=c++17)

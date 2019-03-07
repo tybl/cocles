@@ -19,40 +19,57 @@
 #ifndef COCLES_LEDGER_PARSE_TRANSACTION_HPP
 #define COCLES_LEDGER_PARSE_TRANSACTION_HPP
 
+#include "adjustment.hpp"
+
 #include "date/date.h"
 
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 namespace parse {
 
 struct transaction_t {
    using date_t = date::year_month_day;
 
+   inline
    transaction_t(std::string pTransaction)
       : value_(pTransaction)
    {
-      std::cout << "transaction_c(std::string) with \"" << value_ << "\"";
       date::parse_manip<date_t, std::string::value_type> parser("%F", date_);
       std::istringstream trans_ss(value_);
       trans_ss >> parser;
-      std::string test;
-      trans_ss >> test;
-      std::cout << test << std::endl;
+      std::getline(trans_ss, payee_);
+      std::string input;
+      std::getline(trans_ss, input);
+      while (0 < input.size()) {
+         std::cout << "\"" << input << "\"\n";
+         adjustments_.emplace_back(input);
+         std::getline(trans_ss, input);
+      }
    }
 
+   inline
    date_t date() const { return date_; }
+
+   inline
+   const std::string& payee() const { return payee_; }
 
 private:
    std::string value_;
    date_t date_;
+   std::string payee_;
+   std::vector<adjustment_t> adjustments_;
 }; // struct transaction_t
 
 } // namespace parse
 
+
+// TODO: Move the parse function to another file. Probably src/ledger/parse.hpp
 namespace ledger {
 
+inline
 parse::transaction_t parse(std::string input) {
    return parse::transaction_t(input);
 } // parse(std::string input)

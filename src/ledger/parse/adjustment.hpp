@@ -16,20 +16,24 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "../src/ledger/parse/transaction.hpp"
+#ifndef COCLES_LEDGER_PARSE_ADJUSTMENT_HPP
+#define COCLES_LEDGER_PARSE_ADJUSTMENT_HPP
 
-#include "doctest/doctest.h"
+#include "ledger/util/Money.hpp"
 
-#include <iostream>
+#include <string>
 
-TEST_CASE("parse::transaction_t") {
-   using namespace std::string_literals;
-   using namespace date::literals;
-   auto str = "2019-03-05 Wegman's\n    Accounts:Citi:Credit   $-4.35\n    Funds:Daily:Food   $4.35\n\n"s;
-   auto trans = ledger::parse(str);
-   CHECK(trans.date().year() == 2019_y);
-   CHECK(trans.date().month() == date::March);
-   CHECK(trans.date().day() == 5_d);
-   std::cout << trans.payee() << std::endl;
-   CHECK("Wegman's"s == trans.payee());
-} // TEST_CASE("parse::transaction_t")
+struct adjustment_t {
+
+   adjustment_t(std::string input)
+      : value_(input)
+   {
+   }
+
+private:
+   std::string value_;
+   std::string account_;
+   util::Money amount_;
+}; // struct adjustment_t
+
+#endif // COCLES_LEDGER_PARSE_ADJUSTMENT_HPP
