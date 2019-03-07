@@ -1,3 +1,4 @@
+# Hints: http://www.brianlheim.com/2018/04/09/cmake-cheat-sheet.html
 project(cocles)
 cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_EXTENSIONS OFF)
