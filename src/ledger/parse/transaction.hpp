@@ -23,7 +23,7 @@
 
 #include "date/date.h"
 
-#include <iostream>
+#include <regex>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -34,33 +34,28 @@ struct transaction_t {
    using date_t = date::year_month_day;
 
    inline
-   transaction_t(std::string pTransaction)
-      : value_(pTransaction)
-   {
-      date::parse_manip<date_t, std::string::value_type> parser("%F", date_);
-      std::istringstream trans_ss(value_);
-      trans_ss >> parser;
-      std::getline(trans_ss, payee_);
-      std::string input;
-      std::getline(trans_ss, input);
-      while (0 < input.size()) {
-         std::cout << "\"" << input << "\"\n";
-         adjustments_.emplace_back(input);
-         std::getline(trans_ss, input);
+   transaction_t(std::string t) {
+      std::smatch m;
+      std::regex re("(\\d{4}-\\d{2}-\\d{2}) ([A-Za-z ']*)");
+      if (std::regex_search(t, m, re)) {
+         std::istringstream s(m[1]);
+         s >> date::parse("%F", m_date);
+      } else {
+         throw std::runtime_error("Error: Incomplete transaction");
       }
+      m_payee = m[2];
    }
 
    inline
-   date_t date() const { return date_; }
+   date_t date() const { return m_date; }
 
    inline
-   const std::string& payee() const { return payee_; }
+   const std::string& payee() const { return m_payee; }
 
 private:
-   std::string value_;
-   date_t date_;
-   std::string payee_;
-   std::vector<adjustment_t> adjustments_;
+   date_t                    m_date;
+   std::string               m_payee;
+   std::vector<adjustment_t> m_adjustments;
 }; // struct transaction_t
 
 } // namespace parse

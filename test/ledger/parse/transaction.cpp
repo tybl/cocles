@@ -20,8 +20,6 @@
 
 #include "doctest/doctest.h"
 
-#include <iostream>
-
 TEST_CASE("parse::transaction_t") {
    using namespace std::string_literals;
    using namespace date::literals;
@@ -30,6 +28,5 @@ TEST_CASE("parse::transaction_t") {
    CHECK(trans.date().year() == 2019_y);
    CHECK(trans.date().month() == date::March);
    CHECK(trans.date().day() == 5_d);
-   std::cout << trans.payee() << std::endl;
-   CHECK("Wegman's"s == trans.payee());
+   CHECK(trans.payee() == "Wegman's"s);
 } // TEST_CASE("parse::transaction_t")
