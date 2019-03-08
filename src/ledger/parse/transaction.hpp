@@ -21,8 +21,9 @@
 
 #include "adjustment.hpp"
 
-#include "date/date.h"
+#include <boost/date_time/gregorian/gregorian.hpp>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -31,7 +32,7 @@ namespace ledger {
 namespace parse {
 
 struct transaction_t {
-   using date_t = date::year_month_day;
+   using date_t = boost::gregorian::date;
 
    transaction_t(std::string t);
 
@@ -39,11 +40,11 @@ struct transaction_t {
 
    const std::string& payee() const;
 
-   static transaction_t parse(std::string string);
+   static std::unique_ptr<transaction_t> parse(std::string string);
    static transaction_t parse(std::istream& stream);
 
 private:
-   transaction_t(date_t date, std::string payee, std::vector<adjustment_t> adjustments);
+   transaction_t(date_t date, std::string payee);
 
 private:
    date_t                    m_date;

@@ -14,16 +14,20 @@ set(TEST_NAME libledgertest)
 set(TEST_SOURCES
 	test/ledger/parse/transaction.cpp)
 
-include_directories(include src)
+find_package(Boost 1.69 REQUIRED date_time)
+
+include_directories(include src ${Boost_INCLUDE_DIRS})
 add_library(${LIB_NAME} STATIC ${LIB_SOURCES})
 
 add_executable(${EXEC_NAME} src/main.cpp)
 target_link_libraries(${EXEC_NAME} ${LIB_NAME})
+target_link_libraries(${EXEC_NAME} ${Boost_LIBRARIES})
 
 enable_testing()
 
 add_executable(${TEST_NAME} test/main.cpp ${TEST_SOURCES})
 target_link_libraries(${TEST_NAME} ${LIB_NAME})
+target_link_libraries(${TEST_NAME} ${Boost_LIBRARIES})
 add_test(${TEST_NAME} ${TEST_NAME})
 
 # Enable all available warnings
