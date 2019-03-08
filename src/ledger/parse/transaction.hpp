@@ -23,34 +23,27 @@
 
 #include "date/date.h"
 
-#include <regex>
-#include <sstream>
 #include <string>
 #include <vector>
+
+namespace ledger {
 
 namespace parse {
 
 struct transaction_t {
    using date_t = date::year_month_day;
 
-   inline
-   transaction_t(std::string t) {
-      std::smatch m;
-      std::regex re("(\\d{4}-\\d{2}-\\d{2}) ([A-Za-z ']*)");
-      if (std::regex_search(t, m, re)) {
-         std::istringstream s(m[1]);
-         s >> date::parse("%F", m_date);
-      } else {
-         throw std::runtime_error("Error: Incomplete transaction");
-      }
-      m_payee = m[2];
-   }
+   transaction_t(std::string t);
 
-   inline
-   date_t date() const { return m_date; }
+   date_t date() const;
 
-   inline
-   const std::string& payee() const { return m_payee; }
+   const std::string& payee() const;
+
+   static transaction_t parse(std::string string);
+   static transaction_t parse(std::istream& stream);
+
+private:
+   transaction_t(date_t date, std::string payee, std::vector<adjustment_t> adjustments);
 
 private:
    date_t                    m_date;
@@ -60,13 +53,10 @@ private:
 
 } // namespace parse
 
-
 // TODO: Move the parse function to another file. Probably src/ledger/parse.hpp
-namespace ledger {
-
 inline
-parse::transaction_t parse(std::string input) {
-   return parse::transaction_t(input);
+ledger::parse::transaction_t Parse(std::string input) {
+   return ledger::parse::transaction_t(input);
 } // parse(std::string input)
 
 } // namespace ledger

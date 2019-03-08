@@ -24,7 +24,7 @@ TEST_CASE("parse::transaction_t") {
    using namespace std::string_literals;
    using namespace date::literals;
    auto str = "2019-03-05 Wegman's\n    Accounts:Citi:Credit   $-4.35\n    Funds:Daily:Food   $4.35\n\n"s;
-   auto trans = ledger::parse(str);
+   auto trans = ledger::Parse(str);
    CHECK(trans.date().year() == 2019_y);
    CHECK(trans.date().month() == date::March);
    CHECK(trans.date().day() == 5_d);
