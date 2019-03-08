@@ -16,6 +16,71 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <iostream>
+#include <iterator>
+#include <list>
+#include <regex>
+#include <string>
+#include <vector>
+
+template<class I>
+struct Iterator {
+   using T = typename std::iterator_traits<I>::reference;
+
+   Iterator(I value) : m_value(value) { }
+   T& operator*() { return *m_value; }
+   Iterator& operator++() { return *this; }
+   operator T() { return *m_value; }
+private:
+   I m_value;
+}; // struct Iterator
+
+template<class T>
+struct View {
+
+   T* begin() { return m_list.begin(); }
+   T* end()   { return m_list.end(); }
+   void push_back(T* value) { m_list.push_back(value); }
+private:
+   std::vector<T*> m_list;
+}; // struct View
+
+struct Ledger {
+   using Account = std::string;
+   using AccountList = std::list<Account>;
+
+   void insert(Account a) { m_accounts.push_back(a); }
+
+   View<Account> accounts(std::string ) {
+      View<Account> result;
+      for (auto i = m_accounts.begin(); i != m_accounts.end(); ++i) {
+         result.push_back(&*i);
+      }
+      return result;
+   }
+
+private:
+   AccountList m_accounts;
+}; // struct Ledger
+
+int main(int argc, const char* argv[], const char* envp[]) {
+   static_cast<void>(argc);
+   static_cast<void>(argv);
+   static_cast<void>(envp);
+
+   Ledger ledger;
+   ledger.insert("asset");
+   ledger.insert("liability");
+   ledger.insert("income");
+   ledger.insert("expense");
+   for (auto a : ledger.accounts("unused")) {
+      std::cout << a << "\n";
+   }
+
+   return 0;
+}
+
+#if 0
 //#include "Application.hpp"
 #include "ledger/util/stringify_arguments.hpp"
 
@@ -88,3 +153,4 @@ int Application::run() {
    }
    return 0;
 }
+#endif
