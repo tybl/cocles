@@ -23,39 +23,18 @@
 #include <string>
 #include <vector>
 
-template<class I>
-struct Iterator {
-   using T = typename std::iterator_traits<I>::reference;
-
-   Iterator(I value) : m_value(value) { }
-   T& operator*() { return *m_value; }
-   Iterator& operator++() { return *this; }
-   operator T() { return *m_value; }
-private:
-   I m_value;
-}; // struct Iterator
-
-template<class T>
-struct View {
-
-   T* begin() { return m_list.begin(); }
-   T* end()   { return m_list.end(); }
-   void push_back(T* value) { m_list.push_back(value); }
-private:
-   std::vector<T*> m_list;
-}; // struct View
-
 struct Ledger {
    using Account = std::string;
    using AccountList = std::list<Account>;
 
    void insert(Account a) { m_accounts.push_back(a); }
 
-   View<Account> accounts(std::string ) {
-      View<Account> result;
-      for (auto i = m_accounts.begin(); i != m_accounts.end(); ++i) {
-         result.push_back(&*i);
-      }
+   std::vector<Account> accounts(std::string re) {
+      std::vector<Account> result;
+      std::copy_if(m_accounts.begin(),
+                   m_accounts.end(),
+                   std::back_inserter(result),
+                   [re](std::string const& account) { return std::regex_search(account, std::regex(re)); });
       return result;
    }
 
@@ -73,7 +52,7 @@ int main(int argc, const char* argv[], const char* envp[]) {
    ledger.insert("liability");
    ledger.insert("income");
    ledger.insert("expense");
-   for (auto a : ledger.accounts("unused")) {
+   for (auto a : ledger.accounts("a")) {
       std::cout << a << "\n";
    }
 
