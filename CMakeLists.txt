@@ -14,7 +14,7 @@ set(TEST_NAME libledgertest)
 set(TEST_SOURCES
 	test/ledger/parse/transaction.cpp)
 
-find_package(Boost 1.69 REQUIRED date_time)
+find_package(Boost 1.68 REQUIRED date_time)
 
 include_directories(include src ${Boost_INCLUDE_DIRS})
 add_library(${LIB_NAME} STATIC ${LIB_SOURCES})
