@@ -7,6 +7,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(EXEC_NAME cocles)
 set(LIB_NAME ledger)
 set(LIB_SOURCES
+	src/ledger/Account.cpp
+	src/ledger/Adjustment.cpp
+	src/ledger/Payee.cpp
+	src/ledger/Transaction.cpp
 	src/ledger/parse/transaction.cpp
 	src/ledger/util/Money.cpp
 	src/ledger/util/stringify_arguments.cpp)

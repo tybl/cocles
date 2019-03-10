@@ -16,30 +16,24 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef COCLES_LEDGER_ADJUSTMENT_HPP
-#define COCLES_LEDGER_ADJUSTMENT_HPP
-
-#include "Account.hpp"
 #include "Transaction.hpp"
-#include "util/Money.hpp"
 
 namespace ledger {
 
-struct Adjustment {
-   Adjustment(Transaction transaction, Account account, util::Money amount);
+struct Transaction::Impl {
 
-   Transaction const& transaction() const;
+   Impl(Date date, Payee payee) : m_payee(payee), m_date(date) { }
 
-   Account const& account() const;
-
-   util::Money const& amount() const;
+   Payee const& payee() const { return m_payee; }
 
 private:
-   enum class AdjustmentStatus { UNKNOWN, PENDING, CLEARED, RECONCILED };
-   struct Impl;
-   std::shared_ptr<Impl> m_pimpl;
-}; // struct Adjustment
+   Payee          m_payee;
+   boost::gregorian::date m_date;
+}; // struct Transaction::Impl
+
+Transaction::Transaction(Date date, Payee payee)
+   : m_pimpl(new Impl(date, payee)) { }
+
+Payee const& Transaction::payee() const { return m_pimpl->payee(); }
 
 } // namespace ledger
-
-#endif // COCLES_LEDGER_ADJUSTMENT_HPP

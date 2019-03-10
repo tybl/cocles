@@ -16,30 +16,33 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef COCLES_LEDGER_ADJUSTMENT_HPP
-#define COCLES_LEDGER_ADJUSTMENT_HPP
-
-#include "Account.hpp"
-#include "Transaction.hpp"
-#include "util/Money.hpp"
+#include "Adjustment.hpp"
 
 namespace ledger {
 
-struct Adjustment {
-   Adjustment(Transaction transaction, Account account, util::Money amount);
+struct Adjustment::Impl {
+   Impl(Transaction transaction, Account account, util::Money amount)
+      : m_transaction(transaction)
+      , m_account(account)
+      , m_amount(amount) { }
 
-   Transaction const& transaction() const;
-
-   Account const& account() const;
-
-   util::Money const& amount() const;
+   Transaction const& transaction() const { return m_transaction; }
+   Account     const& account() const { return m_account; }
+   util::Money const& amount() const { return m_amount; }
 
 private:
-   enum class AdjustmentStatus { UNKNOWN, PENDING, CLEARED, RECONCILED };
-   struct Impl;
-   std::shared_ptr<Impl> m_pimpl;
-}; // struct Adjustment
+   Transaction m_transaction;
+   Account     m_account;
+   util::Money m_amount;
+};
+
+Adjustment::Adjustment(Transaction transaction, Account account, util::Money amount)
+   : m_pimpl(new Impl(transaction, account, amount)) { }
+
+Transaction const& Adjustment::transaction() const { return m_pimpl->transaction(); }
+
+Account const& Adjustment::account() const { return m_pimpl->account(); }
+
+util::Money const& Adjustment::amount() const { return m_pimpl->amount(); }
 
 } // namespace ledger
-
-#endif // COCLES_LEDGER_ADJUSTMENT_HPP

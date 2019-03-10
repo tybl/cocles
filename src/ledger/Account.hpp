@@ -19,12 +19,19 @@
 #ifndef COCLES_LEDGER_ACCOUNT_HPP
 #define COCLES_LEDGER_ACCOUNT_HPP
 
+#include <memory>
 #include <string>
 
-struct Account {
+namespace ledger {
 
+struct Account {
+   Account(std::string name);
+   std::string const& name() const;
 private:
-   std::string mName;
+   struct Impl;
+   std::shared_ptr<Impl> m_pimpl;
 }; // struct Account
+
+} // namespace ledger
 
 #endif // COCLES_LEDGER_ACCOUNT_HPP
