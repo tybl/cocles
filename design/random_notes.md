@@ -26,3 +26,7 @@ This is an interesting backend where I wouldn't have to create my own:
 * https://www.remi-coulom.fr/joedb/intro.html
 * https://github.com/Remi-Coulom/joedb
 
+Ways of documenting design:
+* https://docs.readthedocs.io/en/latest/intro/getting-started-with-sphinx.html
+* Doxygen
+* draw.io
