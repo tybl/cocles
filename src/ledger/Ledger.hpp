@@ -35,6 +35,8 @@ struct Ledger {
    //void insert(Payee p) { m_payees.push_back(p); }
    void insert(Adjustment a) { m_adjustments.push_back(a); }
 
+   // Copies all account names that match a specific regex
+   // TODO: Make the accounts in the list unique
    std::vector<Account> accounts(std::string re) {
       std::vector<Account> result;
       transform_if(m_adjustments.begin(),
@@ -58,6 +60,8 @@ struct Ledger {
       return result;
    }
 #endif
+   // Copies all payee names that match a specific regex
+   // TODO: Make the payees in the list unique
    std::vector<Payee> payees(std::string re) {
       std::vector<Payee> result;
       transform_if(m_adjustments.begin(),
