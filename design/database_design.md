@@ -1,6 +1,8 @@
 # Notes
 * Return types for queries:
-    * http://www.drdobbs.com/cpp/c-view-objects/196513737
+    * View Objects:
+        * http://www.drdobbs.com/cpp/c-view-objects/196513737
+        * https://scarvenger.wordpress.com/2008/11/14/c-container-view/
     * https://www.fluentcpp.com/?s=filter+iterator
 
 # Use cases
