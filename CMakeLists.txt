@@ -1,4 +1,5 @@
 # Hints: http://www.brianlheim.com/2018/04/09/cmake-cheat-sheet.html
+# for clang-tidy: http://mariobadr.com/using-clang-tidy-with-cmake-36.html
 project(cocles)
 cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -44,3 +45,9 @@ else()
 endif()
 target_compile_options(${LIB_NAME} PUBLIC -pedantic)
 
+find_program(HAS_CLANG_TIDY NAMES "clang-tidy")
+if(HAS_CLANG_TIDY)
+	message(STATUS "clang-tidy found: ${HAS_CLANG_TIDY}")
+	set(DO_CLANG_TIDY "${HAS_CLANG_TIDY}" "-checks=*")
+	set_target_properties(${LIB_NAME} PROPERTIES CXX_CLANG_TIDY "${DO_CLANG_TIDY}")
+endif()
