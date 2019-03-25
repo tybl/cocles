@@ -34,7 +34,7 @@ namespace parse {
 struct transaction_t {
    using date_t = boost::gregorian::date;
 
-   transaction_t(std::string t);
+   explicit transaction_t(std::string const& t);
 
    date_t date() const;
 
@@ -44,7 +44,7 @@ struct transaction_t {
    static transaction_t parse(std::istream& stream);
 
 private:
-   transaction_t(date_t date, std::string payee);
+   transaction_t(date_t date, std::string const& payee);
 
 private:
    date_t                    m_date;

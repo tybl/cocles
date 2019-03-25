@@ -27,7 +27,7 @@ namespace ledger {
 
 namespace parse {
 
-transaction_t::transaction_t(std::string t) {
+transaction_t::transaction_t(std::string const& t) {
    std::smatch m;
    std::regex re("(\\d{4}-\\d{2}-\\d{2}) ([A-Za-z ']*)");
    if (std::regex_search(t, m, re)) {
@@ -53,7 +53,7 @@ transaction_t transaction_t::parse(std::istream& ) {
    throw std::runtime_error("Error: Incomplete transaction");
 }
 
-transaction_t::transaction_t(date_t date, std::string payee)
+transaction_t::transaction_t(date_t date, std::string const& payee)
    : m_date(date)
    , m_payee(payee) { }
 

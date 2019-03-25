@@ -70,7 +70,7 @@ struct Ledger {
                    [re](Adjustment const& adjustment) {
                       return std::regex_search(adjustment.transaction().payee().name(), std::regex(re)); },
                    [](Adjustment const& adjustment) {
-                      return adjustment.transaction().payee().name(); }); // TODO: remove .name()
+                      return adjustment.transaction().payee(); });
       return result;
    }
 

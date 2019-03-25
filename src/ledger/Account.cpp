@@ -21,13 +21,13 @@
 namespace ledger {
 
 struct Account::Impl {
-   Impl(std::string name) : m_name(name) { }
+   explicit Impl(std::string name) : m_name(std::move(name)) { }
    std::string const& name() const { return m_name; }
 private:
    std::string m_name;
 }; // struct Account::Impl
 
-Account::Account(std::string name) : m_pimpl(new Impl(name)) { }
+Account::Account(std::string const& name) : m_pimpl(new Impl(name)) { }
 
 std::string const& Account::name() const { return m_pimpl->name(); }
 

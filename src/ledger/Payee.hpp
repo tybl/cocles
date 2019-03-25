@@ -25,7 +25,7 @@
 namespace ledger {
 
 struct Payee {
-   Payee(std::string name);
+   explicit Payee(std::string const& name);
    std::string const& name() const;
 private:
    struct Impl;

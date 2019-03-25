@@ -25,7 +25,7 @@
 
 struct adjustment_t {
 
-   adjustment_t(std::string input)
+   explicit adjustment_t(std::string const& input)
       : value_(input)
    {
    }

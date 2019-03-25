@@ -18,16 +18,18 @@
 
 #include "Payee.hpp"
 
+#include <utility>
+
 namespace ledger {
 
 struct Payee::Impl {
-   Impl(std::string name) : m_name(name) { }
+   explicit Impl(std::string name) : m_name(std::move(name)) { }
    std::string const& name() const { return m_name; }
 private:
    std::string m_name;
 }; // struct Payee::Impl
 
-Payee::Payee(std::string name) : m_pimpl(new Impl(name)) { }
+Payee::Payee(std::string const& name) : m_pimpl(new Impl(name)) { }
 
 std::string const& Payee::name() const { return m_pimpl->name(); }
 

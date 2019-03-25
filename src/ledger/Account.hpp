@@ -25,7 +25,7 @@
 namespace ledger {
 
 struct Account {
-   Account(std::string name);
+   explicit Account(std::string const& name);
    std::string const& name() const;
 private:
    struct Impl;
