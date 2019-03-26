@@ -29,7 +29,7 @@ namespace parse {
 
 Transaction::Transaction(std::string const& t) {
    std::smatch m;
-   std::regex re(R"(\d{4}-\d{2}-\d{2}) ([A-Za-z ']*)");
+   std::regex re(R"(\d{4}-\d{2}-\d{2}) ([A-Za-z ']*)", std::regex_constants::ECMAScript);
    if (std::regex_search(t, m, re)) {
       m_date = boost::gregorian::from_string(m[1]);
    } else {
@@ -41,7 +41,7 @@ Transaction::Transaction(std::string const& t) {
 std::unique_ptr<Transaction> Transaction::parse(std::string const& t) {
    std::unique_ptr<Transaction> result;
    std::smatch m;
-   std::regex re(R"(\d{4}-\d{2}-\d{2})([A-Za-z ']*)");
+   std::regex re(R"(\d{4}-\d{2}-\d{2})([A-Za-z ']*)", std::regex_constants::ECMAScript);
    if (std::regex_search(t, m, re)) {
       result = std::make_unique<Transaction>(PassKey(), boost::gregorian::from_string(m[1]), m[2]);
       boost::algorithm::trim(result->m_payee);

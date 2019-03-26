@@ -47,8 +47,6 @@ public:
    static Transaction parse(std::istream& stream);
 
 private:
-
-private:
    date_t                    m_date;
    std::string               m_payee;
    std::vector<adjustment_t> m_adjustments;
