@@ -1,6 +1,6 @@
 ---
-Checks:          '*,-llvm-header-guard,-fuchsia-overloaded-operator'
-WarningsAsErrors: ''
+Checks:          '*,-llvm-header-guard,-fuchsia-overloaded-operator,-fuchsia-default-arguments'
+WarningsAsErrors: '1'
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false
 FormatStyle:     none
@@ -291,7 +291,7 @@ CheckOptions:
   - key:             readability-identifier-naming.AbstractClassSuffix
     value:           ''
   - key:             readability-identifier-naming.ClassCase
-    value:           aNy_CasE
+    value:           CamelCase
   - key:             readability-identifier-naming.ClassConstantCase
     value:           aNy_CasE
   - key:             readability-identifier-naming.ClassConstantPrefix
@@ -299,9 +299,9 @@ CheckOptions:
   - key:             readability-identifier-naming.ClassConstantSuffix
     value:           ''
   - key:             readability-identifier-naming.ClassMemberCase
-    value:           aNy_CasE
+    value:           lower_case
   - key:             readability-identifier-naming.ClassMemberPrefix
-    value:           ''
+    value:           'm_'
   - key:             readability-identifier-naming.ClassMemberSuffix
     value:           ''
   - key:             readability-identifier-naming.ClassMethodCase
@@ -491,7 +491,7 @@ CheckOptions:
   - key:             readability-identifier-naming.StructSuffix
     value:           ''
   - key:             readability-identifier-naming.TemplateParameterCase
-    value:           aNy_CasE
+    value:           UPPER_CASE
   - key:             readability-identifier-naming.TemplateParameterPrefix
     value:           ''
   - key:             readability-identifier-naming.TemplateParameterSuffix
