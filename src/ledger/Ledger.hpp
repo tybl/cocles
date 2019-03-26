@@ -22,8 +22,8 @@
 #include "Account.hpp"
 #include "Adjustment.hpp"
 #include "Payee.hpp"
-#include "util/transform_if.hpp"
 
+#include <list>
 #include <regex>
 #include <vector>
 
@@ -31,94 +31,22 @@ namespace ledger {
 
 struct Ledger {
 
-   //void insert(Account a) { m_accounts.push_back(a); }
-   //void insert(Payee p) { m_payees.push_back(p); }
-   void insert(Adjustment a) { m_adjustments.push_back(a); }
+   void insert(Account const& a);
+   void insert(Payee const& p);
+   void insert(Adjustment const& a);
 
    // Copies all account names that match a specific regex
-   // TODO: Make the accounts in the list unique
-   std::vector<Account> accounts(std::string re) {
-      std::vector<Account> result;
-      transform_if(m_adjustments.begin(),
-                   m_adjustments.end(),
-                   std::back_inserter(result),
-                   [re](Adjustment const& adjustment) {
-                      return std::regex_search(adjustment.account().name(), std::regex(re)); },
-                   [](Adjustment const& adjustment) {
-                      return adjustment.account(); });
-      return result;
-   }
+   std::vector<Account> accounts(std::string const& re) const;
 
-#if 0
-   std::vector<Payee> payees(std::string re) {
-      std::vector<Payee> result;
-      std::copy_if(m_payees.begin(),
-                   m_payees.end(),
-                   std::back_inserter(result),
-                   [re](Payee const& payee) {
-                      return std::regex_search(payee.name(), std::regex(re)); });
-      return result;
-   }
-#endif
    // Copies all payee names that match a specific regex
-   // TODO: Make the payees in the list unique
-   std::vector<Payee> payees(std::string re) {
-      std::vector<Payee> result;
-      transform_if(m_adjustments.begin(),
-                   m_adjustments.end(),
-                   std::back_inserter(result),
-                   [re](Adjustment const& adjustment) {
-                      return std::regex_search(adjustment.transaction().payee().name(), std::regex(re)); },
-                   [](Adjustment const& adjustment) {
-                      return adjustment.transaction().payee(); });
-      return result;
-   }
+   std::vector<Payee> payees(std::string const& re) const;
 
 private:
-   //std::list<Account> m_accounts;
-   //std::list<Payee>   m_payees;
+   std::list<Account>      m_accounts;
+   std::list<Payee>        m_payees;
    std::vector<Adjustment> m_adjustments;
 }; // struct Ledger
 
 } // namespace ledger
-
-#if 0
-struct Transfer {
-   date::year_month_day Date;
-   std::string Payee;
-   std::string Account;
-   Money Amount;
-}; // struct Transfer
-
-struct Accounts {
-   struct Node {
-      std::string Name;
-      Node* Parent;
-      std::vector<Node*> Children;
-
-      std::string GetFullName() {
-         if (Parent) {
-            return Parent->GetFullName() + ":" + Name;
-         } else {
-            return Name;
-         }
-      }
-   }; // struct Account
-private:
-   Node* Root;
-}; // struct Accounts
-
-struct Account {
-
-private:
-   std::map<std::string, Account> mChildren;
-}; // struct Account
-
-struct Ledger {
-private:
-
-   std::vector<Transfer> mTransfers;
-}; // struct Ledger
-#endif
 
 #endif // COCLES_LEDGER_LEDGER_HPP

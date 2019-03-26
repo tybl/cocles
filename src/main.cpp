@@ -19,7 +19,6 @@
 #include "ledger/Ledger.hpp"
 
 int main(int argc, const char* argv[], const char* envp[]) {
-   using namespace std::string_literals;
    static_cast<void>(argc);
    static_cast<void>(argv);
    static_cast<void>(envp);

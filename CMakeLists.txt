@@ -10,6 +10,7 @@ set(LIB_NAME ledger)
 set(LIB_SOURCES
 	src/ledger/Account.cpp
 	src/ledger/Adjustment.cpp
+	src/ledger/Ledger.cpp
 	src/ledger/Payee.cpp
 	src/ledger/Transaction.cpp
 	src/ledger/parse/transaction.cpp
