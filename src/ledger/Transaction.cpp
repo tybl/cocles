@@ -22,7 +22,7 @@ namespace ledger {
 
 struct Transaction::Impl {
 
-   Impl(Date date, Payee payee) : m_payee(payee), m_date(date) { }
+   Impl(Date date, Payee payee) : m_payee(std::move(payee)), m_date(date) { }
 
    Payee const& payee() const { return m_payee; }
 
@@ -32,7 +32,7 @@ private:
 }; // struct Transaction::Impl
 
 Transaction::Transaction(Date date, Payee payee)
-   : m_pimpl(new Impl(date, payee)) { }
+   : m_pimpl(new Impl(date, std::move(payee))) { }
 
 Payee const& Transaction::payee() const { return m_pimpl->payee(); }
 

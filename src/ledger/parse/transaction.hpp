@@ -31,33 +31,35 @@ namespace ledger {
 
 namespace parse {
 
-struct transaction_t {
+class Transaction {
+   struct PassKey {};
+public:
    using date_t = boost::gregorian::date;
 
-   explicit transaction_t(std::string const& t);
+   explicit Transaction(std::string const& t);
+   Transaction(PassKey /* private */, date_t date, std::string payee);
 
    date_t date() const;
 
    const std::string& payee() const;
 
-   static std::unique_ptr<transaction_t> parse(std::string string);
-   static transaction_t parse(std::istream& stream);
+   static std::unique_ptr<Transaction> parse(std::string const& t);
+   static Transaction parse(std::istream& stream);
 
 private:
-   transaction_t(date_t date, std::string const& payee);
 
 private:
    date_t                    m_date;
    std::string               m_payee;
    std::vector<adjustment_t> m_adjustments;
-}; // struct transaction_t
+}; // struct Transaction
 
 } // namespace parse
 
-// TODO: Move the parse function to another file. Probably src/ledger/parse.hpp
+// TODO(tblyons): Move the parse function to another file. Probably src/ledger/parse.hpp
 inline
-ledger::parse::transaction_t Parse(std::string input) {
-   return ledger::parse::transaction_t(input);
+ledger::parse::Transaction Parse(std::string const& input) {
+   return ledger::parse::Transaction(input);
 } // parse(std::string input)
 
 } // namespace ledger

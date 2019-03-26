@@ -27,9 +27,9 @@ namespace ledger {
 
 namespace parse {
 
-transaction_t::transaction_t(std::string const& t) {
+Transaction::Transaction(std::string const& t) {
    std::smatch m;
-   std::regex re("(\\d{4}-\\d{2}-\\d{2}) ([A-Za-z ']*)");
+   std::regex re(R"(\d{4}-\d{2}-\d{2}) ([A-Za-z ']*)");
    if (std::regex_search(t, m, re)) {
       m_date = boost::gregorian::from_string(m[1]);
    } else {
@@ -38,28 +38,28 @@ transaction_t::transaction_t(std::string const& t) {
    m_payee = m[2];
 }
 
-std::unique_ptr<transaction_t> transaction_t::parse(std::string t) {
-   std::unique_ptr<transaction_t> result;
+std::unique_ptr<Transaction> Transaction::parse(std::string const& t) {
+   std::unique_ptr<Transaction> result;
    std::smatch m;
-   std::regex re("(\\d{4}-\\d{2}-\\d{2})([A-Za-z ']*)");
+   std::regex re(R"(\d{4}-\d{2}-\d{2})([A-Za-z ']*)");
    if (std::regex_search(t, m, re)) {
-      result.reset(new transaction_t(boost::gregorian::from_string(m[1]), m[2]));
+      result = std::make_unique<Transaction>(PassKey(), boost::gregorian::from_string(m[1]), m[2]);
       boost::algorithm::trim(result->m_payee);
    }
    return result;
 }
 
-transaction_t transaction_t::parse(std::istream& ) {
+Transaction Transaction::parse(std::istream& /* unused */) {
    throw std::runtime_error("Error: Incomplete transaction");
 }
 
-transaction_t::transaction_t(date_t date, std::string const& payee)
+Transaction::Transaction(PassKey /* unused */, date_t date, std::string payee)
    : m_date(date)
-   , m_payee(payee) { }
+   , m_payee(std::move(payee)) { }
 
-transaction_t::date_t transaction_t::date() const { return m_date; }
+Transaction::date_t Transaction::date() const { return m_date; }
 
-const std::string& transaction_t::payee() const { return m_payee; }
+const std::string& Transaction::payee() const { return m_payee; }
 
 } // namespace parse
 
