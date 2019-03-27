@@ -284,6 +284,7 @@ CheckOptions:
     value:           '800'
   - key:             readability-function-size.VariableThreshold
     value:           '4294967295'
+# https://clang.llvm.org/extra/clang-tidy/checks/readability-identifier-naming.html
   - key:             readability-identifier-naming.AbstractClassCase
     value:           aNy_CasE
   - key:             readability-identifier-naming.AbstractClassPrefix
