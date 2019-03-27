@@ -17,6 +17,106 @@
 * Sum balances for accounts
 * Sum balances for budget categories
 
+# Interface
+## Add account
+ledger-cli (in a file):
+```
+account Funds:Daily:Food
+```
+
+cocles source code
+```
+db.insert(Account("Funds:Daily:Food"));
+```
+## Add payee
+ledger-cli (in a file):
+```
+payee Wegman's
+```
+
+cocles source code
+```
+db.insert(Payee("Wegman's"));
+```
+## List accounts
+ledger-cli (commandline)
+```
+$ ledger accounts regex
+```
+
+cocles source code
+```
+auto accounts = db.accounts("regex");
+for (auto const& a : accounts) {
+    std::cout << a.name() << "\n";
+}
+```
+
+## List payees
+
+ledger-cli (commandline)
+```
+$ ledger payees regex
+```
+
+cocles source code
+```
+auto payees = db.payees("regex");
+for (auto const& p : payees) {
+    std::cout << p.name() << "\n";
+}
+```
+
+## List transactions for a payee
+ledger-cli (commandline)
+```
+$ ledger ...
+```
+
+## List adjustments for an account
+ledger-cli (commandline)
+```
+$ ledger reg regex
+```
+
+cocles source code
+```
+auto accounts = db.accounts("regex");
+for (auto const& a : accounts) {
+    auto adjustments = db.adjustments(a);
+    Money sum;
+    for (auto const& adj : adjustments) {
+        std::cout << adj.date() << " "
+                  << adj.payee().name() << " "
+                  << a.name() << " "
+                  << adj.amount() << " "
+                  << sum += adj.amount() << "\n";
+    }
+}
+```
+
+## Sum balance for transaction
+ledger-cli (commandline)
+```
+$ ledger ...
+```
+
+## Sum balances for accounts
+ledger-cli (commandline)
+```
+$ ledger equity regex
+```
+
+cocles source code
+```
+auto accounts = db.accounts("regex");
+for (auto const& a : accounts) {
+    auto adjustments = db.adjustments(a);
+    std::accumulate(adjustments, Money());
+    std::cout << a.name() << " " << sum << "\n";
+}
+```
+
 # Naive Design
 ```
 struct adjustment_t {
