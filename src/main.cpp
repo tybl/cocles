@@ -33,11 +33,11 @@ int main(int argc, const char* argv[], const char* envp[]) {
             ledger::Account("Accounts:Citi:Credit"),
             util::Money("-54.33 USD")));
 
-   for (auto a : ledger.accounts("")) {
+   for (auto const& a : ledger.accounts("")) {
       std::cout << a.name() << "\n";
    }
 
-   for (auto p : ledger.payees("")) {
+   for (auto const& p : ledger.payees("")) {
       std::cout << p.name() << "\n";
    }
 
