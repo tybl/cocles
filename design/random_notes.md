@@ -33,3 +33,4 @@ Ways of documenting design:
 
 Tools
 * https://blog.kitware.com/static-checks-with-cmake-cdash-iwyu-clang-tidy-lwyu-cpplint-and-cppcheck/
+* https://rix0r.nl/blog/2015/08/13/cmake-guide/
