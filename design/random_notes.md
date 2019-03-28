@@ -30,3 +30,6 @@ Ways of documenting design:
 * https://docs.readthedocs.io/en/latest/intro/getting-started-with-sphinx.html
 * Doxygen
 * draw.io
+
+Tools
+* https://blog.kitware.com/static-checks-with-cmake-cdash-iwyu-clang-tidy-lwyu-cpplint-and-cppcheck/
