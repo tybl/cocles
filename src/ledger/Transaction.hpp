@@ -29,7 +29,7 @@ struct Transaction {
    using Date = boost::gregorian::date;
    Transaction(Date date, Payee payee);
 
-   Payee const& payee() const;
+   [[nodiscard]] Payee const& payee() const;
 
 private:
    struct Impl;

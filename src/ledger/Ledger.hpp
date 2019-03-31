@@ -36,10 +36,10 @@ struct Ledger {
    void insert(Adjustment const& a);
 
    // Copies all account names that match a specific regex
-   std::vector<Account> accounts(std::string const& re) const;
+   [[nodiscard]] std::vector<Account> accounts(std::string const& re) const;
 
    // Copies all payee names that match a specific regex
-   std::vector<Payee> payees(std::string const& re) const;
+   [[nodiscard]] std::vector<Payee> payees(std::string const& re) const;
 
 private:
    std::list<Account>      m_accounts;

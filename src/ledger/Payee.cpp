@@ -24,7 +24,7 @@ namespace ledger {
 
 struct Payee::Impl {
    explicit Impl(std::string name) : m_name(std::move(name)) { }
-   std::string const& name() const { return m_name; }
+   [[nodiscard]] std::string const& name() const { return m_name; }
 private:
    std::string m_name;
 }; // struct Payee::Impl

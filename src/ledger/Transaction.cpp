@@ -24,7 +24,7 @@ struct Transaction::Impl {
 
    Impl(Date date, Payee payee) : m_payee(std::move(payee)), m_date(date) { }
 
-   Payee const& payee() const { return m_payee; }
+   [[nodiscard]] Payee const& payee() const { return m_payee; }
 
 private:
    Payee          m_payee;

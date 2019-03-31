@@ -18,9 +18,7 @@
 
 #include "stringify_arguments.hpp"
 
-namespace ledger {
-
-namespace util {
+namespace ledger::util {
 
 std::vector<std::string> stringify_arguments(int argc, const char* argv[]) {
    std::vector<std::string> args;
@@ -30,6 +28,4 @@ std::vector<std::string> stringify_arguments(int argc, const char* argv[]) {
    return args;
 } // stringify_arguments()
 
-} // namespace util
-
-} // namespace ledger
+} // namespace ledger::util

@@ -26,9 +26,9 @@ struct Adjustment::Impl {
       , m_account(std::move(account))
       , m_amount(amount) { }
 
-   Transaction const& transaction() const { return m_transaction; }
-   Account     const& account() const { return m_account; }
-   util::Money const& amount() const { return m_amount; }
+   [[nodiscard]] Transaction const& transaction() const { return m_transaction; }
+   [[nodiscard]] Account     const& account() const { return m_account; }
+   [[nodiscard]] util::Money const& amount() const { return m_amount; }
 
 private:
    Transaction m_transaction;

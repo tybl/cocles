@@ -28,11 +28,11 @@ namespace ledger {
 struct Adjustment {
    Adjustment(Transaction transaction, Account account, util::Money amount);
 
-   Transaction const& transaction() const;
+   [[nodiscard]] Transaction const& transaction() const;
 
-   Account const& account() const;
+   [[nodiscard]] Account const& account() const;
 
-   util::Money const& amount() const;
+   [[nodiscard]] util::Money const& amount() const;
 
 private:
    enum class AdjustmentStatus { UNKNOWN, PENDING, CLEARED, RECONCILED };

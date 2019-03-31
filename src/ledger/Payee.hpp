@@ -26,7 +26,7 @@ namespace ledger {
 
 struct Payee {
    explicit Payee(std::string const& name);
-   std::string const& name() const;
+   [[nodiscard]] std::string const& name() const;
 private:
    struct Impl;
    std::shared_ptr<Impl> m_pimpl;

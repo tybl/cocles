@@ -23,9 +23,7 @@
 #include <regex>
 #include <sstream>
 
-namespace ledger {
-
-namespace parse {
+namespace ledger::parse {
 
 Transaction::Transaction(std::string const& t) {
    std::smatch m;
@@ -61,6 +59,4 @@ Transaction::date_t Transaction::date() const { return m_date; }
 
 const std::string& Transaction::payee() const { return m_payee; }
 
-} // namespace parse
-
-} // namespace ledger
+} // namespace ledger::parse

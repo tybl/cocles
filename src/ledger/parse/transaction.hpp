@@ -39,9 +39,9 @@ public:
    explicit Transaction(std::string const& t);
    Transaction(PassKey /* private */, date_t date, std::string payee);
 
-   date_t date() const;
+   [[nodiscard]] date_t date() const;
 
-   const std::string& payee() const;
+   [[nodiscard]] const std::string& payee() const;
 
    static std::unique_ptr<Transaction> parse(std::string const& t);
    static Transaction parse(std::istream& stream);

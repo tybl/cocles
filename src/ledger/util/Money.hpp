@@ -39,7 +39,7 @@ struct Money {
 
    explicit Money(std::string const& value);
 
-   std::string to_string() const;
+   [[nodiscard]] std::string to_string() const;
 
    bool operator==(Money const& other) const;
 
