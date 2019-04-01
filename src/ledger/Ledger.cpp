@@ -20,34 +20,82 @@
 
 #include "util/transform_if.hpp"
 
+#include <boost/container/flat_set.hpp>
+
+#include <list>
+#include <regex>
+
 namespace ledger {
 
-void Ledger::insert(Account const& a) { m_accounts.push_back(a); }
-void Ledger::insert(Payee const& p) { m_payees.push_back(p); }
-void Ledger::insert(Adjustment const& a) { m_adjustments.push_back(a); }
+struct Ledger::Impl {
 
-// Copies all account names that match a specific regex
-std::vector<Account> Ledger::accounts(std::string const& re) const {
-   std::vector<Account> result;
-   transform_if(m_adjustments,
-                std::back_inserter(result),
-                [re](Adjustment const& adjustment) {
-                   return std::regex_search(adjustment.account().name(), std::regex(re)); },
-                [](Adjustment const& adjustment) {
-                   return adjustment.account(); });
-   return result;
-}
+   void insert(Account const& a) { m_accounts.insert(a); }
 
-// Copies all payee names that match a specific regex
-std::vector<Payee> Ledger::payees(std::string const& re) const {
-   std::vector<Payee> result;
-   transform_if(m_adjustments,
-                std::back_inserter(result),
-                [re](Adjustment const& adjustment) {
-                   return std::regex_search(adjustment.transaction().payee().name(), std::regex(re)); },
-                [](Adjustment const& adjustment) {
-                   return adjustment.transaction().payee(); });
-   return result;
-}
+   void insert(Payee const& p) { m_payees.insert(p); }
+
+   void insert(Adjustment const& a) { m_adjustments.push_back(a); }
+
+   void insert(Transaction const& t) {
+      if (is_valid(t)) {
+         for (auto const& a : t.adjustments()) {
+            m_adjustments.emplace(t.date(), t.payee(), a.account(), a.amount());
+         }
+      }
+   }
+
+   [[nodiscard]] std::vector<Account> accounts(std::string const& re) const {
+      std::vector<Account> result;
+      transform_if(m_adjustments,
+                   std::back_inserter(result),
+                   [re](Adjustment const& adjustment) {
+                      return std::regex_search(adjustment.account().name(), std::regex(re)); },
+                   [](Adjustment const& adjustment) {
+                      return adjustment.account(); });
+      return result;
+   }
+
+   [[nodiscard]] std::vector<Payee> payees(std::string const& re) const {
+      std::vector<Payee> result;
+      transform_if(m_adjustments,
+                   std::back_inserter(result),
+                   [re](Adjustment const& adjustment) {
+                      return std::regex_search(adjustment.transaction().payee().name(), std::regex(re)); },
+                   [](Adjustment const& adjustment) {
+                      return adjustment.transaction().payee(); });
+      return result;
+   }
+
+private:
+   bool is_valid(Transaction const& t) {
+      if (!m_payees.contains(t.payee())) {
+         return false;
+      }
+      for (auto const& a : t.adjustments()) {
+         if (!m_accounts.contains(a.account())) {
+            return false;
+         }
+      }
+      return true;
+   }
+
+private:
+   boost::container::flat_set<Account> m_accounts;
+   boost::container::flat_set<Payee>   m_payees;
+   std::vector<Adjustment>             m_adjustments;
+};
+
+Ledger::Ledger() : m_pimpl(std::make_shared<Ledger::Impl>()) {}
+
+void Ledger::insert(Account const& a) { m_pimpl->insert(a); }
+
+void Ledger::insert(Payee const& p) { m_pimpl->insert(p); }
+
+void Ledger::insert(Adjustment const& a) { m_pimpl->insert(a); }
+
+void Ledger::insert(Transaction const& t) { m_pimpl->insert(t); }
+
+std::vector<Account> Ledger::accounts(std::string const& re) const { return m_pimpl->accounts(re); }
+
+std::vector<Payee> Ledger::payees(std::string const& re) const { return m_pimpl->payees(re); }
 
 } // namespace ledger

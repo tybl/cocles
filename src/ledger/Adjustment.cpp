@@ -20,26 +20,33 @@
 
 namespace ledger {
 
+// enum class AdjustmentStatus { UNKNOWN, PENDING, CLEARED, RECONCILED };
+
 struct Adjustment::Impl {
-   Impl(Transaction transaction, Account account, util::Money amount)
-      : m_transaction(std::move(transaction))
+   Impl(Date date, Payee payee, Account account, util::Money amount)
+      : m_date(date)
+      , m_payee(std::move(payee))
       , m_account(std::move(account))
       , m_amount(amount) { }
 
-   [[nodiscard]] Transaction const& transaction() const { return m_transaction; }
+   [[nodiscard]] Date        const& date() const { return m_date; }
+   [[nodiscard]] Payee       const& payee() const { return m_payee; }
    [[nodiscard]] Account     const& account() const { return m_account; }
    [[nodiscard]] util::Money const& amount() const { return m_amount; }
 
 private:
-   Transaction m_transaction;
+   Date        m_date;
+   Payee       m_payee;
    Account     m_account;
    util::Money m_amount;
 };
 
-Adjustment::Adjustment(Transaction transaction, Account account, util::Money amount)
-   : m_pimpl(new Impl(std::move(transaction), std::move(account), amount)) { }
+Adjustment::Adjustment(Date date, Payee payee, Account account, util::Money amount)
+   : m_pimpl(new Impl(date, std::move(payee), account, amount) { }
 
-Transaction const& Adjustment::transaction() const { return m_pimpl->transaction(); }
+Adjustment::Date const& Adjustment::date() const { return m_pimpl->date(); }
+
+Payee const& Adjustment::payee() const { return m_pimpl->payee(); }
 
 Account const& Adjustment::account() const { return m_pimpl->account(); }
 

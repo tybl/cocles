@@ -19,12 +19,40 @@
 #ifndef COCLES_LEDGER_TRANSACTION_HPP
 #define COCLES_LEDGER_TRANSACTION_HPP
 
+#include "Account.hpp"
 #include "Payee.hpp"
+#include "util/Money.hpp"
 
 #include <boost/date_time/gregorian/gregorian.hpp>
 
 namespace ledger {
 
+struct Transaction {
+   using Date = boost::gregorian::date;
+
+   struct Adjustment {
+      Adjustment(std::string const& account, int64_t amount)
+         : m_account(account)
+         , m_amount(amount) { }
+
+      [[nodiscard]] Account const& account() const { return m_account; }
+
+      [[nodiscard]] util::Money const& amount() const { return m_amount; }
+
+   private:
+      Account m_account;
+      util::Money   m_amount;
+   }; // Transaction::Adjustment
+
+   [[nodiscard]] std::vector<Adjustment> adjustments() const;
+   [[nodiscard]] Date const& date() const { return m_date; }
+   [[nodiscard]] Payee const& payee() const { return m_payee; }
+private:
+   Date m_date;
+   Payee m_payee;
+}; // struct Transaction
+
+#if 0
 struct Transaction {
    using Date = boost::gregorian::date;
    Transaction(Date date, Payee payee);
@@ -35,6 +63,7 @@ private:
    struct Impl;
    std::shared_ptr<Impl> m_pimpl;
 }; // struct Transaction
+#endif
 
 } // namespace ledger
 

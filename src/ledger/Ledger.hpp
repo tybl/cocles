@@ -22,18 +22,23 @@
 #include "Account.hpp"
 #include "Adjustment.hpp"
 #include "Payee.hpp"
+#include "Transaction.hpp"
 
-#include <list>
-#include <regex>
 #include <vector>
 
 namespace ledger {
 
 struct Ledger {
 
+   Ledger();
+
    void insert(Account const& a);
+
    void insert(Payee const& p);
+
    void insert(Adjustment const& a);
+
+   void insert(Transaction const& t);
 
    // Copies all account names that match a specific regex
    [[nodiscard]] std::vector<Account> accounts(std::string const& re) const;
@@ -42,9 +47,8 @@ struct Ledger {
    [[nodiscard]] std::vector<Payee> payees(std::string const& re) const;
 
 private:
-   std::list<Account>      m_accounts;
-   std::list<Payee>        m_payees;
-   std::vector<Adjustment> m_adjustments;
+   struct Impl;
+   std::shared_ptr<Impl> m_pimpl;
 }; // struct Ledger
 
 } // namespace ledger

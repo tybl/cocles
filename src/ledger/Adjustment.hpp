@@ -26,16 +26,19 @@
 namespace ledger {
 
 struct Adjustment {
-   Adjustment(Transaction transaction, Account account, util::Money amount);
+   using Date = boost::gregorian::date;
 
-   [[nodiscard]] Transaction const& transaction() const;
+   Adjustment(Date date, Payee payee, Account account, util::Money amount);
+
+   [[nodiscard]] Date const& date() const;
+
+   [[nodiscard]] Payee const& payee() const;
 
    [[nodiscard]] Account const& account() const;
 
    [[nodiscard]] util::Money const& amount() const;
 
 private:
-   enum class AdjustmentStatus { UNKNOWN, PENDING, CLEARED, RECONCILED };
    struct Impl;
    std::shared_ptr<Impl> m_pimpl;
 }; // struct Adjustment
