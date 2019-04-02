@@ -38,7 +38,7 @@ struct Ledger::Impl {
    void insert(Transaction const& t) {
       if (is_valid(t)) {
          for (auto const& a : t.adjustments()) {
-            m_adjustments.emplace(t.date(), t.payee(), a.account(), a.amount());
+            m_adjustments.emplace_back(t.date(), t.payee(), a.account(), a.amount());
          }
       }
    }
@@ -59,9 +59,9 @@ struct Ledger::Impl {
       transform_if(m_adjustments,
                    std::back_inserter(result),
                    [re](Adjustment const& adjustment) {
-                      return std::regex_search(adjustment.transaction().payee().name(), std::regex(re)); },
+                      return std::regex_search(adjustment.payee().name(), std::regex(re)); },
                    [](Adjustment const& adjustment) {
-                      return adjustment.transaction().payee(); });
+                      return adjustment.payee(); });
       return result;
    }
 

@@ -44,12 +44,17 @@ struct Transaction {
       util::Money   m_amount;
    }; // Transaction::Adjustment
 
-   [[nodiscard]] std::vector<Adjustment> adjustments() const;
+   Transaction(Date date, Payee payee)
+      : m_date(date)
+      , m_payee(std::move(payee)) { }
+
+   [[nodiscard]] std::vector<Adjustment> adjustments() const { return m_adjustments; }
    [[nodiscard]] Date const& date() const { return m_date; }
    [[nodiscard]] Payee const& payee() const { return m_payee; }
 private:
    Date m_date;
    Payee m_payee;
+   std::vector<Adjustment> m_adjustments;
 }; // struct Transaction
 
 #if 0

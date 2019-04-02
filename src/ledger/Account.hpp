@@ -27,6 +27,7 @@ namespace ledger {
 struct Account {
    explicit Account(std::string const& name);
    [[nodiscard]] std::string const& name() const;
+   bool operator<(Account const& other) const;
 private:
    struct Impl;
    std::shared_ptr<Impl> m_pimpl;

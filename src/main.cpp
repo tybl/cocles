@@ -27,9 +27,8 @@ int main(int argc, const char* argv[], const char* envp[]) {
 
    ledger.insert(
          ledger::Adjustment(
-            ledger::Transaction(
-               boost::gregorian::from_string("2019-03-09"),
-               ledger::Payee("Wegman's")),
+            boost::gregorian::from_string("2019-03-09"),
+            ledger::Payee("Wegman's"),
             ledger::Account("Accounts:Citi:Credit"),
             util::Money("-54.33 USD")));
 

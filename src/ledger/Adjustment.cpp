@@ -39,10 +39,10 @@ private:
    Payee       m_payee;
    Account     m_account;
    util::Money m_amount;
-};
+}; // struct Adjustment::Impl
 
-Adjustment::Adjustment(Date date, Payee payee, Account account, util::Money amount)
-   : m_pimpl(new Impl(date, std::move(payee), account, amount) { }
+Adjustment::Adjustment(Adjustment::Date date, Payee payee, Account account, util::Money amount)
+   : m_pimpl(new Impl(date, std::move(payee), std::move(account), amount)) { }
 
 Adjustment::Date const& Adjustment::date() const { return m_pimpl->date(); }
 
