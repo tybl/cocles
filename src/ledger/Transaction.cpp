@@ -20,22 +20,14 @@
 
 namespace ledger {
 
-#if 0
-struct Transaction::Impl {
-
-   Impl(Date date, Payee payee) : m_payee(std::move(payee)), m_date(date) { }
-
-   [[nodiscard]] Payee const& payee() const { return m_payee; }
-
-private:
-   Payee          m_payee;
-   boost::gregorian::date m_date;
-}; // struct Transaction::Impl
-
 Transaction::Transaction(Date date, Payee payee)
-   : m_pimpl(new Impl(date, std::move(payee))) { }
+   : m_date(date)
+   , m_payee(std::move(payee)) { }
 
-Payee const& Transaction::payee() const { return m_pimpl->payee(); }
-#endif
+std::vector<Adjustment> const& Transaction::adjustments() const { return m_adjustments; }
+
+Transaction::Date const& Transaction::date() const { return m_date; }
+
+Payee const& Transaction::payee() const { return m_payee; }
 
 } // namespace ledger

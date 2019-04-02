@@ -25,12 +25,15 @@
 namespace ledger {
 
 struct Payee {
-   explicit Payee(std::string const& name);
+
+   explicit Payee(std::string name);
+
    [[nodiscard]] std::string const& name() const;
-   bool operator<(Payee const& other) const;
+
+   [[nodiscard]] bool operator<(Payee const& other) const;
+
 private:
-   struct Impl;
-   std::shared_ptr<Impl> m_pimpl;
+   std::string m_name;
 }; // struct Payee
 
 } // namespace ledger

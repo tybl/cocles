@@ -19,14 +19,16 @@
 #ifndef COCLES_LEDGER_LEDGER_HPP
 #define COCLES_LEDGER_LEDGER_HPP
 
-#include "Account.hpp"
-#include "Adjustment.hpp"
-#include "Payee.hpp"
-#include "Transaction.hpp"
-
+#include <memory>
+#include <string>
 #include <vector>
 
 namespace ledger {
+
+struct Account;
+struct Adjustment;
+struct Payee;
+struct Transaction;
 
 struct Ledger {
 

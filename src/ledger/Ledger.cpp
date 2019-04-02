@@ -18,6 +18,10 @@
 
 #include "Ledger.hpp"
 
+#include "Account.hpp"
+#include "Adjustment.hpp"
+#include "Payee.hpp"
+#include "Transaction.hpp"
 #include "util/transform_if.hpp"
 
 #include <boost/container/flat_set.hpp>

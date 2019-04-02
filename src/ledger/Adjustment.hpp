@@ -20,8 +20,10 @@
 #define COCLES_LEDGER_ADJUSTMENT_HPP
 
 #include "Account.hpp"
-#include "Transaction.hpp"
+#include "Payee.hpp"
 #include "util/Money.hpp"
+
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 namespace ledger {
 
@@ -39,8 +41,10 @@ struct Adjustment {
    [[nodiscard]] util::Money const& amount() const;
 
 private:
-   struct Impl;
-   std::shared_ptr<Impl> m_pimpl;
+   Date        m_date;
+   Payee       m_payee;
+   Account     m_account;
+   util::Money m_amount;
 }; // struct Adjustment
 
 } // namespace ledger

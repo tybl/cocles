@@ -22,18 +22,10 @@
 
 namespace ledger {
 
-struct Payee::Impl {
-   explicit Impl(std::string name) : m_name(std::move(name)) { }
-   [[nodiscard]] std::string const& name() const { return m_name; }
-   bool operator<(Impl const& other) const { return m_name < other.m_name; }
-private:
-   std::string m_name;
-}; // struct Payee::Impl
+Payee::Payee(std::string name) : m_name(std::move(name)) { }
 
-Payee::Payee(std::string const& name) : m_pimpl(new Impl(name)) { }
+std::string const& Payee::name() const { return m_name; }
 
-std::string const& Payee::name() const { return m_pimpl->name(); }
-
-bool Payee::operator<(Payee const& other) const { return m_pimpl->operator<(*other.m_pimpl); }
+bool Payee::operator<(Payee const& other) const { return m_name < other.m_name; }
 
 } // namespace ledger

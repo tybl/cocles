@@ -20,18 +20,10 @@
 
 namespace ledger {
 
-struct Account::Impl {
-   explicit Impl(std::string name) : m_name(std::move(name)) { }
-   [[nodiscard]] std::string const& name() const { return m_name; }
-   bool operator<(Impl const& other) const { return m_name < other.m_name; }
-private:
-   std::string m_name;
-}; // struct Account::Impl
+Account::Account(std::string name) : m_name(std::move(name)) { }
 
-Account::Account(std::string const& name) : m_pimpl(new Impl(name)) { }
+std::string const& Account::name() const { return m_name; }
 
-std::string const& Account::name() const { return m_pimpl->name(); }
-
-bool Account::operator<(Account const& other) const { return m_pimpl->operator<(*other.m_pimpl); }
+bool Account::operator<(Account const& other) const { return m_name < other.m_name; }
 
 } // namespace ledger
