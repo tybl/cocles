@@ -20,13 +20,13 @@
 
 namespace ledger {
 
-Transaction::Transaction(Date date, Payee payee)
+Transaction::Transaction(util::Date date, Payee payee)
    : m_date(date)
    , m_payee(std::move(payee)) { }
 
 std::vector<Adjustment> const& Transaction::adjustments() const { return m_adjustments; }
 
-Transaction::Date const& Transaction::date() const { return m_date; }
+util::Date const& Transaction::date() const { return m_date; }
 
 Payee const& Transaction::payee() const { return m_payee; }
 

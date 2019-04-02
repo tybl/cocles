@@ -22,14 +22,14 @@ namespace ledger {
 
 // enum class AdjustmentStatus { UNKNOWN, PENDING, CLEARED, RECONCILED };
 
-Adjustment::Adjustment(Adjustment::Date date, Payee payee, Account account, util::Money amount)
+Adjustment::Adjustment(util::Date date, Payee payee, Account account, util::Money amount)
    : m_date(date)
    , m_payee(std::move(payee))
    , m_account(std::move(account))
    , m_amount(amount)
 { }
 
-Adjustment::Date const& Adjustment::date() const { return m_date; }
+util::Date const& Adjustment::date() const { return m_date; }
 
 Payee const& Adjustment::payee() const { return m_payee; }
 

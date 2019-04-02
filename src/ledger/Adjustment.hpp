@@ -21,18 +21,16 @@
 
 #include "Account.hpp"
 #include "Payee.hpp"
+#include "util/Date.hpp"
 #include "util/Money.hpp"
-
-#include <boost/date_time/gregorian/gregorian.hpp>
 
 namespace ledger {
 
 struct Adjustment {
-   using Date = boost::gregorian::date;
 
-   Adjustment(Date date, Payee payee, Account account, util::Money amount);
+   Adjustment(util::Date date, Payee payee, Account account, util::Money amount);
 
-   [[nodiscard]] Date const& date() const;
+   [[nodiscard]] util::Date const& date() const;
 
    [[nodiscard]] Payee const& payee() const;
 
@@ -41,7 +39,7 @@ struct Adjustment {
    [[nodiscard]] util::Money const& amount() const;
 
 private:
-   Date        m_date;
+   util::Date  m_date;
    Payee       m_payee;
    Account     m_account;
    util::Money m_amount;

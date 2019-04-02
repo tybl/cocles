@@ -16,32 +16,15 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef COCLES_LEDGER_TRANSACTION_HPP
-#define COCLES_LEDGER_TRANSACTION_HPP
+#ifndef COCLES_UTIL_DATE_HPP
+#define COCLES_UTIL_DATE_HPP
 
-#include "Adjustment.hpp"
-#include "Payee.hpp"
-#include "util/Date.hpp"
-#include "util/Money.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 
-namespace ledger {
+namespace util {
 
-struct Transaction {
+using Date = boost::gregorian::date;
 
-   Transaction(util::Date date, Payee payee);
+} // namespace util
 
-   [[nodiscard]] std::vector<Adjustment> const& adjustments() const;
-
-   [[nodiscard]] util::Date const& date() const;
-
-   [[nodiscard]] Payee const& payee() const;
-
-private:
-   util::Date m_date;
-   Payee      m_payee;
-   std::vector<Adjustment> m_adjustments;
-}; // struct Transaction
-
-} // namespace ledger
-
-#endif // COCLES_LEDGER_TRANSACTION_HPP
+#endif // COCLES_UTIL_DATE_HPP
