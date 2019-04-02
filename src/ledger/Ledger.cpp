@@ -19,14 +19,13 @@
 #include "Ledger.hpp"
 
 #include "Account.hpp"
-#include "Adjustment.hpp"
+#include "ExtendedAdjustment.hpp"
 #include "Payee.hpp"
 #include "Transaction.hpp"
 #include "util/transform_if.hpp"
 
 #include <boost/container/flat_set.hpp>
 
-#include <list>
 #include <regex>
 
 namespace ledger {
@@ -36,8 +35,6 @@ struct Ledger::Impl {
    void insert(Account const& a) { m_accounts.insert(a); }
 
    void insert(Payee const& p) { m_payees.insert(p); }
-
-   void insert(Adjustment const& a) { m_adjustments.push_back(a); }
 
    void insert(Transaction const& t) {
       if (is_valid(t)) {
@@ -51,9 +48,9 @@ struct Ledger::Impl {
       std::vector<Account> result;
       transform_if(m_adjustments,
                    std::back_inserter(result),
-                   [re](Adjustment const& adjustment) {
+                   [re](ExtendedAdjustment const& adjustment) {
                       return std::regex_search(adjustment.account().name(), std::regex(re)); },
-                   [](Adjustment const& adjustment) {
+                   [](ExtendedAdjustment const& adjustment) {
                       return adjustment.account(); });
       return result;
    }
@@ -62,9 +59,9 @@ struct Ledger::Impl {
       std::vector<Payee> result;
       transform_if(m_adjustments,
                    std::back_inserter(result),
-                   [re](Adjustment const& adjustment) {
+                   [re](ExtendedAdjustment const& adjustment) {
                       return std::regex_search(adjustment.payee().name(), std::regex(re)); },
-                   [](Adjustment const& adjustment) {
+                   [](ExtendedAdjustment const& adjustment) {
                       return adjustment.payee(); });
       return result;
    }
@@ -85,7 +82,7 @@ private:
 private:
    boost::container::flat_set<Account> m_accounts;
    boost::container::flat_set<Payee>   m_payees;
-   std::vector<Adjustment>             m_adjustments;
+   std::vector<ExtendedAdjustment>     m_adjustments;
 };
 
 Ledger::Ledger() : m_pimpl(std::make_shared<Ledger::Impl>()) {}
@@ -93,8 +90,6 @@ Ledger::Ledger() : m_pimpl(std::make_shared<Ledger::Impl>()) {}
 void Ledger::insert(Account const& a) { m_pimpl->insert(a); }
 
 void Ledger::insert(Payee const& p) { m_pimpl->insert(p); }
-
-void Ledger::insert(Adjustment const& a) { m_pimpl->insert(a); }
 
 void Ledger::insert(Transaction const& t) { m_pimpl->insert(t); }
 

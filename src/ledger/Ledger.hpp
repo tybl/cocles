@@ -26,7 +26,6 @@
 namespace ledger {
 
 struct Account;
-struct Adjustment;
 struct Payee;
 struct Transaction;
 
@@ -37,8 +36,6 @@ struct Ledger {
    void insert(Account const& a);
 
    void insert(Payee const& p);
-
-   void insert(Adjustment const& a);
 
    void insert(Transaction const& t);
 

@@ -10,12 +10,12 @@ set(LIB_NAME ledger)
 set(LIB_SOURCES
 	src/ledger/Account.cpp
 	src/ledger/Adjustment.cpp
+	src/ledger/ExtendedAdjustment.cpp
 	src/ledger/Ledger.cpp
 	src/ledger/Payee.cpp
 	src/ledger/Transaction.cpp
 	src/ledger/parse/transaction.cpp
-	src/ledger/util/Money.cpp
-	src/ledger/util/stringify_arguments.cpp)
+	src/util/Money.cpp)
 set(TEST_NAME libledgertest)
 set(TEST_SOURCES
 	test/ledger/parse/transaction.cpp)

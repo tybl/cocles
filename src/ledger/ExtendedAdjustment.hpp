@@ -16,19 +16,35 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "Adjustment.hpp"
+#ifndef COCLES_LEDGER_EXTENDED_ADJUSTMENT_HPP
+#define COCLES_LEDGER_EXTENDED_ADJUSTMENT_HPP
+
+#include "Account.hpp"
+#include "Payee.hpp"
+#include "util/Date.hpp"
+#include "util/Money.hpp"
 
 namespace ledger {
 
-// enum class AdjustmentStatus { UNKNOWN, PENDING, CLEARED, RECONCILED };
+struct ExtendedAdjustment {
 
-Adjustment::Adjustment(Account account, util::Money amount)
-   : m_account(std::move(account))
-   , m_amount(amount)
-{ }
+   ExtendedAdjustment(util::Date date, Payee payee, Account account, util::Money amount);
 
-Account const& Adjustment::account() const { return m_account; }
+   [[nodiscard]] util::Date const& date() const;
 
-util::Money const& Adjustment::amount() const { return m_amount; }
+   [[nodiscard]] Payee const& payee() const;
+
+   [[nodiscard]] Account const& account() const;
+
+   [[nodiscard]] util::Money const& amount() const;
+
+private:
+   util::Date  m_date;
+   Payee       m_payee;
+   Account     m_account;
+   util::Money m_amount;
+}; // struct ExtendedAdjustment
 
 } // namespace ledger
+
+#endif // COCLES_LEDGER_EXTENDED_ADJUSTMENT_HPP

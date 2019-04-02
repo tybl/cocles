@@ -19,7 +19,7 @@
 #ifndef COCLES_LEDGER_PARSE_ADJUSTMENT_HPP
 #define COCLES_LEDGER_PARSE_ADJUSTMENT_HPP
 
-#include "ledger/util/Money.hpp"
+#include "util/Money.hpp"
 
 #include <string>
 

@@ -16,19 +16,25 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "Adjustment.hpp"
+#include "ExtendedAdjustment.hpp"
 
 namespace ledger {
 
 // enum class AdjustmentStatus { UNKNOWN, PENDING, CLEARED, RECONCILED };
 
-Adjustment::Adjustment(Account account, util::Money amount)
-   : m_account(std::move(account))
+ExtendedAdjustment::ExtendedAdjustment(util::Date date, Payee payee, Account account, util::Money amount)
+   : m_date(date)
+   , m_payee(std::move(payee))
+   , m_account(std::move(account))
    , m_amount(amount)
 { }
 
-Account const& Adjustment::account() const { return m_account; }
+util::Date const& ExtendedAdjustment::date() const { return m_date; }
 
-util::Money const& Adjustment::amount() const { return m_amount; }
+Payee const& ExtendedAdjustment::payee() const { return m_payee; }
+
+Account const& ExtendedAdjustment::account() const { return m_account; }
+
+util::Money const& ExtendedAdjustment::amount() const { return m_amount; }
 
 } // namespace ledger
