@@ -17,12 +17,12 @@
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "ledger/Account.hpp"
-#include "ledger/ExtendedAdjustment.hpp"
+#include "ledger/Adjustment.hpp"
 #include "ledger/Ledger.hpp"
 #include "ledger/Payee.hpp"
+#include "ledger/Transaction.hpp"
+#include "util/Date.hpp"
 #include "util/Money.hpp"
-
-#include <boost/date_time/gregorian/gregorian.hpp>
 
 int main(int argc, const char* argv[], const char* envp[]) {
    static_cast<void>(argc);
@@ -31,14 +31,11 @@ int main(int argc, const char* argv[], const char* envp[]) {
 
    ledger::Ledger ledger;
 
-#if 0
-   ledger.insert(
-         ledger::ExtendedAdjustment(
-            boost::gregorian::from_string("2019-03-09"),
-            ledger::Payee("Wegman's"),
-            ledger::Account("Accounts:Citi:Credit"),
-            util::Money("-54.33 USD")));
-#endif
+   ledger::Transaction t(boost::gregorian::from_string("2019-03-09"), ledger::Payee("Wegman's"));
+   t.add_adjustment(ledger::Adjustment(ledger::Account("Accounts:Citi:Credit"), util::Money("-54.33 USD")));
+   t.add_adjustment(ledger::Adjustment(ledger::Account("Funds:Daily:Food"), util::Money("54.33 USD")));
+
+   ledger.insert(t);
 
    for (auto const& a : ledger.accounts("")) {
       std::cout << a.name() << "\n";

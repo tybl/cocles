@@ -24,6 +24,8 @@ Transaction::Transaction(util::Date date, Payee payee)
    : m_date(date)
    , m_payee(std::move(payee)) { }
 
+void Transaction::add_adjustment(Adjustment const& adjustment) { m_adjustments.push_back(adjustment); }
+
 std::vector<Adjustment> const& Transaction::adjustments() const { return m_adjustments; }
 
 util::Date const& Transaction::date() const { return m_date; }

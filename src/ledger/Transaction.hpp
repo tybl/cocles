@@ -30,6 +30,8 @@ struct Transaction {
 
    Transaction(util::Date date, Payee payee);
 
+   void add_adjustment(Adjustment const& adjustment);
+
    [[nodiscard]] std::vector<Adjustment> const& adjustments() const;
 
    [[nodiscard]] util::Date const& date() const;

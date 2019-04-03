@@ -26,6 +26,7 @@
 
 #include <boost/container/flat_set.hpp>
 
+#include <iostream>
 #include <regex>
 
 namespace ledger {
@@ -41,6 +42,8 @@ struct Ledger::Impl {
          for (auto const& a : t.adjustments()) {
             m_adjustments.emplace_back(t.date(), t.payee(), a.account(), a.amount());
          }
+      } else {
+         std::cout << "Error: invalid transaction!\n";
       }
    }
 
