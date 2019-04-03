@@ -31,6 +31,14 @@ int main(int argc, const char* argv[], const char* envp[]) {
 
    ledger::Ledger ledger;
 
+   ledger::Account accounts_citi_credit("Accounts:Citi:Credit");
+   ledger::Account funds_daily_food("Funds:Daily:Food");
+   ledger::Payee payee_wegmans("Wegman's");
+
+   ledger.insert(accounts_citi_credit);
+   ledger.insert(funds_daily_food);
+   ledger.insert(payee_wegmans);
+
    ledger::Transaction t(boost::gregorian::from_string("2019-03-09"), ledger::Payee("Wegman's"));
    t.add_adjustment(ledger::Adjustment(ledger::Account("Accounts:Citi:Credit"), util::Money("-54.33 USD")));
    t.add_adjustment(ledger::Adjustment(ledger::Account("Funds:Daily:Food"), util::Money("54.33 USD")));
