@@ -49,12 +49,9 @@ struct Ledger::Impl {
 
    [[nodiscard]] std::vector<Account> accounts(std::string const& re) const {
       std::vector<Account> result;
-      transform_if(m_adjustments,
-                   std::back_inserter(result),
-                   [re](ExtendedAdjustment const& adjustment) {
-                      return std::regex_search(adjustment.account().name(), std::regex(re)); },
-                   [](ExtendedAdjustment const& adjustment) {
-                      return adjustment.account(); });
+      std::copy_if(m_accounts.begin(), m_accounts.end(), std::back_inserter(result),
+                   [re](Account const& account) {
+                      return std::regex_search(account.name(), std::regex(re)); });
       return result;
    }
 
