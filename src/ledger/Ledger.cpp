@@ -60,12 +60,9 @@ struct Ledger::Impl {
 
    [[nodiscard]] std::vector<Payee> payees(std::string const& re) const {
       std::vector<Payee> result;
-      transform_if(m_adjustments,
-                   std::back_inserter(result),
-                   [re](ExtendedAdjustment const& adjustment) {
-                      return std::regex_search(adjustment.payee().name(), std::regex(re)); },
-                   [](ExtendedAdjustment const& adjustment) {
-                      return adjustment.payee(); });
+      std::copy_if(m_payees.begin(), m_payees.end(), std::back_inserter(result),
+                   [re](Payee const& payee) {
+                      return std::regex_search(payee.name(), std::regex(re)); });
       return result;
    }
 
