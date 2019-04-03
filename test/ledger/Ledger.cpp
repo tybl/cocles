@@ -49,3 +49,30 @@ TEST_CASE("tblyons/cocles#4") {
    auto post_size = payees.size();
    CHECK(prior_size == post_size);
 }
+
+TEST_CASE("tblyons/cocles#5") {
+   ledger::Ledger ledger;
+
+   ledger::Account accounts_citi_credit("Accounts:Citi:Credit");
+   ledger::Account funds_daily_food("Funds:Daily:Food");
+   ledger::Payee payee_wegmans("Wegman's");
+
+   ledger.insert(accounts_citi_credit);
+   ledger.insert(funds_daily_food);
+   ledger.insert(payee_wegmans);
+
+   ledger::Transaction t(boost::gregorian::from_string("2019-03-09"), ledger::Payee("Wegman's"));
+   t.add_adjustment(ledger::Adjustment(ledger::Account("Accounts:Citi:Credit"), util::Money("-54.33 USD")));
+   t.add_adjustment(ledger::Adjustment(ledger::Account("Funds:Daily:Food"), util::Money("54.33 USD")));
+
+   ledger.insert(t);
+   ledger.insert(t);
+
+   auto accounts = ledger.accounts("");
+   auto prior_size = accounts.size();
+   std::sort(accounts.begin(), accounts.end());
+   auto new_end = std::unique(accounts.begin(), accounts.end());
+   accounts.erase(new_end, accounts.end());
+   auto post_size = accounts.size();
+   CHECK(prior_size == post_size);
+}

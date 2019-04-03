@@ -32,6 +32,8 @@ struct Account {
 
    [[nodiscard]] bool operator<(Account const& other) const;
 
+   [[nodiscard]] bool operator==(Account const& other) const;
+
 private:
    std::string m_name;
 }; // struct Account

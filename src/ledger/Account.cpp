@@ -26,4 +26,6 @@ std::string const& Account::name() const { return m_name; }
 
 bool Account::operator<(Account const& other) const { return m_name < other.m_name; }
 
+bool Account::operator==(Account const& other) const { return m_name == other.m_name; }
+
 } // namespace ledger
