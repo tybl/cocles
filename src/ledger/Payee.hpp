@@ -32,6 +32,8 @@ struct Payee {
 
    [[nodiscard]] bool operator<(Payee const& other) const;
 
+   [[nodiscard]] bool operator==(Payee const& other) const;
+
 private:
    std::string m_name;
 }; // struct Payee

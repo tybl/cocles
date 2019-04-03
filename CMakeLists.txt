@@ -18,6 +18,7 @@ set(LIB_SOURCES
 	src/util/Money.cpp)
 set(TEST_NAME libledgertest)
 set(TEST_SOURCES
+	test/ledger/Ledger.cpp
 	test/ledger/parse/transaction.cpp)
 
 find_package(Boost 1.68 REQUIRED date_time)

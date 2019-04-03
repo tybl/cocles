@@ -28,4 +28,6 @@ std::string const& Payee::name() const { return m_name; }
 
 bool Payee::operator<(Payee const& other) const { return m_name < other.m_name; }
 
+bool Payee::operator==(Payee const& other) const { return m_name == other.m_name; }
+
 } // namespace ledger
