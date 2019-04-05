@@ -61,11 +61,16 @@ util::Date const& Transaction::Builder::date() const {
    return m_date;
 }
 
-Payee const& Transaction::Builder::payee() const { return m_payee; }
+Payee const& Transaction::Builder::payee() const {
+   return m_payee;
+}
 
-std::vector<Adjustment> const& Transaction::Builder::adjustments() const { return m_adjustments; }
+std::vector<Adjustment> const& Transaction::Builder::adjustments() const {
+   return m_adjustments;
+}
 
 Transaction Transaction::Builder::build() const {
+   if (!is_valid()) { throw std::runtime_error("Error: Transaction adjustments don't sum to zero"); }
    return Transaction(*this);
 }
 
