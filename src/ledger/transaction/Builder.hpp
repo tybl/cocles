@@ -16,35 +16,41 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef COCLES_LEDGER_TRANSACTION_HPP
-#define COCLES_LEDGER_TRANSACTION_HPP
+#ifndef COCLES_LEDGER_TRANSACTION_BUILDER_HPP
+#define COCLES_LEDGER_TRANSACTION_BUILDER_HPP
 
-#include "Adjustment.hpp"
-#include "Payee.hpp"
-#include "util/Date.hpp"
-#include "util/Money.hpp"
+#include "ledger/Transaction.hpp"
 
 namespace ledger {
 
-struct Transaction {
-   struct Builder;
+struct Transaction::Builder {
 
-   explicit Transaction(Builder const& b);
+   Builder& set_date(util::Date date);
 
-   [[nodiscard]] std::vector<Adjustment> const& adjustments() const;
+   Builder& set_date(std::string const& date);
+
+   Builder& set_payee(Payee payee);
+
+   Builder& set_payee(std::string const& payee);
+
+   Builder& add_adjustment(Adjustment const& adjustment);
+
+   [[nodiscard]] bool is_valid() const;
 
    [[nodiscard]] util::Date const& date() const;
 
    [[nodiscard]] Payee const& payee() const;
 
-   static Builder builder();
+   [[nodiscard]] std::vector<Adjustment> const& adjustments() const;
+
+   [[nodiscard]] Transaction build() const;
 
 private:
-   util::Date m_date;
-   Payee      m_payee;
+   util::Date              m_date;
+   Payee                   m_payee;
    std::vector<Adjustment> m_adjustments;
-}; // struct Transaction
+}; // struct Transaction::Builder
 
 } // namespace ledger
 
-#endif // COCLES_LEDGER_TRANSACTION_HPP
+#endif // COCLES_LEDGER_TRANSACTION_BUILDER_HPP

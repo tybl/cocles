@@ -1,0 +1,72 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* ISC License
+*
+* Copyright (c) 2019, Timothy Lyons
+*
+* Permission to use, copy, modify, and/or distribute this software for any
+* purpose with or without fee is hereby granted, provided that the above
+* copyright notice and this permission notice appear in all copies.
+*
+* THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+* REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+* AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+* INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+* LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+* OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+* PERFORMANCE OF THIS SOFTWARE.
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#include "Builder.hpp"
+
+#include "ledger/Transaction.hpp"
+
+#include <numeric>
+
+namespace ledger {
+
+Transaction::Builder& Transaction::Builder::set_date(util::Date date) {
+   m_date = date;
+   return *this;
+}
+
+Transaction::Builder& Transaction::Builder::set_date(std::string const& date) {
+   m_date = boost::gregorian::from_string(date);
+   return *this;
+}
+
+Transaction::Builder& Transaction::Builder::set_payee(Payee payee) {
+   m_payee = std::move(payee);
+   return *this;
+}
+
+Transaction::Builder& Transaction::Builder::set_payee(std::string const& payee) {
+   m_payee = Payee(payee);
+   return *this;
+}
+
+Transaction::Builder& Transaction::Builder::add_adjustment(Adjustment const& adjustment) {
+   m_adjustments.push_back(adjustment);
+   return *this;
+}
+
+bool Transaction::Builder::is_valid() const {
+   return util::Money() == std::accumulate(m_adjustments.begin(),
+                                           m_adjustments.end(),
+                                           util::Money(),
+                                           [](util::Money const& m, Adjustment const& a) -> util::Money {
+                                              return m + a.amount();
+                                           });
+}
+util::Date const& Transaction::Builder::date() const {
+   return m_date;
+}
+
+Payee const& Transaction::Builder::payee() const { return m_payee; }
+
+std::vector<Adjustment> const& Transaction::Builder::adjustments() const { return m_adjustments; }
+
+Transaction Transaction::Builder::build() const {
+   return Transaction(*this);
+}
+
+} // namespace ledger

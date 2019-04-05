@@ -15,6 +15,7 @@ set(LIB_SOURCES
 	src/ledger/Payee.cpp
 	src/ledger/Transaction.cpp
 	src/ledger/parse/transaction.cpp
+	src/ledger/transaction/Builder.cpp
 	src/util/Money.cpp)
 set(TEST_NAME libledgertest)
 set(TEST_SOURCES

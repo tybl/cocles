@@ -63,6 +63,8 @@ private:
    int64_t m_value{0};
 }; // struct Money
 
+Money operator+(Money a, Money const& b);
+
 } // namespace util
 
 #endif // COCLES_UTIL_MONEY_HPP

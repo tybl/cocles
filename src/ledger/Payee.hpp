@@ -26,6 +26,8 @@ namespace ledger {
 
 struct Payee {
 
+   Payee() = default;
+
    explicit Payee(std::string name);
 
    [[nodiscard]] std::string const& name() const;

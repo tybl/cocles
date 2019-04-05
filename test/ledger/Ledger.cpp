@@ -21,25 +21,26 @@
 #include "ledger/Account.hpp"
 #include "ledger/Payee.hpp"
 #include "ledger/Transaction.hpp"
+#include "ledger/transaction/Builder.hpp"
 
 #include "doctest/doctest.h"
 
 TEST_CASE("tblyons/cocles#4") {
-   ledger::Ledger ledger;
+   using namespace ledger;
+   Ledger ledger;
 
-   ledger::Account accounts_citi_credit("Accounts:Citi:Credit");
-   ledger::Account funds_daily_food("Funds:Daily:Food");
-   ledger::Payee payee_wegmans("Wegman's");
+   Account accounts_citi_credit("Accounts:Citi:Credit");
+   Account funds_daily_food("Funds:Daily:Food");
+   Payee payee_wegmans("Wegman's");
 
    ledger.insert(accounts_citi_credit);
    ledger.insert(funds_daily_food);
    ledger.insert(payee_wegmans);
 
-   ledger::Transaction t(boost::gregorian::from_string("2019-03-09"), ledger::Payee("Wegman's"));
-   t.add_adjustment(ledger::Adjustment(ledger::Account("Accounts:Citi:Credit"), util::Money("-54.33 USD")));
-   t.add_adjustment(ledger::Adjustment(ledger::Account("Funds:Daily:Food"), util::Money("54.33 USD")));
-
-   ledger.insert(t);
+   ledger.insert(Transaction::builder().set_date("2019-03-09").set_payee("Wegman's")
+         .add_adjustment(Adjustment(Account("Accounts:Citi:Credit"), util::Money("-54.33 USD")))
+         .add_adjustment(Adjustment(Account("Funds:Daily:Food"), util::Money("54.33 USD")))
+         .build());
 
    auto payees = ledger.payees("");
    auto prior_size = payees.size();
@@ -51,19 +52,21 @@ TEST_CASE("tblyons/cocles#4") {
 }
 
 TEST_CASE("tblyons/cocles#5") {
-   ledger::Ledger ledger;
+   using namespace ledger;
+   Ledger ledger;
 
-   ledger::Account accounts_citi_credit("Accounts:Citi:Credit");
-   ledger::Account funds_daily_food("Funds:Daily:Food");
-   ledger::Payee payee_wegmans("Wegman's");
+   Account accounts_citi_credit("Accounts:Citi:Credit");
+   Account funds_daily_food("Funds:Daily:Food");
+   Payee payee_wegmans("Wegman's");
 
    ledger.insert(accounts_citi_credit);
    ledger.insert(funds_daily_food);
    ledger.insert(payee_wegmans);
 
-   ledger::Transaction t(boost::gregorian::from_string("2019-03-09"), ledger::Payee("Wegman's"));
-   t.add_adjustment(ledger::Adjustment(ledger::Account("Accounts:Citi:Credit"), util::Money("-54.33 USD")));
-   t.add_adjustment(ledger::Adjustment(ledger::Account("Funds:Daily:Food"), util::Money("54.33 USD")));
+   auto t = Transaction::builder().set_date("2019-03-09").set_payee("Wegman's")
+         .add_adjustment(Adjustment(Account("Accounts:Citi:Credit"), util::Money("-54.33 USD")))
+         .add_adjustment(Adjustment(Account("Funds:Daily:Food"), util::Money("54.33 USD")))
+         .build();
 
    ledger.insert(t);
    ledger.insert(t);

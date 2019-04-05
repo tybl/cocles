@@ -78,4 +78,8 @@ void swap(Money& first, Money& second) {
    swap(first.m_value, second.m_value);
 }
 
+Money operator+(Money a, Money const& b) {
+   return a += b;
+}
+
 } // namespace util
