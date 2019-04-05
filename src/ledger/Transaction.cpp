@@ -39,8 +39,4 @@ Payee const& Transaction::payee() const {
    return m_payee;
 }
 
-Transaction::Builder Transaction::builder() {
-   return Builder();
-}
-
 } // namespace ledger

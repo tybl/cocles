@@ -37,7 +37,7 @@ TEST_CASE("tblyons/cocles#4") {
    ledger.insert(funds_daily_food);
    ledger.insert(payee_wegmans);
 
-   ledger.insert(Transaction::builder().set_date("2019-03-09").set_payee("Wegman's")
+   ledger.insert(Transaction::Builder().set_date("2019-03-09").set_payee("Wegman's")
          .add_adjustment(Adjustment(Account("Accounts:Citi:Credit"), util::Money("-54.33 USD")))
          .add_adjustment(Adjustment(Account("Funds:Daily:Food"), util::Money("54.33 USD")))
          .build());
@@ -63,7 +63,7 @@ TEST_CASE("tblyons/cocles#5") {
    ledger.insert(funds_daily_food);
    ledger.insert(payee_wegmans);
 
-   auto t = Transaction::builder().set_date("2019-03-09").set_payee("Wegman's")
+   auto t = Transaction::Builder().set_date("2019-03-09").set_payee("Wegman's")
          .add_adjustment(Adjustment(Account("Accounts:Citi:Credit"), util::Money("-54.33 USD")))
          .add_adjustment(Adjustment(Account("Funds:Daily:Food"), util::Money("54.33 USD")))
          .build();

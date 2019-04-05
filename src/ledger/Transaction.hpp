@@ -37,8 +37,6 @@ struct Transaction {
 
    [[nodiscard]] Payee const& payee() const;
 
-   static Builder builder();
-
 private:
    util::Date m_date;
    Payee      m_payee;
