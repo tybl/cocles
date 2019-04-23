@@ -16,13 +16,13 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef COCLES_UTIL_MONEY_HPP
-#define COCLES_UTIL_MONEY_HPP
+#ifndef COCLES_UTIL_HAPENNY_HPP
+#define COCLES_UTIL_HAPENNY_HPP
 
 ///////////////////////////////////////////////////////////////////////////////
-// Defines class to represent money
+// Defines class to represent money to half a cent
 //
-// Only represent up to 1,000,000,000,000,000.000
+// Only represent up to 5,000,000,000,000,000.00
 //
 // Use cases:
 // - Sum up amounts from each adjustment for a specific account
@@ -33,44 +33,40 @@
 
 namespace util {
 
-struct Money {
-   using MoneyType = std::string;
+struct Hapenny {
 
-   Money() = default;
+   Hapenny();
 
-   explicit Money(MoneyType const& v) : m_value(std::stoll(v)) { }
+   explicit Hapenny(std::string const& value);
 
-   explicit Money(int64_t v) : m_value(v) { }
+   explicit Hapenny(int64_t value) : m_value(value) { }
 
    [[nodiscard]] std::string to_string() const;
 
-   bool operator==(Money const& o) const;
+   bool operator==(Hapenny const& other) const;
 
-   Money& operator+=(Money const& o);
+   Hapenny& operator+=(Hapenny const& other);
 
-   Money& operator-=(Money const& o);
+   Hapenny& operator-=(Hapenny const& other);
 
-   //Money& operator %= (Money const& o);
-   //Money& operator /= (Money const& o);
+   //Hapenny& operator %= (Hapenny const& other);
+   //Hapenny& operator /= (Hapenny const& other);
 
-   Money& operator*=(int64_t o);
+   Hapenny& operator*=(int64_t other);
 
-   Money& operator%=(int64_t o);
+   Hapenny& operator%=(int64_t other);
+   Hapenny& operator/=(int64_t other);
 
-   Money& operator/=(int64_t o);
-
-   [[nodiscard]] MoneyType get_money_type() const { return std::to_string(m_value); }
-
-   friend void swap(Money& first, Money& second);
+   friend void swap(Hapenny& first, Hapenny& second);
 
 private:
    int64_t m_value{0};
-}; // struct Money
+}; // struct Hapenny
 
-Money operator+(Money a, Money const& b);
+Hapenny operator+(Hapenny a, Hapenny const& b);
 
-std::ostream& operator<<(std::ostream& s, Money const& m);
+std::ostream& operator<<(std::ostream& s, Hapenny const& m);
 
 } // namespace util
 
-#endif // COCLES_UTIL_MONEY_HPP
+#endif // COCLES_UTIL_HAPENNY_HPP

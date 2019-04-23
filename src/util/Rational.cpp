@@ -23,11 +23,7 @@
 
 namespace util {
 
-constexpr Rational operator""_r(unsigned long long p) {
-    // default conversion
-    return p;
-}
-
+#if 0
 namespace {
    constexpr long long gcd(long long p, long long q) {
       return q ? gcd(q, (p % q)) : p;
@@ -187,4 +183,5 @@ constexpr Rational Rational::inverse() const {
    return {m_denominator, m_numerator};
 }
 
+#endif
 } // namespace util

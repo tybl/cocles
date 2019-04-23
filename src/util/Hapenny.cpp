@@ -16,64 +16,78 @@
 * PERFORMANCE OF THIS SOFTWARE.
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "Money.hpp"
+#include "Hapenny.hpp"
 
 #include <iomanip>
 #include <sstream>
 
-#include <iostream>
+t   b   m   t
+123,456,789,012,345
 
 namespace util {
 
-std::string Money::to_string() const {
-   std::ostringstream value_stream(std::ios_base::out);
-   value_stream << std::put_money(m_value, false);
-   return value_stream.str();
+Hapenny::Hapenny()
+   : m_value(0)
+{}
+
+Hapenny::Hapenny(std::string const& new_value)
+   : m_value(0)
+{
+#if 0
+   auto temp = 0.0L;
+   std::istringstream value_stream(new_value, std::ios_base::in);
+   value_stream >> std::get_money(temp, false);
+   std::cout << "Hapenny(\"" << new_value << "\") = " << temp << "\n";
+   m_value = static_cast<int64_t>(temp);
+#endif
 }
 
-bool Money::operator==(Money const& other) const {
-   return m_value == other.m_value;
+std::string Hapenny::to_string() const {
+   return std::to_string(m_value / 200) + "." + std::to_string((m_value % 200) * 5);
 }
 
-Money& Money::operator+=(Money const& other) {
-   m_value += other.m_value;
+bool Hapenny::operator==(Hapenny const& o) const {
+   return m_value == o.m_value;
+}
+
+Hapenny& Hapenny::operator+=(Hapenny const& o) {
+   m_value += o.m_value;
    return *this;
 }
 
-Money& Money::operator-=(Money const& other) {
-   m_value -= other.m_value;
+Hapenny& Hapenny::operator-=(Hapenny const& o) {
+   m_value -= o.m_value;
    return *this;
 }
 
-//Money& operator %= (Money const& other);
-//Money& operator /= (Money const& other);
+//Hapenny& operator %= (Hapenny const& o);
+//Hapenny& operator /= (Hapenny const& o);
 
-Money& Money::operator*=(int64_t other) {
-   m_value *= other;
+Hapenny& Hapenny::operator*=(int64_t o) {
+   m_value *= o;
    return *this;
 }
 
-Money& Money::operator%=(int64_t other) {
-   m_value %= other;
+Hapenny& Hapenny::operator%=(int64_t o) {
+   m_value %= o;
    return *this;
 }
 
-Money& Money::operator/=(int64_t other) {
-   m_value /= other;
+Hapenny& Hapenny::operator/=(int64_t o) {
+   m_value /= o;
    return *this;
 }
 
-void swap(Money& a, Money& b) {
+void swap(Hapenny& a, Hapenny& b) {
    using std::swap;
    swap(a.m_value, b.m_value);
 }
 
-Money operator+(Money a, Money const& b) {
+Hapenny operator+(Hapenny a, Hapenny const& b) {
    return a += b;
 }
 
-std::ostream& operator<<(std::ostream& s, Money const& m) {
-   s.imbue(std::locale(s.getloc(), new 
+std::ostream& operator<<(std::ostream& s, Hapenny const& m) {
     return s << m.to_string();
 }
 

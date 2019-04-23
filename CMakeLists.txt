@@ -16,13 +16,15 @@ set(LIB_SOURCES
 	src/ledger/Transaction.cpp
 	src/ledger/parse/transaction.cpp
 	src/ledger/transaction/Builder.cpp
+	src/util/Hapenny.cpp
 	src/util/Money.cpp
 	src/util/Rational.cpp)
 set(TEST_NAME libledgertest)
 set(TEST_SOURCES
 	test/ledger/Ledger.cpp
 	test/ledger/transaction/Builder.cpp
-	test/ledger/parse/transaction.cpp)
+	test/ledger/parse/transaction.cpp
+	test/util/Rational.cpp)
 
 find_package(Boost 1.68 REQUIRED date_time)
 
@@ -42,7 +44,7 @@ add_test(${TEST_NAME} ${TEST_NAME})
 
 # Enable all available warnings
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-	target_compile_options(${LIB_NAME} PUBLIC -Weverything -Wno-c++98-compat)
+	target_compile_options(${LIB_NAME} PUBLIC -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic)
 elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 	target_compile_options(${LIB_NAME} PUBLIC -Wall -Wextra)
 else()
