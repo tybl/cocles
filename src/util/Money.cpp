@@ -73,7 +73,7 @@ Money operator+(Money a, Money const& b) {
 }
 
 std::ostream& operator<<(std::ostream& s, Money const& m) {
-   s.imbue(std::locale(s.getloc(), new 
+   //s.imbue(std::locale(s.getloc(), new 
     return s << m.to_string();
 }
 

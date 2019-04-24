@@ -16,15 +16,13 @@ set(LIB_SOURCES
 	src/ledger/Transaction.cpp
 	src/ledger/parse/transaction.cpp
 	src/ledger/transaction/Builder.cpp
-	src/util/Hapenny.cpp
-	src/util/Money.cpp
-	src/util/Rational.cpp)
+	src/util/Money.cpp)
 set(TEST_NAME libledgertest)
 set(TEST_SOURCES
 	test/ledger/Ledger.cpp
 	test/ledger/transaction/Builder.cpp
 	test/ledger/parse/transaction.cpp
-	test/util/Rational.cpp)
+	test/util/Money.cpp)
 
 find_package(Boost 1.68 REQUIRED date_time)
 
