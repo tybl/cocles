@@ -36,32 +36,37 @@ namespace util {
 struct Money {
    using MoneyType = std::string;
 
-   Money() = default;
+   Money();
 
-   explicit Money(MoneyType const& v) : m_value(std::stoll(v)) { }
+   explicit Money(MoneyType const& v);
 
-   explicit Money(int64_t v) : m_value(v) { }
+   explicit Money(int64_t v);
 
-   [[nodiscard]] std::string to_string() const;
-
+   // Comparison Operators
    bool operator==(Money const& o) const;
+   bool operator!=(Money const& o) const;
+   bool operator<(Money const& o) const;
+   bool operator>(Money const& o) const;
+   bool operator<=(Money const& o) const;
+   bool operator>=(Money const& o) const;
 
+   // Arithmetic Operators
    Money& operator+=(Money const& o);
-
    Money& operator-=(Money const& o);
-
+   //Money& operator *= (Money const& o);
    //Money& operator %= (Money const& o);
    //Money& operator /= (Money const& o);
-
+   //Money& operator+=(int64_t o);
+   //Money& operator-=(int64_t o);
    Money& operator*=(int64_t o);
-
    Money& operator%=(int64_t o);
-
    Money& operator/=(int64_t o);
 
-   [[nodiscard]] MoneyType get_money_type() const { return std::to_string(m_value); }
+   [[nodiscard]] MoneyType get_money_type() const;
 
-   friend void swap(Money& first, Money& second);
+   void set_money_type(MoneyType const& v);
+
+   friend void swap(Money& a, Money& b);
 
 private:
    int64_t m_value{0};
@@ -70,6 +75,7 @@ private:
 Money operator+(Money a, Money const& b);
 
 std::ostream& operator<<(std::ostream& s, Money const& m);
+std::istream& operator>>(std::istream& s, Money& m);
 
 } // namespace util
 

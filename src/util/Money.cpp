@@ -21,18 +21,40 @@
 #include <iomanip>
 #include <sstream>
 
-#include <iostream>
-
 namespace util {
 
-std::string Money::to_string() const {
-   std::ostringstream value_stream(std::ios_base::out);
-   value_stream << std::put_money(m_value, false);
-   return value_stream.str();
+Money::Money() = default;
+
+Money::Money(MoneyType const& v)
+   : m_value(std::stoll(v))
+{ }
+
+Money::Money(int64_t v)
+   : m_value(v)
+{ }
+
+bool Money::operator==(Money const& o) const {
+   return m_value == o.m_value;
 }
 
-bool Money::operator==(Money const& other) const {
-   return m_value == other.m_value;
+bool Money::operator!=(Money const& o) const {
+   return m_value != o.m_value;
+}
+
+bool Money::operator<(Money const& o) const {
+   return m_value < o.m_value;
+}
+
+bool Money::operator>(Money const& o) const {
+   return m_value > o.m_value;
+}
+
+bool Money::operator<=(Money const& o) const {
+   return m_value <= o.m_value;
+}
+
+bool Money::operator>=(Money const& o) const {
+   return m_value >= o.m_value;
 }
 
 Money& Money::operator+=(Money const& other) {
@@ -63,6 +85,14 @@ Money& Money::operator/=(int64_t other) {
    return *this;
 }
 
+Money::MoneyType Money::get_money_type() const {
+   return std::to_string(m_value);
+}
+
+void Money::set_money_type(MoneyType const& v) {
+   m_value = std::stoll(v);
+}
+
 void swap(Money& a, Money& b) {
    using std::swap;
    swap(a.m_value, b.m_value);
@@ -73,8 +103,14 @@ Money operator+(Money a, Money const& b) {
 }
 
 std::ostream& operator<<(std::ostream& s, Money const& m) {
-   //s.imbue(std::locale(s.getloc(), new 
-    return s << m.to_string();
+   return s << std::put_money(m.get_money_type());
+}
+
+std::istream& operator>>(std::istream& s, Money& m) {
+   std::string temp;
+   s >> std::get_money(temp);
+   m.set_money_type(temp);
+   return s;
 }
 
 } // namespace util

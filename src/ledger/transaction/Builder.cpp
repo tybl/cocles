@@ -55,7 +55,7 @@ bool Transaction::Builder::is_valid() const {
                                            m_adjustments.end(),
                                            util::Money(),
                                            [](util::Money const& m, Adjustment const& a) -> util::Money {
-                                              std::cout << "T:B:iv: " << m << " + " << a.amount() << " = " << m + a.amount() << "\n";
+                                              //std::cout << "T:B:iv: " << m << " + " << a.amount() << " = " << m + a.amount() << "\n";
                                               return m + a.amount();
                                            });
 }

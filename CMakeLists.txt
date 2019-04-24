@@ -42,7 +42,7 @@ add_test(${TEST_NAME} ${TEST_NAME})
 
 # Enable all available warnings
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-	target_compile_options(${LIB_NAME} PUBLIC -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic)
+	target_compile_options(${LIB_NAME} PUBLIC -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded)
 elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 	target_compile_options(${LIB_NAME} PUBLIC -Wall -Wextra)
 else()
