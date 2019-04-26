@@ -19,9 +19,39 @@
 #include "Money.hpp"
 
 #include <iomanip>
+#include <iostream>
+#include <locale>
 #include <sstream>
 
 namespace util {
+
+struct space_out
+   : std::moneypunct<char>
+{
+   pattern do_pos_format() const override {
+      return { { symbol, sign, value, none } };
+   }
+
+   pattern do_neg_format() const override {
+      return { { symbol, sign, value, none } };
+   }
+
+   int do_frac_digits() const override {
+      return 2;
+   }
+
+   char_type do_thousands_sep() const override {
+      return ',';
+   }
+
+   string_type do_grouping() const override {
+      return "\003";
+   }
+
+   string_type do_curr_symbol() const override {
+      return "$";
+   }
+};
 
 Money::Money() = default;
 
@@ -103,10 +133,16 @@ Money operator+(Money a, Money const& b) {
 }
 
 std::ostream& operator<<(std::ostream& s, Money const& m) {
-   return s << std::put_money(m.get_money_type());
+   if (!std::has_facet<space_out>(s.getloc())) {
+      s.imbue(std::locale(s.getloc(), new space_out));
+   }
+   return s << std::showbase << std::put_money(m.get_money_type());
 }
 
 std::istream& operator>>(std::istream& s, Money& m) {
+   if (!std::has_facet<space_out>(s.getloc())) {
+      s.imbue(std::locale(s.getloc(), new space_out));
+   }
    std::string temp;
    s >> std::get_money(temp);
    m.set_money_type(temp);
