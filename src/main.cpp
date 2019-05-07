@@ -54,5 +54,12 @@ int main(int argc, const char* argv[], const char* envp[]) {
       std::cout << p.name() << "\n";
    }
 
+   std::stringstream input_file(
+   "2019-05-05 Giant\n"
+   "    * Accounts:Citi:Credit                         $-4.63\n"
+   "    Funds:Daily:Petrol\n");
+
+   input_file >> ledger;
+
    return 0;
 }

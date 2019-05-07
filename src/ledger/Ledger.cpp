@@ -22,11 +22,13 @@
 #include "ExtendedAdjustment.hpp"
 #include "Payee.hpp"
 #include "Transaction.hpp"
+#include "transaction/Builder.hpp"
 #include "util/transform_if.hpp"
 
 #include <boost/container/flat_set.hpp>
 
 #include <iostream>
+#include <istream>
 #include <regex>
 
 namespace ledger {
@@ -93,5 +95,91 @@ void Ledger::insert(Transaction const& t) { m_pimpl->insert(t); }
 std::vector<Account> Ledger::accounts(std::string const& re) const { return m_pimpl->accounts(re); }
 
 std::vector<Payee> Ledger::payees(std::string const& re) const { return m_pimpl->payees(re); }
+
+std::istream& operator>>(std::istream& s, Ledger& /*l*/) {
+   std::string temp;
+   while (s) {
+      switch (s.peek()) {
+         case ' ':
+            // Shouldn't be a space on its own
+            std::cerr << "case \' \': Found a \"" << s.get() << "\"\n";
+            break;
+         case '0': [[fallthrough]];
+         case '1': [[fallthrough]];
+         case '2': [[fallthrough]];
+         case '3': [[fallthrough]];
+         case '4': [[fallthrough]];
+         case '5': [[fallthrough]];
+         case '6': [[fallthrough]];
+         case '7': [[fallthrough]];
+         case '8': [[fallthrough]];
+         case '9':
+            // Parse transaction
+            Transaction::Builder t;
+            s >> t;
+            l.insert(t.build());
+            break;
+         case 'A': [[fallthrough]];
+         case 'B': [[fallthrough]];
+         case 'C': [[fallthrough]];
+         case 'D': [[fallthrough]];
+         case 'E': [[fallthrough]];
+         case 'F': [[fallthrough]];
+         case 'G': [[fallthrough]];
+         case 'H': [[fallthrough]];
+         case 'I': [[fallthrough]];
+         case 'J': [[fallthrough]];
+         case 'K': [[fallthrough]];
+         case 'L': [[fallthrough]];
+         case 'M': [[fallthrough]];
+         case 'N': [[fallthrough]];
+         case 'O': [[fallthrough]];
+         case 'P': [[fallthrough]];
+         case 'Q': [[fallthrough]];
+         case 'R': [[fallthrough]];
+         case 'S': [[fallthrough]];
+         case 'T': [[fallthrough]];
+         case 'U': [[fallthrough]];
+         case 'V': [[fallthrough]];
+         case 'W': [[fallthrough]];
+         case 'X': [[fallthrough]];
+         case 'Y': [[fallthrough]];
+         case 'Z': [[fallthrough]];
+         case 'a': [[fallthrough]];
+         case 'b': [[fallthrough]];
+         case 'c': [[fallthrough]];
+         case 'd': [[fallthrough]];
+         case 'e': [[fallthrough]];
+         case 'f': [[fallthrough]];
+         case 'g': [[fallthrough]];
+         case 'h': [[fallthrough]];
+         case 'i': [[fallthrough]];
+         case 'j': [[fallthrough]];
+         case 'k': [[fallthrough]];
+         case 'l': [[fallthrough]];
+         case 'm': [[fallthrough]];
+         case 'n': [[fallthrough]];
+         case 'o': [[fallthrough]];
+         case 'p': [[fallthrough]];
+         case 'q': [[fallthrough]];
+         case 'r': [[fallthrough]];
+         case 's': [[fallthrough]];
+         case 't': [[fallthrough]];
+         case 'u': [[fallthrough]];
+         case 'v': [[fallthrough]];
+         case 'w': [[fallthrough]];
+         case 'x': [[fallthrough]];
+         case 'y': [[fallthrough]];
+         case 'z':
+            // Parse account
+            std::cerr << "case \'a\': Found a \"" << static_cast<char>(s.get()) << "\"\n";
+            break;
+         default:
+            std::cerr << "default: Found a \"" << s.get() << "\"\n";
+            break;
+      }
+   } // while (s)
+   return s;
+}
 
 } // namespace ledger

@@ -50,6 +50,8 @@ private:
    std::shared_ptr<Impl> m_pimpl;
 }; // struct Ledger
 
+std::istream& operator>>(std::istream& s, Ledger& l);
+
 } // namespace ledger
 
 #endif // COCLES_LEDGER_LEDGER_HPP

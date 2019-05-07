@@ -43,6 +43,7 @@ private:
    std::vector<Adjustment> m_adjustments;
 }; // struct Transaction
 
+
 } // namespace ledger
 
 #endif // COCLES_LEDGER_TRANSACTION_HPP

@@ -63,7 +63,6 @@ struct Money {
    Money& operator/=(int64_t o);
 
    [[nodiscard]] MoneyType get_money_type() const;
-
    void set_money_type(MoneyType const& v);
 
    friend void swap(Money& a, Money& b);

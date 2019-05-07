@@ -76,4 +76,8 @@ Transaction Transaction::Builder::build() const {
    return Transaction(*this);
 }
 
+std::istream& operator>>(std::istream& s, Transaction::Builder& t) {
+   return s;
+}
+
 } // namespace ledger

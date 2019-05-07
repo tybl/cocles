@@ -45,6 +45,8 @@ struct Transaction::Builder {
 
    [[nodiscard]] Transaction build() const;
 
+   friend std::istream& operator>>(std::istream& s, Transaction::Builder& t);
+
 private:
    util::Date              m_date;
    Payee                   m_payee;
