@@ -7,22 +7,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(EXEC_NAME cocles)
 set(LIB_NAME ledger)
-set(LIB_SOURCES
-	src/ledger/Account.cpp
-	src/ledger/Adjustment.cpp
-	src/ledger/ExtendedAdjustment.cpp
-	src/ledger/Ledger.cpp
-	src/ledger/Payee.cpp
-	src/ledger/Transaction.cpp
-	src/ledger/parse/transaction.cpp
-	src/ledger/transaction/Builder.cpp
-	src/util/Money.cpp)
+file(GLOB_RECURSE LIB_SOURCES src/ledger/*.cpp src/util/*.cpp)
 set(TEST_NAME libledgertest)
-set(TEST_SOURCES
-	test/ledger/Ledger.cpp
-	test/ledger/transaction/Builder.cpp
-	test/ledger/parse/transaction.cpp
-	test/util/Money.cpp)
+file(GLOB_RECURSE TEST_SOURCES test/ledger/*.cpp test/util/*.cpp)
 
 find_package(Boost 1.68 REQUIRED date_time)
 
