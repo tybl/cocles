@@ -1,7 +1,11 @@
 # Hints: http://www.brianlheim.com/2018/04/09/cmake-cheat-sheet.html
 # for clang-tidy: http://mariobadr.com/using-clang-tidy-with-cmake-36.html
-project(cocles)
 cmake_minimum_required(VERSION 3.13)
+project(cocles
+	VERSION 0.0
+	DESCRIPTION "Thanks, Cocles; you are the pearl of cachiers."
+	LANGUAGES CXX)
+
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 17)
 
