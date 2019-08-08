@@ -96,7 +96,7 @@ std::vector<Account> Ledger::accounts(std::string const& re) const { return m_pi
 
 std::vector<Payee> Ledger::payees(std::string const& re) const { return m_pimpl->payees(re); }
 
-std::istream& operator>>(std::istream& s, Ledger& /*l*/) {
+std::istream& operator>>(std::istream& s, Ledger& l) {
    std::string temp;
    while (s) {
       switch (s.peek()) {
@@ -113,12 +113,13 @@ std::istream& operator>>(std::istream& s, Ledger& /*l*/) {
          case '6': [[fallthrough]];
          case '7': [[fallthrough]];
          case '8': [[fallthrough]];
-         case '9':
+         case '9': {
             // Parse transaction
             Transaction::Builder t;
             s >> t;
             l.insert(t.build());
             break;
+         }
          case 'A': [[fallthrough]];
          case 'B': [[fallthrough]];
          case 'C': [[fallthrough]];
