@@ -6,6 +6,18 @@ project(cocles
 	DESCRIPTION "Thanks, Cocles; you are the pearl of cachiers."
 	LANGUAGES CXX)
 
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+include(SetTargetMaxCompileWarnings)
+#[[
+# Define ledger library target
+add_library(ledger)
+target_compile_features(ledger PUBLIC cxx_std_17)
+set_target_properties(ledger PROPERTIES
+	CXX_STANDARD 17
+	CXX_EXTENSIONS NO
+	INTERPROCEDURAL_OPTIMIZATION ON
+	POSITION_INDEPENDENT_CODE ON)
+
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 17)
 
@@ -52,3 +64,10 @@ if(CPPCHECK_EXE)
 	message(STATUS "cppcheck found: ${CPPCHECK_EXE}")
 	set_target_properties(ledger PROPERTIES CXX_CPPCHECK ${CPPCHECK_EXE})
 endif()
+]]
+add_executable(cocles apps/cocles.cpp)
+set_target_properties(cocles PROPERTIES
+	CXX_STANDARD 17
+	CXX_EXTENSIONS NO)
+target_compile_options(cocles PRIVATE -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual -Wpedantic -Wconversion -Wsign-conversion -Wmisleading-indentation -Weffc++)
+set_target_max_compile_warnings(cocles)
