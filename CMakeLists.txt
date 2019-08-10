@@ -69,5 +69,4 @@ add_executable(cocles apps/cocles.cpp)
 set_target_properties(cocles PROPERTIES
 	CXX_STANDARD 17
 	CXX_EXTENSIONS NO)
-target_compile_options(cocles PRIVATE -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual -Wpedantic -Wconversion -Wsign-conversion -Wmisleading-indentation -Weffc++)
 set_target_max_compile_warnings(cocles)
