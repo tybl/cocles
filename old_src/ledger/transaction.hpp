@@ -1,3 +1,4 @@
+// License: The Unlicense (https://unlicense.org)
 #ifndef COCLES_LEDGER_TRANSACTION_HPP
 #define COCLES_LEDGER_TRANSACTION_HPP
 

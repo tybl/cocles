@@ -1,3 +1,4 @@
+// License: The Unlicense (https://unlicense.org)
 #ifndef COCLES_LEDGER_INTERNAL_TABLEVIEW_HPP
 #define COCLES_LEDGER_INTERNAL_TABLEVIEW_HPP
 

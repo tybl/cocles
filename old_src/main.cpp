@@ -1,3 +1,4 @@
+// License: The Unlicense (https://unlicense.org)
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest/doctest.h"
 #include "date/date.h"

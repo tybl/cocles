@@ -1,3 +1,4 @@
+// License: The Unlicense (https://unlicense.org)
 #include "money.hpp"
 
 #include "doctest/doctest.h"

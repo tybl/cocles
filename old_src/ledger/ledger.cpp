@@ -1,3 +1,4 @@
+// License: The Unlicense (https://unlicense.org)
 #include "ledger.hpp"
 
 #include "account.hpp"

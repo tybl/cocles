@@ -1,3 +1,6 @@
+################################################################################
+# License: The Unlicense (https://unlicense.org)
+################################################################################
 # Hints: http://www.brianlheim.com/2018/04/09/cmake-cheat-sheet.html
 # for clang-tidy: http://mariobadr.com/using-clang-tidy-with-cmake-36.html
 cmake_minimum_required(VERSION 3.13)

@@ -1,3 +1,6 @@
+################################################################################
+# License: The Unlicense (https://unlicense.org)
+################################################################################
 function(set_target_max_compile_warnings target_name)
 	include(CheckCXXCompilerFlag)
 
